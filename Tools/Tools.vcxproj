@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{74D610CA-9CE8-4691-98F0-1FA4B0DF2073}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Tools</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="third_party_libs.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="third_party_libs.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(ProjectDir)\AsyncHttpClient\include;$(ProjectDir)\WebSvcApp\include;$(ProjectDir)\Configuration\include;$(ProjectDir)\CompressUtils\include;$(ProjectDir)\StringUtils\include;$(ProjectDir)\Logger\include;$(ProjectDir)\MiscUtils\include;$(ProjectDir)\WebServer\include;$(IncludePath)</IncludePath>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(ProjectDir)\AsyncHttpClient\include;$(ProjectDir)\WebSvcApp\include;$(ProjectDir)\Configuration\include;$(ProjectDir)\CompressUtils\include;$(ProjectDir)\StringUtils\include;$(ProjectDir)\Logger\include;$(ProjectDir)\MiscUtils\include;$(ProjectDir)\WebServer\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs\Tools\lib\
+
+XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
+</Command>
+    </PostBuildEvent>
+    <Lib />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs\Tools\lib\
+
+XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\AsyncHttpClient.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\ConnectionPool.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\Error.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\HandlerTypes.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IConnectionPool.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IRequest.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IRequestManager.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\MultiRequestManager.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\Request.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\RequestManagerBase.h" />
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\SingleRequestManager.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\cdecode.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\cencode.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\decode.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\encode.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\Base64.h" />
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\Compress.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\Configuration.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\ConfigurationBase.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\ConfigurationView.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\Errors.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\Path.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\Ranges.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\RealPath.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\Store.h" />
+    <ClInclude Include="Configuration\include\Tools\Configuration\XmlParser.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\Logger.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerBaseStream.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerErrors.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerFileStream.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerHeader.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerMessageLevel.h" />
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerStdStream.h" />
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\BaseHash.h" />
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ConcurrentQueue.h" />
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\Sha1.h" />
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ShutdownManager.h" />
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ThreadingModel.h" />
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\JSONUtils.h" />
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\StringEscapeUtils.h" />
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\UnicodeTextProcessing.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\ConfService.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\ConnectionContext.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\Errors.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\IScheduler.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\IStat.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\IWebService.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\PionWebServerCore.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\Scheduler.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\ServiceHandler.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\StatService.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\WebServer.h" />
+    <ClInclude Include="WebSvcApp\include\Tools\WebSvcApp\WebSvcApp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AsyncHttpClient\src\AsyncHttpClient.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\ConnectionPool.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\Error.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\MultiRequestManager.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\Request.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\RequestManagerBase.cpp" />
+    <ClCompile Include="AsyncHttpClient\src\SingleRequestManager.cpp" />
+    <ClCompile Include="CompressUtils\src\Base64.cpp" />
+    <ClCompile Include="CompressUtils\src\cdecode.c" />
+    <ClCompile Include="CompressUtils\src\cencode.c" />
+    <ClCompile Include="CompressUtils\src\Compress.cpp" />
+    <ClCompile Include="Configuration\src\Configuration.cpp" />
+    <ClCompile Include="Configuration\src\ConfigurationBase.cpp" />
+    <ClCompile Include="Configuration\src\ConfigurationView.cpp" />
+    <ClCompile Include="Configuration\src\Path.cpp" />
+    <ClCompile Include="Configuration\src\Ranges.cpp" />
+    <ClCompile Include="Configuration\src\RealPath.cpp" />
+    <ClCompile Include="Configuration\src\Store.cpp" />
+    <ClCompile Include="Configuration\src\XmlParser.cpp" />
+    <ClCompile Include="Logger\src\Logger.cpp" />
+    <ClCompile Include="Logger\src\LoggerFileStream.cpp" />
+    <ClCompile Include="Logger\src\LoggerMessageLevel.cpp" />
+    <ClCompile Include="Logger\src\LoggerStdStream.cpp" />
+    <ClCompile Include="StringUtils\src\JSONUtils.cpp" />
+    <ClCompile Include="StringUtils\src\StringEscapeUtils.cpp" />
+    <ClCompile Include="StringUtils\src\UnicodeTextProcessing.cpp" />
+    <ClCompile Include="WebServer\src\ConfService.cpp" />
+    <ClCompile Include="WebServer\src\ConnectionContext.cpp" />
+    <ClCompile Include="WebServer\src\PionWebServerCore.cpp" />
+    <ClCompile Include="WebServer\src\Scheduler.cpp" />
+    <ClCompile Include="WebServer\src\ServiceHandler.cpp" />
+    <ClCompile Include="WebServer\src\StatService.cpp" />
+    <ClCompile Include="WebServer\src\WebServer.cpp" />
+    <ClCompile Include="WebSvcApp\src\WebSvcApp.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

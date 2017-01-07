@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Configuration">
+      <UniqueIdentifier>{e8022b94-524a-439f-9fa4-481a4ce48365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logger">
+      <UniqueIdentifier>{8e0e517c-df70-4e0c-a4a2-b1991f011254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WebServer">
+      <UniqueIdentifier>{8fb7cd6a-b7d5-42fd-94d2-aca922c50f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logger">
+      <UniqueIdentifier>{caf4cb2a-a879-4de4-865a-d67408960f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Configuration">
+      <UniqueIdentifier>{030c1880-a026-4147-92b2-697321189a98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\MiscUtils">
+      <UniqueIdentifier>{56d38311-ab4c-4b6f-9880-08306c9fbfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CompressUtils">
+      <UniqueIdentifier>{2c43cc23-1bb3-4de7-82a2-bee4df2f2467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CompressUtils">
+      <UniqueIdentifier>{6722e1d6-fbf8-4bb7-b377-47b244f996cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\StringUtils">
+      <UniqueIdentifier>{b7350618-656a-4481-a972-4b13d3963085}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\StringUtils">
+      <UniqueIdentifier>{ca6e70a8-c2fb-437b-831e-13b21c0dde79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\WebSvcApp">
+      <UniqueIdentifier>{1db5e9e1-067e-4d09-9de6-7b77af3a8fb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WebSvcApp">
+      <UniqueIdentifier>{253d4e83-b314-4fe5-b21e-b432f330a574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AsyncHttpClient">
+      <UniqueIdentifier>{8506a1a1-6686-4178-a746-da40e360c772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AsyncHttpClient">
+      <UniqueIdentifier>{715a3657-8040-4a19-b3ed-188df6a16fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\WebServer">
+      <UniqueIdentifier>{6962f862-3e5d-484d-9f5d-4253a45d7df1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="WebServer\include\Tools\WebServer\ConfService.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\ConnectionContext.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\Errors.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\IScheduler.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\IStat.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\IWebService.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\PionWebServerCore.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\Scheduler.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\ServiceHandler.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\StatService.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\WebServer.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\Configuration.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\ConfigurationBase.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\ConfigurationView.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\Errors.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\Path.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\Ranges.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\RealPath.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\Store.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration\include\Tools\Configuration\XmlParser.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\Logger.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerBaseStream.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerErrors.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerFileStream.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerHeader.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerMessageLevel.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\include\Tools\Logger\LoggerStdStream.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\BaseHash.h">
+      <Filter>Header Files\MiscUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ConcurrentQueue.h">
+      <Filter>Header Files\MiscUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\Sha1.h">
+      <Filter>Header Files\MiscUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ShutdownManager.h">
+      <Filter>Header Files\MiscUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="MiscUtils\include\Tools\MiscUtils\ThreadingModel.h">
+      <Filter>Header Files\MiscUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\Base64.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\Compress.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\cdecode.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\cencode.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\decode.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="CompressUtils\include\Tools\CompressUtils\b64\encode.h">
+      <Filter>Header Files\CompressUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\JSONUtils.h">
+      <Filter>Header Files\StringUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\StringEscapeUtils.h">
+      <Filter>Header Files\StringUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils\include\Tools\StringUtils\UnicodeTextProcessing.h">
+      <Filter>Header Files\StringUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSvcApp\include\Tools\WebSvcApp\WebSvcApp.h">
+      <Filter>Header Files\WebSvcApp</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\AsyncHttpClient.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\ConnectionPool.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\Error.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\HandlerTypes.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IConnectionPool.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IRequest.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\IRequestManager.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\MultiRequestManager.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\Request.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\RequestManagerBase.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\SingleRequestManager.h">
+      <Filter>Header Files\AsyncHttpClient</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="WebServer\src\ConfService.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\ConnectionContext.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\PionWebServerCore.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\Scheduler.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\ServiceHandler.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\StatService.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\WebServer.cpp">
+      <Filter>Source Files\WebServer</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger\src\Logger.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger\src\LoggerFileStream.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger\src\LoggerMessageLevel.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger\src\LoggerStdStream.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\Configuration.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\ConfigurationBase.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\ConfigurationView.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\Path.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\Ranges.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\RealPath.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\Store.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration\src\XmlParser.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressUtils\src\Base64.cpp">
+      <Filter>Source Files\CompressUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressUtils\src\Compress.cpp">
+      <Filter>Source Files\CompressUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressUtils\src\cdecode.c">
+      <Filter>Source Files\CompressUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressUtils\src\cencode.c">
+      <Filter>Source Files\CompressUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils\src\JSONUtils.cpp">
+      <Filter>Source Files\StringUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils\src\StringEscapeUtils.cpp">
+      <Filter>Source Files\StringUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtils\src\UnicodeTextProcessing.cpp">
+      <Filter>Source Files\StringUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="WebSvcApp\src\WebSvcApp.cpp">
+      <Filter>Source Files\WebSvcApp</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\AsyncHttpClient.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\ConnectionPool.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\Error.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\MultiRequestManager.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\Request.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\RequestManagerBase.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncHttpClient\src\SingleRequestManager.cpp">
+      <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

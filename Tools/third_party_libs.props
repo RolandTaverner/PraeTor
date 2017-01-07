@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <BOOST_INC>x:\libs\boost-1.62.0\include</BOOST_INC>
+    <BOOST_LIB>x:\libs\boost-1.62.0\lib</BOOST_LIB>
+    <BZIP2_INC>x:\libs\bzip2\include</BZIP2_INC>
+    <BZIP2_LIB>x:\libs\bzip2\lib</BZIP2_LIB>
+    <ICU_INC>x:\libs\icu57\include</ICU_INC>
+    <ICU_LIB>x:\libs\icu57\lib</ICU_LIB>
+    <ZLIB_INC>x:\libs\zlib-1.2.8\include</ZLIB_INC>
+    <ZLIB_LIB>x:\libs\zlib-1.2.8\lib</ZLIB_LIB>
+    <OPENSSL_INC>x:\libs\openssl\include</OPENSSL_INC>
+    <OPENSSL_LIB>x:\libs\openssl\lib</OPENSSL_LIB>
+    <PION_INC>x:\libs\pion-5.0.6\include</PION_INC>
+    <PION_LIB>x:\libs\pion-5.0.6\lib</PION_LIB>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(BOOST_INC);$(BZIP2_INC);$(ICU_INC);$(OPENSSL_INC);$(ZLIB_INC);$(PION_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PION_STATIC_LINKING;U_STATIC_IMPLEMENTATION;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_WIN32_WINNT=_WIN32_WINNT_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="BOOST_INC">
+      <Value>$(BOOST_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BOOST_LIB">
+      <Value>$(BOOST_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BZIP2_INC">
+      <Value>$(BZIP2_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BZIP2_LIB">
+      <Value>$(BZIP2_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ICU_INC">
+      <Value>$(ICU_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ICU_LIB">
+      <Value>$(ICU_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="OPENSSL_INC">
+      <Value>$(OPENSSL_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="OPENSSL_LIB">
+      <Value>$(OPENSSL_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ZLIB_INC">
+      <Value>$(ZLIB_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="ZLIB_LIB">
+      <Value>$(ZLIB_LIB)</Value>
+    </BuildMacro>
+    <BuildMacro Include="PION_INC">
+      <Value>$(PION_INC)</Value>
+    </BuildMacro>
+    <BuildMacro Include="PION_LIB">
+      <Value>$(PION_LIB)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

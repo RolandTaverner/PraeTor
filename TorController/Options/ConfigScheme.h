@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+#include "Tools/Configuration/ConfigurationView.h"
+
 #include "Options/IConfigScheme.h"
 
 class ConfigScheme :
@@ -12,7 +14,7 @@ public:
     ConfigScheme();
     virtual ~ConfigScheme();
 
-    // IConfigScheme
+    // IConfigScheme implementation
     void checkOption(const Option &opt) override; /* throws */
 
     void registerOption(const std::string &name,
@@ -25,6 +27,9 @@ public:
     bool hasDefaultValue(const std::string &name) const override; /* throws */
 
     const OptionDesc &getOptionDesc(const std::string &name) const override; /* throws */
+    // End of IConfigScheme implementation
+
+    static IConfigSchemePtr CreateFromConfig(const Tools::Configuration::ConfigurationView &conf);
 
 private:
     typedef std::map<std::string, OptionDesc> OptionsDesc;
@@ -68,4 +73,3 @@ private:
     };
 
 };
-

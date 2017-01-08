@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "Main.h"
 
-#include "TorControllerWebSvc.h"
+#include "ControllerWebSvc.h"
 
 #define MAX_LOADSTRING 100
 
@@ -27,7 +27,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    TorControllerWebSvc webSvc;
+    ControllerWebSvc webSvc;
 
     //return webSvc.run();
 

@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Process">
       <UniqueIdentifier>{367af1d2-9554-4548-9bb5-7a2b469c7b55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\WebServices">
+      <UniqueIdentifier>{08013529-982c-4a42-813e-02f4c4e94d74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WebServices">
+      <UniqueIdentifier>{1a4dc3aa-9f03-46f9-94a9-21314fcde9b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -37,9 +43,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TorControllerWebSvc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Main.h">
@@ -69,12 +72,21 @@
     <ClInclude Include="Options\ConfigScheme.h">
       <Filter>Header Files\Options</Filter>
     </ClInclude>
+    <ClInclude Include="Process\ProcessConfiguration.h">
+      <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerWebSvc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\IProcess.h">
+      <Filter>Header Files\Process</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TorControllerWebSvc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
@@ -91,6 +103,15 @@
     </ClCompile>
     <ClCompile Include="Options\ConfigScheme.cpp">
       <Filter>Source Files\Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\ProcessConfiguration.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerWebSvc.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

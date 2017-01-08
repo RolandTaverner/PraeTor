@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <boost/shared_ptr.hpp>
+
 #include "Options/AbstractCollection.h"
 #include "Options/Option.h"
 
@@ -14,6 +16,9 @@ public:
     virtual void setValue(const std::string &name, const OptionValueType &value) = 0; /* throws */
     virtual const OptionValueType &getValue(const std::string &name) const = 0; /* throws */
 };
+
+typedef boost::shared_ptr<IOptionsStorage> IOptionsStoragePtr;
+typedef boost::shared_ptr<const IOptionsStorage> IOptionsStorageConstPtr;
 
 class OptionsStorageError : public OptionError
 {

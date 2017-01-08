@@ -92,6 +92,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="Options\ConfigScheme.h" />
     <ClInclude Include="Options\IConfigScheme.h" />
     <ClInclude Include="Options\IFormatter.h" />
@@ -99,24 +100,28 @@
     <ClInclude Include="Options\Option.h" />
     <ClInclude Include="Options\AbstractCollection.h" />
     <ClInclude Include="Options\OptionsStorage.h" />
+    <ClInclude Include="Process\IProcess.h" />
     <ClInclude Include="Process\ProcessBase.h" />
+    <ClInclude Include="Process\ProcessConfiguration.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Main.h" />
-    <ClInclude Include="TorControllerWebSvc.h" />
+    <ClInclude Include="ControllerWebSvc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Options\ConfigScheme.cpp" />
     <ClCompile Include="Options\Option.cpp" />
     <ClCompile Include="Options\OptionsStorage.cpp" />
     <ClCompile Include="Process\ProcessBase.cpp" />
+    <ClCompile Include="Process\ProcessConfiguration.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="TorControllerWebSvc.cpp" />
+    <ClCompile Include="ControllerWebSvc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TorController.rc" />

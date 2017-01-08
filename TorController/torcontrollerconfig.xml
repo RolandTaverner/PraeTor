@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <run>
+        <daemon>1</daemon>
+
+        <httpserver>
+            <host>0.0.0.0</host>
+            <port>55555</port>
+            <timeout>10</timeout>
+            <connectionlimit>300</connectionlimit>
+            <httpthreads>2</httpthreads>
+            <workerthreads>4</workerthreads>
+
+            <statservicename>browserlogservice</statservicename>
+            <statservice>stat</statservice>
+        </httpserver>
+
+        <logger>
+            <level>
+                <all>
+                    <file>
+                        <name>/kmsearch/service/log/browserlogservice.log</name>
+                    </file>
+                </all>
+            </level>
+        </logger>
+    </run>
+
+    <debug>true</debug>
+
+    <serviceconfig>
+        <controller>
+            <process name="tor">
+                <root>x:\et\tor-win32-0.2.8.11</root>
+                <image>tor.exe</image>
+                <args>--quiet -f "%CONFIGFILE%" --__OwningControllerProcess %PID%</args>
+                <options>
+                    <cmdline>
+                    </cmdline>
+                    <config>
+                        <option name="" type="" multi="no"> <!-- multi="no|line|sep -->
+                            
+                        </option>
+                    </config>
+                    <runtime>
+                    </runtime>
+                </options>
+            </process>
+            
+            <process name="polipo">
+                <image></image>
+            </process>
+            
+        </controller>
+    </serviceconfig>
+
+</document>

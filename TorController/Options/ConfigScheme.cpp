@@ -106,3 +106,9 @@ const ConfigScheme::CollectionType::CollectionValueType &ConfigScheme::dereferen
 
     return dynamic_cast<const ConfigSchemeElement*>(current)->getIterator()->second;
 }
+
+//-------------------------------------------------------------------------------------------------
+IConfigSchemePtr ConfigScheme::CreateFromConfig(const Tools::Configuration::ConfigurationView &conf)
+{
+
+}

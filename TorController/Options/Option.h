@@ -1,11 +1,16 @@
 #pragma once
 
+#include <list>
 #include <stdexcept>
 #include <string>
 
 #include <boost/optional.hpp>
+#include <boost/variant.hpp>
 
-typedef boost::optional<std::string> OptionValueType;
+typedef std::string OptionSingleValue;
+typedef std::list<OptionSingleValue> OptionListValue;
+typedef boost::variant<OptionSingleValue, OptionListValue> OptionValueContainer;
+typedef boost::optional<OptionValueContainer> OptionValueType;
 
 class Option
 {
@@ -17,6 +22,7 @@ public:
     const std::string &name() const;
     const OptionValueType &value() const;
     void setValue(const OptionValueType &newValue);
+    bool hasValue() const;
 
 private:
     std::string m_name;

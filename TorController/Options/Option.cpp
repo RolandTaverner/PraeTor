@@ -27,3 +27,8 @@ void Option::setValue(const OptionValueType &newValue)
 { 
     m_value = newValue;
 }
+
+bool Option::hasValue() const
+{
+    return value().is_initialized();
+}

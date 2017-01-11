@@ -20,20 +20,31 @@ public:
     void registerOption(const std::string &name,
         const OptionValueType &defaultValue,
         bool required,
-        const OptionConstraints &constraints) override;  /* throws */
+        const OptionConstraints &constraints,
+        bool isList,
+        OptionValueTag tag) override;  /* throws */
 
     bool isRequired(const std::string &name) const override; /* throws */
 
     bool hasDefaultValue(const std::string &name) const override; /* throws */
+
+    bool isList(const std::string &name) const override; /* throws */
+
+    OptionValueContainer getDefaultValue(const std::string &name) const override; /* throws */
 
     const OptionDesc &getOptionDesc(const std::string &name) const override; /* throws */
     // End of IConfigScheme implementation
 
     static IConfigSchemePtr CreateFromConfig(const Tools::Configuration::ConfigurationView &conf);
 
+protected:
+    void registerOption(const OptionDesc &od);
+
 private:
     typedef std::map<std::string, OptionDesc> OptionsDesc;
     OptionsDesc m_optionsDesc;
+
+    static OptionDesc CreateOptionDescFromConfig(const Tools::Configuration::ConfigurationView &optConf);
 
     // AbstractCollection<OptionDesc> implementation
     CollectionType::Element *begin() const override;
@@ -73,3 +84,6 @@ private:
     };
 
 };
+
+
+typedef boost::shared_ptr<ConfigScheme> ConfigSchemePtr;

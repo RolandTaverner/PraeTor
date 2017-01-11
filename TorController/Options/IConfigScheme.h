@@ -15,15 +15,17 @@ class IOptionConstraint
 public:
     virtual ~IOptionConstraint() {}
 
-    virtual bool isValid(const Option &opt) = 0;
+    virtual bool isValid(const Option &opt) const = 0;
 
     virtual std::string description() const = 0;
 };
 
+enum OptionValueTag { OVT_NUMBER, OVT_STRING, OVT_DOMAIN };
+
 typedef boost::shared_ptr<IOptionConstraint> IOptionConstraintPtr;
 typedef std::list<IOptionConstraintPtr> OptionConstraints;
 
-typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints> OptionDesc;
+typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag> OptionDesc; // name, defaultValue, isRequired, contraints, isList, type
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {
@@ -35,11 +37,17 @@ public:
     virtual void registerOption(const std::string &name,
         const OptionValueType &defaultValue,
         bool required,
-        const OptionConstraints &constraints) = 0;  /* throws */
+        const OptionConstraints &constraints,
+        bool isList,
+        OptionValueTag tag) = 0;  /* throws */
 
     virtual bool isRequired(const std::string &name) const = 0; /* throws */
 
     virtual bool hasDefaultValue(const std::string &name) const = 0; /* throws */
+
+    virtual bool isList(const std::string &name) const = 0; /* throws */
+
+    virtual OptionValueContainer getDefaultValue(const std::string &name) const = 0; /* throws */
 
     virtual const OptionDesc &getOptionDesc(const std::string &name) const = 0; /* throws */
 };
@@ -112,4 +120,31 @@ public:
 
 private:
     OptionConstraints m_failedConstraints;
+};
+
+
+class OptionDefinitionError : public OptionsSchemeError
+{
+public:
+    OptionDefinitionError(const std::string &message, const std::string &name) :
+        OptionsSchemeError(message, name)
+    {
+    }
+
+    virtual ~OptionDefinitionError()
+    {
+    }
+};
+
+class OptionHasNoDefaultValue : public OptionsSchemeError
+{
+public:
+    OptionHasNoDefaultValue(const std::string &message, const std::string &name) :
+        OptionsSchemeError(message, name)
+    {
+    }
+
+    virtual ~OptionHasNoDefaultValue()
+    {
+    }
 };

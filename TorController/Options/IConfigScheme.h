@@ -25,7 +25,7 @@ enum OptionValueTag { OVT_NUMBER, OVT_STRING, OVT_DOMAIN };
 typedef boost::shared_ptr<IOptionConstraint> IOptionConstraintPtr;
 typedef std::list<IOptionConstraintPtr> OptionConstraints;
 
-typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag> OptionDesc; // name, defaultValue, isRequired, contraints, isList, type
+typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag, bool> OptionDesc; // name, defaultValue, isRequired, contraints, isList, type, isSystem
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {
@@ -39,13 +39,16 @@ public:
         bool required,
         const OptionConstraints &constraints,
         bool isList,
-        OptionValueTag tag) = 0;  /* throws */
+        OptionValueTag tag,
+        bool isSystem) = 0;  /* throws */
 
     virtual bool isRequired(const std::string &name) const = 0; /* throws */
 
     virtual bool hasDefaultValue(const std::string &name) const = 0; /* throws */
 
     virtual bool isList(const std::string &name) const = 0; /* throws */
+
+    virtual bool isSystem(const std::string &name) const = 0; /* throws */
 
     virtual OptionValueContainer getDefaultValue(const std::string &name) const = 0; /* throws */
 

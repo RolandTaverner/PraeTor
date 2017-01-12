@@ -34,6 +34,12 @@ const OptionValueType &OptionsStorage::getValue(const std::string &name) const
 }
 
 //-------------------------------------------------------------------------------------------------
+IConfigSchemePtr OptionsStorage::getScheme() const
+{
+    return m_scheme;
+}
+
+//-------------------------------------------------------------------------------------------------
 OptionsStorage::CollectionType::Element *OptionsStorage::begin() const
 {
     return new OptionsStorageElement(this, m_options.cbegin());

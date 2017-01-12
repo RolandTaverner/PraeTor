@@ -10,11 +10,11 @@ class IProcess
 public:
     virtual ~IProcess() {}
 
-    virtual const std::string &processType() const = 0;
+    virtual const std::string &name() const = 0;
 
     virtual const std::string &executable() const = 0;
 
-    virtual const boost::filesystem::path &root() const = 0;
+    virtual const boost::filesystem::path &rootPath() const = 0;
 
 };
 

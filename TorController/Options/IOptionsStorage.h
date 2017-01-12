@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "Options/AbstractCollection.h"
+#include "Options/IConfigScheme.h"
 #include "Options/Option.h"
 
 class IOptionsStorage : public AbstractCollection<Option>
@@ -15,6 +16,7 @@ public:
 
     virtual void setValue(const std::string &name, const OptionValueType &value) = 0; /* throws */
     virtual const OptionValueType &getValue(const std::string &name) const = 0; /* throws */
+    virtual IConfigSchemePtr getScheme() const = 0;
 };
 
 typedef boost::shared_ptr<IOptionsStorage> IOptionsStoragePtr;

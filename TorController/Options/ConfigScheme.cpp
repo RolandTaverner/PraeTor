@@ -41,14 +41,15 @@ void ConfigScheme::registerOption(const std::string &name,
     bool required,
     const OptionConstraints &constraints,
     bool isList,
-    OptionValueTag tag)
+    OptionValueTag tag,
+    bool isSystem)
 {
     if (m_optionsDesc.find(name) != m_optionsDesc.end())
     {
         throw OptionAlreadyRegistered("Option already registered.", name);
     }
 
-    m_optionsDesc[name] = OptionDesc(name, defaultValue, required, constraints, isList, tag);
+    m_optionsDesc[name] = OptionDesc(name, defaultValue, required, constraints, isList, tag, isSystem);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -67,6 +68,12 @@ bool ConfigScheme::hasDefaultValue(const std::string &name) const
 bool ConfigScheme::isList(const std::string &name) const
 {
     return getOptionDesc(name).get<4>();
+}
+
+//-------------------------------------------------------------------------------------------------
+bool ConfigScheme::isSystem(const std::string &name) const
+{
+    return getOptionDesc(name).get<6>();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -165,6 +172,7 @@ typedef struct _OptionDescAttribute
 static const char *s_typeValues[] = { "number", "string", "domainvalue" };
 static const char *s_requiredValues[] = { "no", "yes" };
 static const char *s_listValues[] = { "no", "yes" };
+static const char *s_systemValues[] = { "no", "yes" };
 
 static const OptionDescAttribute s_optionAttributes[] = 
 {
@@ -172,6 +180,7 @@ static const OptionDescAttribute s_optionAttributes[] =
     { "type",     true,  s_typeValues,     sizeof(s_typeValues) / sizeof(*s_typeValues) },
     { "required", false, s_requiredValues, sizeof(s_requiredValues) / sizeof(*s_requiredValues) },
     { "list",     false, s_listValues,     sizeof(s_listValues) / sizeof(*s_listValues) },
+    { "system",   false, s_systemValues,   sizeof(s_systemValues) / sizeof(*s_systemValues) },
 };
 
 typedef struct _OptionTypeToTag
@@ -238,6 +247,7 @@ OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::
     const std::string type = boost::to_lower_copy(optConf.getAttr("", "type"));
     const bool isRequired = boost::iequals(optConf.getAttr<std::string>("", "required", std::string("no")), "yes");
     const bool isList = boost::iequals(optConf.getAttr<std::string>("", "list", std::string("no")), "yes");
+    const bool isSystem = boost::iequals(optConf.getAttr<std::string>("", "system", std::string("no")), "yes");
 
     OptionValueType defaultValue;
     if (optConf.exists("default"))
@@ -266,7 +276,7 @@ OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::
 
     // TODO: constraints and default value check
     OptionConstraints constraints;
-    OptionDesc od(name, defaultValue, isRequired, constraints, isList, typeTag);
+    OptionDesc od(name, defaultValue, isRequired, constraints, isList, typeTag, isSystem);
 
     return od;
 }

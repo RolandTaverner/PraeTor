@@ -17,6 +17,8 @@ public:
     
     const OptionValueType &getValue(const std::string &name) const override; /* throws */
 
+    IConfigSchemePtr getScheme() const override;
+
 private:
     typedef std::map<std::string, Option> Options;
     Options m_options;

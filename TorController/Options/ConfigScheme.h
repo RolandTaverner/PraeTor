@@ -22,13 +22,16 @@ public:
         bool required,
         const OptionConstraints &constraints,
         bool isList,
-        OptionValueTag tag) override;  /* throws */
+        OptionValueTag tag,
+        bool isSystem) override;  /* throws */
 
     bool isRequired(const std::string &name) const override; /* throws */
 
     bool hasDefaultValue(const std::string &name) const override; /* throws */
 
     bool isList(const std::string &name) const override; /* throws */
+
+    bool isSystem(const std::string &name) const override; /* throws */
 
     OptionValueContainer getDefaultValue(const std::string &name) const override; /* throws */
 

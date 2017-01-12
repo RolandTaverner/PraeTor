@@ -1,20 +1,8 @@
 #include "ProcessConfiguration.h"
 
 //-------------------------------------------------------------------------------------------------
-ProcessConfiguration::ProcessConfiguration(IOptionsStoragePtr cmdOpts, IOptionsStoragePtr confOpts, IOptionsStoragePtr rtOpts)
+ProcessConfiguration::ProcessConfiguration()
 {
-    if (cmdOpts)
-    {
-        m_storages[OST_CMDLINEARGS] = cmdOpts;
-    }
-    if (confOpts)
-    {
-        m_storages[OST_CONFIGFILE] = confOpts;
-    }
-    if (rtOpts)
-    {
-        m_storages[OST_RUNTIME] = rtOpts;
-    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -23,15 +11,15 @@ ProcessConfiguration::~ProcessConfiguration()
 }
 
 //-------------------------------------------------------------------------------------------------
-bool ProcessConfiguration::hasStorage(const OptionsStorageType storageType) const
+bool ProcessConfiguration::hasStorage(const std::string &name) const
 {
-    return m_storages.find(storageType) != m_storages.end();
+    return m_storages.find(name) != m_storages.end();
 }
 
 //-------------------------------------------------------------------------------------------------
-IOptionsStoragePtr ProcessConfiguration::getStorage(const OptionsStorageType storageType)
+IOptionsStoragePtr ProcessConfiguration::getStorage(const std::string &name)
 {
-    OptionsStorages::iterator i = m_storages.find(storageType);
+    OptionsStorages::iterator i = m_storages.find(name);
     if (i == m_storages.end())
     {
         throw std::range_error("No such storage.");
@@ -40,12 +28,57 @@ IOptionsStoragePtr ProcessConfiguration::getStorage(const OptionsStorageType sto
 }
 
 //-------------------------------------------------------------------------------------------------
-IOptionsStorageConstPtr ProcessConfiguration::getStorage(const OptionsStorageType storageType) const
+IOptionsStorageConstPtr ProcessConfiguration::getStorage(const std::string &name) const
 {
-    OptionsStorages::const_iterator i = m_storages.find(storageType);
+    OptionsStorages::const_iterator i = m_storages.find(name);
     if (i == m_storages.end())
     {
         throw std::range_error("No such storage.");
     }
     return i->second;
+}
+
+//-------------------------------------------------------------------------------------------------
+ProcessConfiguration::CollectionType::Element *ProcessConfiguration::begin() const
+{
+    return new ConfigSchemeElement(this, m_storages.cbegin());
+}
+
+//-------------------------------------------------------------------------------------------------
+ProcessConfiguration::CollectionType::Element *ProcessConfiguration::end() const
+{
+    return new ConfigSchemeElement(this, m_storages.cend());
+}
+
+//-------------------------------------------------------------------------------------------------
+ProcessConfiguration::CollectionType::Element *ProcessConfiguration::next(const CollectionType::Element *current) const
+{
+    BOOST_ASSERT(current != NULL);
+    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current) != NULL);
+    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current)->getIterator() != m_storages.end());
+
+    const ConfigSchemeElement *element = dynamic_cast<const ConfigSchemeElement*>(current);
+    OptionsStorages::const_iterator iterator = element->getIterator();
+
+    return new ConfigSchemeElement(this, ++iterator);
+}
+
+//-------------------------------------------------------------------------------------------------
+const ProcessConfiguration::CollectionType::CollectionValueType &ProcessConfiguration::dereference(const CollectionType::Element *current) const
+{
+    BOOST_ASSERT(current != NULL);
+    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current) != NULL);
+    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current)->getIterator() != m_storages.end());
+
+    return dynamic_cast<const ConfigSchemeElement*>(current)->getIterator()->second;
+}
+
+//-------------------------------------------------------------------------------------------------
+void ProcessConfiguration::addStorage(const std::string &name, IOptionsStoragePtr storagePtr)
+{
+    if (m_storages.find(name) != m_storages.end())
+    {
+        throw std::runtime_error("Storage " + name + " already registered.");
+    }
+    m_storages[name] = storagePtr;
 }

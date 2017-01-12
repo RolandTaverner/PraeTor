@@ -223,7 +223,7 @@ OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::
             throw OptionDefinitionError("Required attribute not found.", "");
         }
 
-        if (s_optionAttributes[i].values != NULL && s_optionAttributes[i].valuesCount > 0u)
+        if (s_optionAttributes[i].values != NULL && s_optionAttributes[i].valuesCount > 0u && optConf.hasAttr("", attrName))
         {
             const std::string attrValue = optConf.getAttr("", attrName);
             bool found = false;

@@ -161,7 +161,7 @@ int WebSvcApp::run(Tools::Configuration::Configuration &conf)
             const std::string statServiceName = httpConfig.get<std::string>("statservicename", m_project);
             const std::string statServiceResource = httpConfig.get<std::string>("statservice", std::string(""));
 
-            if (!statServiceName.empty() && !statServiceName.empty()) 
+            if (!statServiceName.empty() && !statServiceResource.empty())
             {
                 webServerPtr->enableStatService(statServiceName,
                     "/" + statServiceResource,

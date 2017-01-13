@@ -1,0 +1,124 @@
+FORMAT: 1A
+HOST: http://127.0.0.1:30000/
+
+# torcontrollerservice
+
+API для управления Tor'ом
+
+## Состояние контроллера [/api/controller{?key}]
++ Parameters
+    + key (required, string) - ключ доступа
+
+### Получить состояние контроллера [GET]
++ Response 200 (application/json)
+    + Attributes (ControllerInfo)
+
+
+## Список процессов [/api/controller/processes{?key}]
++ Parameters
+    + key (required, string) - ключ доступа
+
+### Получить список процессов [GET]
++ Response 200 (application/json)
+    + Attributes (array[string])
+
+
+## Информация о процессе [/api/controller/processes/{process_id}{?key}]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+    + key (required, string) - ключ доступа
+
+### Получить информацию о процессе [GET]
++ Response 200 (application/json)
+    + Attributes (ProcessInfo)
++ Response 404 
+
+
+## Список конфигураций процесса [/api/controller/processes/{process_id}/configs{?key}]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+    + key (required, string) - ключ доступа
+
+### Получить список конфигураций [GET]
++ Response 200 (application/json)
+    + Attributes (array[string])
++ Response 404 
+
+
+## Конфигурация процесса [/api/controller/processes/{process_id}/configs/{config_name}{?key}]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+    + config_name (required, string) - имя конфигурации
+    + key (required, string) - ключ доступа
+
+### Получить конфигурацию процесса [GET]
++ Response 200 (application/json)
+    + Attributes (ProcessConfiguration)
++ Response 404 
+
+## Опция конфигурации [/api/controller/processes/{process_id}/configs/{config_name}/options/{option_name}{?key}]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+    + config_name (required, string) - имя конфигурации
+    + option_name (required, string) - имя опции
+    + key (required, string) - ключ доступа
+
+### Получить опцию [GET]
++ Response 200 (application/json)
+    + Attributes (Option)
++ Response 404 
+
+### Задать опцию [PUT]
++ Response 200 (application/json)
+    + Attributes (Option)
++ Response 201 (application/json)
+    + Attributes (Option)
++ Response 400
++ Response 400
++ Response 403
++ Response 404 
+
+### Удалить опцию [DELETE]
++ Response 204 (application/json)
++ Response 403
++ Response 404 
+
+## Data Structures
+
+# ControllerInfo
+Информация о контроллере.
+## Properties
++ PID (number, required)
+
+# ProcessInfo
+Информация о процессе.
+## Properties
++ name (required, string) - название процесса (например, "tor", "privoxy")
++ status (required, enum[string]) - состояние процесса
+    + Members
+        + `starting`
+        + `running`
+        + `stopping`
+        + `stopped`
++ configs (required, array[string]) - список названий конфигураций
+
+# ProcessConfiguration
+Конфигурация процесса. Их может быть несколько - конфиг-файл, параметры командной строки, рантайм-конфгурация.
+## Properties
++ name (required, string) - имя конфигурации
++ options (required, array[string]) - список опций
+
+# Option
+Описание опции.
+## Properties
++ name (required, string)
++ type (required, enum[string])
+    + Members
+        + `string`
+        + `number`
+        + `domain`
++ list (required, boolean) - может ли содержать список значений или одно
++ system (required, boolean) - системные свойства нельзя изменить
++ required (required, boolean) - является ли опция необходимой
++ value (optional, string)
++ presentation (optional, string)

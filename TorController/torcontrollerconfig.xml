@@ -4,7 +4,7 @@
         <daemon>0</daemon>
 
         <httpserver>
-            <host>0.0.0.0</host>
+            <host>127.0.0.1</host>
             <port>30000</port>
             <timeout>10</timeout>
             <connectionlimit>300</connectionlimit>
@@ -18,7 +18,7 @@
             <level>
                 <all>
                     <file>
-                        <name>log.txt</name>
+                        <name>x:\log.txt</name>
                     </file>
                 </all>
             </level>
@@ -31,9 +31,30 @@
         <controller>
             <process name="tor">
                 <root>x:\et\tor-win32-0.2.8.11</root>
-                <image>tor.exe</image>
+                <executable>tor.exe</executable>
                 <args>--quiet -f "%CONFIGFILE%" --__OwningControllerProcess %PID%</args>
                 <options>
+                    <scheme name="config">
+                        <option name="HashedControlPassword" type="string" list="yes" required="yes" system="yes">
+                            <format>%NAME% %VALUE%</format>
+                        </option>
+                        <option name="DataDirectory" type="string" list="no">
+                            <format>%NAME% %VALUE%</format>
+                        </option>
+                        <option name="SafeLogging" type="domainvalue" list="no">
+                            <format>%NAME% %VALUE%</format>
+                            <type>
+                                <domain>
+                                    <value>0</value>
+                                    <value>1</value>
+                                    <value>relay</value>
+                                </domain>
+                            </type>
+                            <default>
+                                <value>0</value>
+                            </default>
+                        </option>                        
+                    </scheme>
                 </options>
             </process>
             

@@ -4,7 +4,11 @@
 #include "stdafx.h"
 #include "Main.h"
 
+#include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include "ControllerWebSvc.h"
+
+#include <pion/http/server.hpp>
 
 #define MAX_LOADSTRING 100
 
@@ -29,7 +33,11 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
     ControllerWebSvc webSvc;
 
-    //return webSvc.run();
+    boost::scoped_array<char*> argv(new char*[3]);
+    argv[0] = "TorController.exe";
+    argv[1] = "--config=x:\\EasyTor\\TorController\\torcontrollerconfig.xml";
+    argv[2] = NULL;
+    return webSvc.run(2, argv.get());
 
     // TODO: Place code here.
     MSG msg;

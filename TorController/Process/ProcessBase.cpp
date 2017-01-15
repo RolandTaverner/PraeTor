@@ -18,7 +18,6 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf)
         IOptionsStoragePtr storage(new OptionsStorage(scheme));
         m_configuration.addStorage(name, storage);
     }
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -42,4 +41,10 @@ const std::string &ProcessBase::executable() const
 const boost::filesystem::path &ProcessBase::rootPath() const
 {
     return m_rootPath;
+}
+
+//-------------------------------------------------------------------------------------------------
+const ProcessConfiguration &ProcessBase::getConfiguration() const
+{
+    return m_configuration;
 }

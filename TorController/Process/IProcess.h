@@ -5,6 +5,8 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include "Process/ProcessConfiguration.h"
+
 class IProcess
 {
 public:
@@ -16,6 +18,7 @@ public:
 
     virtual const boost::filesystem::path &rootPath() const = 0;
 
+    virtual const ProcessConfiguration &getConfiguration() const = 0;
 };
 
 typedef boost::shared_ptr<IProcess> IProcessPtr;

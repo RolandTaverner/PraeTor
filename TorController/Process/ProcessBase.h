@@ -24,6 +24,8 @@ public:
 
     const boost::filesystem::path &rootPath() const override;
 
+    const ProcessConfiguration &getConfiguration() const override;
+
 private:
     std::string m_name;
     std::string m_executable;

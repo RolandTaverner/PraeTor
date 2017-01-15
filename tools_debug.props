@@ -21,8 +21,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(BOOST_INC);$(BZIP2_INC);$(ICU_INC);$(OPENSSL_INC);$(ZLIB_INC);$(PION_INC);$(TOOLS_INC)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PION_STATIC_LINKING;U_STATIC_IMPLEMENTATION;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_WIN32_WINNT=_WIN32_WINNT_WIN7;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(BOOST_INC);$(BZIP2_INC);$(ICU_INC);$(OPENSSL_INC);$(ZLIB_INC);$(PION_INC);$(TOOLS_INC);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PION_FULL;PION_STATIC_LINKING;U_STATIC_IMPLEMENTATION;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_WIN32_WINNT=0x0601;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);$(TOOLS_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -84,6 +84,12 @@
     <ClInclude Include="Process\IProcess.h">
       <Filter>Header Files\Process</Filter>
     </ClInclude>
+    <ClInclude Include="WebServices\ControllerAPIWebService.h">
+      <Filter>Header Files\WebServices</Filter>
+    </ClInclude>
+    <ClInclude Include="WebServices\ResourceParser.h">
+      <Filter>Header Files\WebServices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="ControllerWebSvc.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServices\ControllerAPIWebService.cpp">
+      <Filter>Source Files\WebServices</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServices\ResourceParser.cpp">
+      <Filter>Source Files\WebServices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

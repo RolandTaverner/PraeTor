@@ -59,6 +59,12 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MinimalRebuild>false</MinimalRebuild>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <CompileAsManaged>false</CompileAsManaged>
+      <CompileAsWinRT>false</CompileAsWinRT>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -78,6 +84,9 @@ XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
 </Command>
     </PostBuildEvent>
     <Lib />
+    <Lib>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -113,6 +122,9 @@ XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs\Tools\include\
 XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
 </Command>
     </PostBuildEvent>
+    <Lib>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -1,6 +1,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/tokenizer.hpp>
 
 #include <pion/algorithm.hpp>
 
@@ -15,75 +16,104 @@
 #include "WebServices/ControllerAPIWebService.h"
 
 static const char *s_resourceScheme =
-"{" \
+"{"
+"  \"node\": \"api\","
+"  \"next\":"
+"  ["
+"    {"
+"      \"node\" : \"controller\","
+"      \"action\":  \"ControllerInfo\","
+"      \"next\" :"
+"      ["
+"        {"
+"          \"node\" : \"processes\","
+"          \"action\":  \"Processes\","
+"          \"next\" :"
+"          ["
+"            { "
+"              \"node\" : \"$process_id\","
+"              \"action\":  \"ProcessInfo\""
+"            }"
+"          ]"
+"        }"
+"      ]"
+"    }"
+"  ]"
 "}";
 
 //-------------------------------------------------------------------------------------------------
 ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_controller(controller), m_parser(s_resourceScheme)
 {
-    m_httpStatusMessage[100] = "Continue";
-    m_httpStatusMessage[101] = "Switching Protocols";
-    m_httpStatusMessage[102] = "Processing";
-    m_httpStatusMessage[200] = "OK";
-    m_httpStatusMessage[201] = "Created";
-    m_httpStatusMessage[202] = "Accepted";
-    m_httpStatusMessage[203] = "Non-Authoritative Information";
-    m_httpStatusMessage[204] = "No Content";
-    m_httpStatusMessage[205] = "Reset Content";
-    m_httpStatusMessage[206] = "Partial Content";
-    m_httpStatusMessage[207] = "Multi-Status";
-    m_httpStatusMessage[208] = "Already Reported";
-    m_httpStatusMessage[226] = "IM Used";
-    m_httpStatusMessage[300] = "Multiple Choices";
-    m_httpStatusMessage[301] = "Moved Permanently";
-    m_httpStatusMessage[302] = "Found";
-    m_httpStatusMessage[303] = "See Other";
-    m_httpStatusMessage[304] = "Not Modified";
-    m_httpStatusMessage[305] = "Use Proxy";
-    m_httpStatusMessage[306] = "Reserved";
-    m_httpStatusMessage[307] = "Temporary Redirect";
-    m_httpStatusMessage[308] = "Permanent Redirect";
-    m_httpStatusMessage[400] = "Bad Request";
-    m_httpStatusMessage[401] = "Unauthorized";
-    m_httpStatusMessage[402] = "Payment Required";
-    m_httpStatusMessage[403] = "Forbidden";
-    m_httpStatusMessage[404] = "Not Found";
-    m_httpStatusMessage[405] = "Method Not Allowed";
-    m_httpStatusMessage[406] = "Not Acceptable";
-    m_httpStatusMessage[407] = "Proxy Authentication Required";
-    m_httpStatusMessage[408] = "Request Timeout";
-    m_httpStatusMessage[409] = "Conflict";
-    m_httpStatusMessage[410] = "Gone";
-    m_httpStatusMessage[411] = "Length Required";
-    m_httpStatusMessage[412] = "Precondition Failed";
-    m_httpStatusMessage[413] = "Request Entity Too Large";
-    m_httpStatusMessage[414] = "Request-URI Too Long";
-    m_httpStatusMessage[415] = "Unsupported Media Type";
-    m_httpStatusMessage[416] = "Requested Range Not Satisfiable";
-    m_httpStatusMessage[417] = "Expectation Failed";
-    m_httpStatusMessage[422] = "Unprocessable Entity";
-    m_httpStatusMessage[423] = "Locked";
-    m_httpStatusMessage[424] = "Failed Dependency";
-    m_httpStatusMessage[425] = "Unassigned";
-    m_httpStatusMessage[426] = "Upgrade Required";
-    m_httpStatusMessage[427] = "Unassigned";
-    m_httpStatusMessage[428] = "Precondition Required";
-    m_httpStatusMessage[429] = "Too Many Requests";
-    m_httpStatusMessage[430] = "Unassigned";
-    m_httpStatusMessage[431] = "Request Header Fields Too Large";
-    m_httpStatusMessage[500] = "Internal Server Error";
-    m_httpStatusMessage[501] = "Not Implemented";
-    m_httpStatusMessage[502] = "Bad Gateway";
-    m_httpStatusMessage[503] = "Service Unavailable";
-    m_httpStatusMessage[504] = "Gateway Timeout";
-    m_httpStatusMessage[505] = "HTTP Version Not Supported";
-    m_httpStatusMessage[506] = "Variant Also Negotiates (Experimental)";
-    m_httpStatusMessage[507] = "Insufficient Storage";
-    m_httpStatusMessage[508] = "Loop Detected";
-    m_httpStatusMessage[509] = "Unassigned";
-    m_httpStatusMessage[510] = "Not Extended";
-    m_httpStatusMessage[511] = "Network Authentication Required";
+    m_handlers["ControllerInfo"] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, _2);
+    m_handlers["Processes"] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, _2);
+    m_handlers["ProcessInfo"] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, _2);
+
+    // HTTP status messages
+    {
+        m_httpStatusMessage[100] = "Continue";
+        m_httpStatusMessage[101] = "Switching Protocols";
+        m_httpStatusMessage[102] = "Processing";
+        m_httpStatusMessage[200] = "OK";
+        m_httpStatusMessage[201] = "Created";
+        m_httpStatusMessage[202] = "Accepted";
+        m_httpStatusMessage[203] = "Non-Authoritative Information";
+        m_httpStatusMessage[204] = "No Content";
+        m_httpStatusMessage[205] = "Reset Content";
+        m_httpStatusMessage[206] = "Partial Content";
+        m_httpStatusMessage[207] = "Multi-Status";
+        m_httpStatusMessage[208] = "Already Reported";
+        m_httpStatusMessage[226] = "IM Used";
+        m_httpStatusMessage[300] = "Multiple Choices";
+        m_httpStatusMessage[301] = "Moved Permanently";
+        m_httpStatusMessage[302] = "Found";
+        m_httpStatusMessage[303] = "See Other";
+        m_httpStatusMessage[304] = "Not Modified";
+        m_httpStatusMessage[305] = "Use Proxy";
+        m_httpStatusMessage[306] = "Reserved";
+        m_httpStatusMessage[307] = "Temporary Redirect";
+        m_httpStatusMessage[308] = "Permanent Redirect";
+        m_httpStatusMessage[400] = "Bad Request";
+        m_httpStatusMessage[401] = "Unauthorized";
+        m_httpStatusMessage[402] = "Payment Required";
+        m_httpStatusMessage[403] = "Forbidden";
+        m_httpStatusMessage[404] = "Not Found";
+        m_httpStatusMessage[405] = "Method Not Allowed";
+        m_httpStatusMessage[406] = "Not Acceptable";
+        m_httpStatusMessage[407] = "Proxy Authentication Required";
+        m_httpStatusMessage[408] = "Request Timeout";
+        m_httpStatusMessage[409] = "Conflict";
+        m_httpStatusMessage[410] = "Gone";
+        m_httpStatusMessage[411] = "Length Required";
+        m_httpStatusMessage[412] = "Precondition Failed";
+        m_httpStatusMessage[413] = "Request Entity Too Large";
+        m_httpStatusMessage[414] = "Request-URI Too Long";
+        m_httpStatusMessage[415] = "Unsupported Media Type";
+        m_httpStatusMessage[416] = "Requested Range Not Satisfiable";
+        m_httpStatusMessage[417] = "Expectation Failed";
+        m_httpStatusMessage[422] = "Unprocessable Entity";
+        m_httpStatusMessage[423] = "Locked";
+        m_httpStatusMessage[424] = "Failed Dependency";
+        m_httpStatusMessage[425] = "Unassigned";
+        m_httpStatusMessage[426] = "Upgrade Required";
+        m_httpStatusMessage[427] = "Unassigned";
+        m_httpStatusMessage[428] = "Precondition Required";
+        m_httpStatusMessage[429] = "Too Many Requests";
+        m_httpStatusMessage[430] = "Unassigned";
+        m_httpStatusMessage[431] = "Request Header Fields Too Large";
+        m_httpStatusMessage[500] = "Internal Server Error";
+        m_httpStatusMessage[501] = "Not Implemented";
+        m_httpStatusMessage[502] = "Bad Gateway";
+        m_httpStatusMessage[503] = "Service Unavailable";
+        m_httpStatusMessage[504] = "Gateway Timeout";
+        m_httpStatusMessage[505] = "HTTP Version Not Supported";
+        m_httpStatusMessage[506] = "Variant Also Negotiates (Experimental)";
+        m_httpStatusMessage[507] = "Insufficient Storage";
+        m_httpStatusMessage[508] = "Loop Detected";
+        m_httpStatusMessage[509] = "Unassigned";
+        m_httpStatusMessage[510] = "Not Extended";
+        m_httpStatusMessage[511] = "Network Authentication Required";
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -96,25 +126,30 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
 {
     //contextPtr->getStat()->increment("total_queries", 1);
 
-    pion::http::request_ptr request = contextPtr->getRequest();
-
-    //const bool isGzipEnabled = (request->get_header("Accept-Encoding").find("gzip") != std::string::npos);
-
-    std::string action;
-    ResourceParameters resourceParameters;
-    if (!resourceParser().mapToAction(request->get_resource(), action, resourceParameters))
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST , "Can't parse resource url.");
-        return;
-    }
-
     try
     {
+        ResourceParameters resourceParameters;
 
+        const std::string action = resourceParser().mapToAction(contextPtr->getRequest()->get_resource(), resourceParameters);
+
+        ActionHandlers::const_iterator it = m_handlers.find(action);
+        if (it == m_handlers.end())
+        {
+            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Action not found.");
+            return;
+        }
+
+        (it->second)(contextPtr, resourceParameters);
+    }
+    catch (const ResourceParserError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse resource url.");
+        return;
     }
     catch (const std::exception &e)
     {
-    
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, std::string("Internal error: ") + e.what());
+        return;
     }
 
     //if (request->get_method() != pion::http::types::REQUEST_METHOD_POST
@@ -123,30 +158,9 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
     //    // bad request
     //    contextPtr->getStat()->increment("bad_queries", 1);
 
-    //    const std::string badRequestData = std::string() +
-    //        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-    //        "<document version=\"" + HttpCollector::Version::getMajor() + "." + HttpCollector::Version::getMinor() + "." + HttpCollector::Version::getPatch() + "\">\n" +
-    //        "    <error>\n" +
-    //        "        <type>bad request</type>\n" +
-    //        "        <description>Only GET or POST method supported</description>\n" +
-    //        "    </error>\n" +
-    //        "</document>\n";
-
-    //    pion::http::response_ptr responsePtr = createResponse(pion::http::types::RESPONSE_CODE_BAD_REQUEST,
-    //        badRequestData,
-    //        isGzipEnabled);
-
     //    contextPtr->sendResponse(responsePtr);
     //    return;
     //}
-
-    //m_collectorPtr->asyncGetXmlResponse(request,
-    //    boost::bind(&CollectorWebService::onCollectorResponse,
-    //    this,
-    //    contextPtr,
-    //    _1),
-    //    contextPtr->getTracer());
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -254,7 +268,7 @@ void ControllerAPIWebService::onControllerResponse(Tools::WebServer::ConnectionC
     //    responsePtr = createResponse(pion::http::types::RESPONSE_CODE_SERVER_ERROR, errorResponseData, isGzipEnabled);
     //}
 
-    requestPtr->change_header(pion::http::types::HEADER_CONNECTION,
+    responsePtr->change_header(pion::http::types::HEADER_CONNECTION,
         contextPtr->getRequest()->check_keep_alive() ? "Keep-Alive" : "close");
 
     contextPtr->sendResponse(responsePtr);
@@ -278,5 +292,27 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
     
     const std::string responseBody = Json::FastWriter().write(error);
     pion::http::response_ptr response = createResponse(statusCode, contextPtr->getRequest()->get_method(), "application/json", responseBody, isGzipEnabled);
+
+    response->change_header(pion::http::types::HEADER_CONNECTION,
+        contextPtr->getRequest()->check_keep_alive() ? "Keep-Alive" : "close");
+
     contextPtr->sendResponse(response);
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
 }

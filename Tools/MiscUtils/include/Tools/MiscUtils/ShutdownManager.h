@@ -2,7 +2,7 @@
 #define TOOLS_MISCUTILS_SHUTDOWNMANAGER_H_
 
 #include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
+#include <boost/thread/condition_variable.hpp>
 #include <boost/serialization/singleton.hpp>
 
 /**
@@ -67,7 +67,7 @@ private:
     /** Мьютекс */
     boost::mutex m_mutex;
     /** Условная переменная ожидания */
-    boost::condition m_condition;
+    boost::condition_variable_any m_condition;
 };
 
 #endif /* TOOLS_MISCUTILS_SHUTDOWNMANAGER_H_ */

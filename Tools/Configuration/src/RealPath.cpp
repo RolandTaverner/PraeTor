@@ -1,3 +1,4 @@
+#include <iterator>
 #include <sstream>
 
 #include "Tools/Configuration/RealPath.h"

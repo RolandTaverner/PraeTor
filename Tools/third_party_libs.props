@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
-    <BOOST_INC>x:\libs\boost-1.62.0\include</BOOST_INC>
-    <BOOST_LIB>x:\libs\boost-1.62.0\lib</BOOST_LIB>
+    <BOOST_INC>x:\libs\boost-1.63.0\include</BOOST_INC>
+    <BOOST_LIB>x:\libs\boost-1.63.0\lib</BOOST_LIB>
     <BZIP2_INC>x:\libs\bzip2\include</BZIP2_INC>
     <BZIP2_LIB>x:\libs\bzip2\lib</BZIP2_LIB>
     <ICU_INC>x:\libs\icu57\include</ICU_INC>

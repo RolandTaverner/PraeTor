@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
-    <BOOST_INC>x:\libs\boost-1.62.0\include</BOOST_INC>
-    <BOOST_LIB>x:\libs\boost-1.62.0\lib</BOOST_LIB>
+    <BOOST_INC>x:\libs\boost-1.63.0\include</BOOST_INC>
+    <BOOST_LIB>x:\libs\boost-1.63.0\lib</BOOST_LIB>
     <BZIP2_INC>x:\libs\bzip2\include</BZIP2_INC>
     <BZIP2_LIB>x:\libs\bzip2\lib</BZIP2_LIB>
     <ICU_INC>x:\libs\icu57\include</ICU_INC>
@@ -26,7 +26,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);$(TOOLS_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sicudt.lib;sicuin.lib;sicuio.lib;sicule.lib;siculx.lib;sicutu.lib;sicuuc.lib;libboost_bzip2-vc120-mt-1_62.lib;libboost_chrono-vc120-mt-1_62.lib;libboost_date_time-vc120-mt-1_62.lib;libboost_filesystem-vc120-mt-1_62.lib;libboost_iostreams-vc120-mt-1_62.lib;libboost_locale-vc120-mt-1_62.lib;libboost_program_options-vc120-mt-1_62.lib;libboost_regex-vc120-mt-1_62.lib;libboost_system-vc120-mt-1_62.lib;libboost_thread-vc120-mt-1_62.lib;libboost_zlib-vc120-mt-1_62.lib;libboost_serialization-vc120-mt-1_62.lib;pion.lib;Tools.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sicudt.lib;sicuin.lib;sicuio.lib;sicule.lib;siculx.lib;sicutu.lib;sicuuc.lib;libboost_bzip2-vc140-mt-1_63.lib;libboost_chrono-vc140-mt-1_63.lib;libboost_date_time-vc140-mt-1_63.lib;libboost_filesystem-vc140-mt-1_63.lib;libboost_iostreams-vc140-mt-1_63.lib;libboost_locale-vc140-mt-1_63.lib;libboost_program_options-vc140-mt-1_63.lib;libboost_regex-vc140-mt-1_63.lib;libboost_system-vc140-mt-1_63.lib;libboost_thread-vc140-mt-1_63.lib;libboost_zlib-vc140-mt-1_63.lib;libboost_serialization-vc140-mt-1_63.lib;pion.lib;Tools.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

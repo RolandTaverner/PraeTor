@@ -3,6 +3,7 @@
 #include <list>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -25,12 +26,28 @@ enum OptionValueTag { OVT_NUMBER, OVT_STRING, OVT_DOMAIN };
 typedef boost::shared_ptr<IOptionConstraint> IOptionConstraintPtr;
 typedef std::list<IOptionConstraintPtr> OptionConstraints;
 
-typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag, bool> OptionDesc; // name, defaultValue, isRequired, contraints, isList, type, isSystem
+//struct OptionDesc
+//{
+//    std::string name;
+//    OptionValueType defaultValue;
+//    bool isRequired;
+//    OptionConstraints constraints;
+//    bool isList;
+//    OptionValueTag type;
+//    bool isSystem;
+//};
+
+// 0 = name, 1 = defaultValue, 2 = isRequired, 3 = contraints, 4 = isList, 5 = type, 6 = isSystem
+typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag, bool> OptionDesc; 
+
+typedef std::pair<OptionDesc, OptionValueType> OptionDescValue;
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {
 public:
     virtual ~IConfigScheme() {}
+
+    virtual bool hasOption(const std::string &name) const = 0;
 
     virtual void checkOption(const Option &opt) = 0; /* throws */
 

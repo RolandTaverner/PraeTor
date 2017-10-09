@@ -31,6 +31,12 @@
     <Filter Include="Source Files\WebServices">
       <UniqueIdentifier>{1a4dc3aa-9f03-46f9-94a9-21314fcde9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Controller">
+      <UniqueIdentifier>{976ef05a-1d83-4f1f-aa32-4575d0f066fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controller">
+      <UniqueIdentifier>{e9e4fd14-1f97-4792-96c4-c925df90208a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -75,9 +81,6 @@
     <ClInclude Include="Process\ProcessConfiguration.h">
       <Filter>Header Files\Process</Filter>
     </ClInclude>
-    <ClInclude Include="Controller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ControllerWebSvc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -89,6 +92,21 @@
     </ClInclude>
     <ClInclude Include="WebServices\ResourceParser.h">
       <Filter>Header Files\WebServices</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\Controller.h">
+      <Filter>Header Files\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Process\ProcessErrors.h">
+      <Filter>Header Files\Process</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ControllerErrors.h">
+      <Filter>Header Files\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ControllerActions.h">
+      <Filter>Header Files\Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +131,6 @@
     <ClCompile Include="Process\ProcessConfiguration.cpp">
       <Filter>Source Files\Process</Filter>
     </ClCompile>
-    <ClCompile Include="Controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ControllerWebSvc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -124,6 +139,21 @@
     </ClCompile>
     <ClCompile Include="WebServices\ResourceParser.cpp">
       <Filter>Source Files\WebServices</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Controller.cpp">
+      <Filter>Source Files\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Process\ProcessErrors.cpp">
+      <Filter>Source Files\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\ControllerErrors.cpp">
+      <Filter>Source Files\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseError.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\ControllerActions.cpp">
+      <Filter>Source Files\Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

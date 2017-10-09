@@ -33,6 +33,13 @@ const OptionValueType &OptionsStorage::getValue(const std::string &name) const
     return i->second.value();
 }
 
+
+//-------------------------------------------------------------------------------------------------
+bool OptionsStorage::hasValue(const std::string &name) const
+{
+    return m_options.find(name) != m_options.end();
+}
+
 //-------------------------------------------------------------------------------------------------
 IConfigSchemePtr OptionsStorage::getScheme() const
 {

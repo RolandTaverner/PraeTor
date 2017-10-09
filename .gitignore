@@ -47,3 +47,5 @@ obj/
 [Bb]in
 [Dd]ebug*/
 [Rr]elease*/
+*.VC.db
+*.VC.opendb

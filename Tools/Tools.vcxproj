@@ -14,18 +14,19 @@
     <ProjectGuid>{74D610CA-9CE8-4691-98F0-1FA4B0DF2073}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Tools</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -71,16 +72,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs\Tools\lib\
+      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs_2017\Tools\lib\
 
-XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs_2017\Tools\include\
 </Command>
     </PostBuildEvent>
     <Lib />
@@ -110,16 +111,16 @@ XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs\Tools\lib\
+      <Command>XCOPY /R /E /Y "$(TargetDir)$(TargetName).lib" x:\libs_2017\Tools\lib\
 
-XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs\Tools\include\
-XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\AsyncHttpClient\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\CompressUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Configuration\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\Logger\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\MiscUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\StringUtils\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebServer\include" x:\libs_2017\Tools\include\
+XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs_2017\Tools\include\
 </Command>
     </PostBuildEvent>
     <Lib>

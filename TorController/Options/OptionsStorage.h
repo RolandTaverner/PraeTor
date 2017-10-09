@@ -17,6 +17,8 @@ public:
     
     const OptionValueType &getValue(const std::string &name) const override; /* throws */
 
+    bool hasValue(const std::string &name) const override;
+
     IConfigSchemePtr getScheme() const override;
 
 private:

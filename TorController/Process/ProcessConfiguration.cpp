@@ -41,36 +41,36 @@ IOptionsStorageConstPtr ProcessConfiguration::getStorage(const std::string &name
 //-------------------------------------------------------------------------------------------------
 ProcessConfiguration::CollectionType::Element *ProcessConfiguration::begin() const
 {
-    return new ConfigSchemeElement(this, m_storages.cbegin());
+    return new ProcessConfigElement(this, m_storages.cbegin());
 }
 
 //-------------------------------------------------------------------------------------------------
 ProcessConfiguration::CollectionType::Element *ProcessConfiguration::end() const
 {
-    return new ConfigSchemeElement(this, m_storages.cend());
+    return new ProcessConfigElement(this, m_storages.cend());
 }
 
 //-------------------------------------------------------------------------------------------------
 ProcessConfiguration::CollectionType::Element *ProcessConfiguration::next(const CollectionType::Element *current) const
 {
     BOOST_ASSERT(current != NULL);
-    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current) != NULL);
-    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current)->getIterator() != m_storages.end());
+    BOOST_ASSERT(dynamic_cast<const ProcessConfigElement*>(current) != NULL);
+    BOOST_ASSERT(dynamic_cast<const ProcessConfigElement*>(current)->getIterator() != m_storages.end());
 
-    const ConfigSchemeElement *element = dynamic_cast<const ConfigSchemeElement*>(current);
+    const ProcessConfigElement *element = dynamic_cast<const ProcessConfigElement*>(current);
     OptionsStorages::const_iterator iterator = element->getIterator();
 
-    return new ConfigSchemeElement(this, ++iterator);
+    return new ProcessConfigElement(this, ++iterator);
 }
 
 //-------------------------------------------------------------------------------------------------
 const ProcessConfiguration::CollectionType::CollectionValueType &ProcessConfiguration::dereference(const CollectionType::Element *current) const
 {
     BOOST_ASSERT(current != NULL);
-    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current) != NULL);
-    BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(current)->getIterator() != m_storages.end());
+    BOOST_ASSERT(dynamic_cast<const ProcessConfigElement*>(current) != NULL);
+    BOOST_ASSERT(dynamic_cast<const ProcessConfigElement*>(current)->getIterator() != m_storages.end());
 
-    return dynamic_cast<const ConfigSchemeElement*>(current)->getIterator()->second;
+    return dynamic_cast<const ProcessConfigElement*>(current)->getIterator()->second;
 }
 
 //-------------------------------------------------------------------------------------------------

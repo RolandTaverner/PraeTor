@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
-    <JSONCPP_INC>x:\libs\jsoncpp\include</JSONCPP_INC>
-    <JSONCPP_LIB>x:\libs\jsoncpp\lib</JSONCPP_LIB>
+    <JSONCPP_INC>x:\libs_2017\jsoncpp\include</JSONCPP_INC>
+    <JSONCPP_LIB>x:\libs_2017\jsoncpp\lib</JSONCPP_LIB>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>

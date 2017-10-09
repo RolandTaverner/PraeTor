@@ -4,7 +4,7 @@
 
 #include "Tools/WebSvcApp/WebSvcApp.h"
 
-#include "Controller.h"
+#include "Controller/Controller.h"
 
 class ControllerWebSvc :
     public Tools::WebSvcApp::WebSvcApp

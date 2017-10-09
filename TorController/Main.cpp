@@ -2,13 +2,21 @@
 //
 
 #include "stdafx.h"
-#include "Main.h"
 
+#include <iostream>
+
+#include <boost/foreach.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/scoped_array.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/tokenizer.hpp>
+
+#include "Tools/StringUtils/UnicodeTextProcessing.h"
+
 #include "ControllerWebSvc.h"
 
-#include <pion/http/server.hpp>
+
+#include "Main.h"
 
 #define MAX_LOADSTRING 100
 
@@ -23,6 +31,31 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
+std::string getExeName()
+{
+    unsigned nameBufLen = 1024;
+    boost::scoped_array<TCHAR> nameBuf(new TCHAR[nameBufLen + 1]);
+    nameBuf[nameBufLen] = 0;
+
+    unsigned const fileNameLen = GetModuleFileName(NULL, nameBuf.get(), nameBufLen);
+    if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+    {
+        nameBuf.reset(new TCHAR[fileNameLen + 1]);
+        nameBuf[fileNameLen] = 0;
+
+        if (!GetModuleFileName(NULL, nameBuf.get(), fileNameLen))
+        {
+            return "";
+        }
+    }
+    UnicodeString ustrFileName(nameBuf.get());
+    std::string strFileName;
+    ustrFileName.toUTF8String(strFileName);
+
+    return strFileName;
+}
+
+
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
     _In_ LPTSTR    lpCmdLine,
@@ -33,40 +66,41 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 
     ControllerWebSvc webSvc;
 
-    boost::scoped_array<char*> argv(new char*[3]);
-    argv[0] = "TorController.exe";
-    argv[1] = "--config=x:\\EasyTor\\TorController\\torcontrollerconfig.xml";
-    argv[2] = NULL;
-    return webSvc.run(2, argv.get());
-
-    // TODO: Place code here.
-    MSG msg;
-    HACCEL hAccelTable;
-
-    // Initialize global strings
-    LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-    LoadString(hInstance, IDC_TORCONTROLLER, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
-
-    // Perform application initialization:
-    if (!InitInstance(hInstance, nCmdShow))
+    const std::string strFileName = getExeName();
+    if (strFileName.empty())
     {
-        return FALSE;
+        std::cerr << "Can't get module file name" << std::endl;
+        return -1;
     }
 
-    hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TORCONTROLLER));
+    std::string strCmdLine;
+    UnicodeString(lpCmdLine).toUTF8String(strCmdLine);
 
-    // Main message loop:
-    while (GetMessage(&msg, NULL, 0, 0))
+    std::vector<boost::shared_array<char>> cmdParts;
+
+    boost::shared_array<char> namePart(new char[strFileName.length() + 1]);
+    strcpy(namePart.get(), strFileName.c_str());
+    cmdParts.push_back(namePart);
+
+    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+
+    boost::char_separator<char> sep(" \t");
+    tokenizer tokens(strCmdLine, sep);
+    BOOST_FOREACH(const std::string &token, tokens)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
+        boost::shared_array<char> part(new char[token.length() + 1]);
+        strcpy(part.get(), token.c_str());
+        cmdParts.push_back(part);
     }
 
-    return (int)msg.wParam;
+    boost::scoped_array<char*> argv(new char*[cmdParts.size() + 1]);
+    for (unsigned i = 0; i < cmdParts.size(); ++i)
+    {
+        argv[i] = cmdParts[i].get();
+    }
+    argv[cmdParts.size()] = NULL;
+
+    return webSvc.run(cmdParts.size(), argv.get());
 }
 
 

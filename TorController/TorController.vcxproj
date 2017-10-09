@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -14,18 +14,19 @@
     <ProjectGuid>{9E3905CD-D79A-4E3F-8359-4EDAF1CC6636}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>TorController</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -61,7 +62,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
-      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <EnablePREfast>false</EnablePREfast>
@@ -69,6 +70,7 @@
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAsWinRT>false</CompileAsWinRT>
       <SDLCheck>true</SDLCheck>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -102,7 +104,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Controller.h" />
+    <ClInclude Include="BaseError.h" />
+    <ClInclude Include="Controller\Controller.h" />
+    <ClInclude Include="Controller\ControllerActions.h" />
+    <ClInclude Include="Controller\ControllerErrors.h" />
     <ClInclude Include="Options\ConfigScheme.h" />
     <ClInclude Include="Options\IConfigScheme.h" />
     <ClInclude Include="Options\IFormatter.h" />
@@ -110,6 +115,7 @@
     <ClInclude Include="Options\Option.h" />
     <ClInclude Include="Options\AbstractCollection.h" />
     <ClInclude Include="Options\OptionsStorage.h" />
+    <ClInclude Include="Process\ProcessErrors.h" />
     <ClInclude Include="Process\IProcess.h" />
     <ClInclude Include="Process\ProcessBase.h" />
     <ClInclude Include="Process\ProcessConfiguration.h" />
@@ -122,10 +128,14 @@
     <ClInclude Include="WebServices\ResourceParser.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="BaseError.cpp" />
+    <ClCompile Include="Controller\Controller.cpp" />
+    <ClCompile Include="Controller\ControllerActions.cpp" />
+    <ClCompile Include="Controller\ControllerErrors.cpp" />
     <ClCompile Include="Options\ConfigScheme.cpp" />
     <ClCompile Include="Options\Option.cpp" />
     <ClCompile Include="Options\OptionsStorage.cpp" />
+    <ClCompile Include="Process\ProcessErrors.cpp" />
     <ClCompile Include="Process\ProcessBase.cpp" />
     <ClCompile Include="Process\ProcessConfiguration.cpp" />
     <ClCompile Include="stdafx.cpp">

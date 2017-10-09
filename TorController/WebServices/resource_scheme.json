@@ -1,0 +1,55 @@
+{
+  "node": "api",
+  "next":
+  [
+    {
+      "node" : "controller",
+      "action":  "ControllerInfo",
+      "next" :
+      [
+        {
+          "node" : "processes",
+          "action":  "Processes",
+          "next" :
+          [
+            { 
+              "node" : "$process_id",
+              "action":  "ProcessInfo",
+              "next" :
+              [
+                { 
+                  "node" : "action",
+                  "action":  "ProcessAction"
+                },
+                { 
+                  "node" : "configs",
+                  "action":  "ProcessConfigs",
+                  "next" :
+                  [
+                    {
+                      "node" : "$config_name",
+                      "action" : "ProcessConfig",
+                      "next" :
+                      [
+                        {
+                          "node" : "options",
+                          "next" :
+                          [
+                            {
+                              "node" : "$option_name",
+                              "action" : "ProcessOption"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

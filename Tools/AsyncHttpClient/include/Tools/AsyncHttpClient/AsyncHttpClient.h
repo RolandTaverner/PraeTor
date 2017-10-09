@@ -30,8 +30,8 @@ namespace AsyncHttpClient
 typedef boost::tuple<pion::http::request_ptr, const boost::asio::ip::tcp::endpoint &, bool> RequestDesc;
 typedef std::list<RequestDesc> MultiRequestDesc;
 
-typedef boost::future<RequestResult> SingleRequestFuture;
-typedef boost::future<RequestResults> MultiRequestFuture;
+typedef boost::unique_future<RequestResult> SingleRequestFuture;
+typedef boost::unique_future<RequestResults> MultiRequestFuture;
 
 /**
  * @brief Класс для создания асинхронных HTTP-запросов

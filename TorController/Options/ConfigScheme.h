@@ -15,6 +15,8 @@ public:
     virtual ~ConfigScheme();
 
     // IConfigScheme implementation
+    bool hasOption(const std::string &name) const override;
+
     void checkOption(const Option &opt) override; /* throws */
 
     void registerOption(const std::string &name,

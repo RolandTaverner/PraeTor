@@ -13,6 +13,7 @@
 #include "Tools/StringUtils/StringEscapeUtils.h"
 #include "Tools/StringUtils/UnicodeTextProcessing.h"
 
+#include "Controller/ControllerErrors.h"
 #include "WebServices/ControllerAPIWebService.h"
 
 static const char *s_resourceScheme =
@@ -32,7 +33,38 @@ static const char *s_resourceScheme =
 "          ["
 "            { "
 "              \"node\" : \"$process_id\","
-"              \"action\":  \"ProcessInfo\""
+"              \"action\":  \"ProcessInfo\","
+"              \"next\" :"
+"              ["
+"                { "
+"                  \"node\" : \"action\","
+"                  \"action\":  \"ProcessAction\""
+"                },"
+"                { "
+"                  \"node\" : \"configs\","
+"                  \"action\":  \"ProcessConfigs\","
+"                  \"next\" :"
+"                  ["
+"                    {"
+"                      \"node\" : \"$config_name\","
+"                      \"action\" : \"ProcessConfig\","
+"                      \"next\" :"
+"                      ["
+"                        {"
+"                          \"node\" : \"options\","
+"                          \"next\" :"
+"                          ["
+"                            {"
+"                              \"node\" : \"$option_name\","
+"                              \"action\" : \"ProcessOption\""
+"                            }"
+"                          ]"
+"                        }"
+"                      ]"
+"                    }"
+"                  ]"
+"                }"
+"              ]"
 "            }"
 "          ]"
 "        }"
@@ -48,6 +80,9 @@ ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_handlers["ControllerInfo"] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, _2);
     m_handlers["Processes"] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, _2);
     m_handlers["ProcessInfo"] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, _2);
+    m_handlers["ProcessConfigs"] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, _2);
+    m_handlers["ProcessConfig"] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, _2);
+    m_handlers["ProcessOption"] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, _2);
 
     // HTTP status messages
     {
@@ -143,7 +178,7 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
     }
     catch (const ResourceParserError &e)
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse resource url.");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, std::string("Can't parse resource url: ") + e.what());
         return;
     }
     catch (const std::exception &e)
@@ -281,6 +316,20 @@ const ResourceParser &ControllerAPIWebService::resourceParser() const
 }
 
 //-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::sendResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &message)
+{
+    const bool isGzipEnabled = (contextPtr->getRequest()->get_header("Accept-Encoding").find("gzip") != std::string::npos);
+
+    pion::http::response_ptr response = createResponse(pion::http::types::RESPONSE_CODE_OK,
+        contextPtr->getRequest()->get_method(),
+        "application/json;charset=utf-8",
+        message,
+        isGzipEnabled);
+
+    contextPtr->sendResponse(response);
+}
+
+//-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr,
     unsigned statusCode,
     const std::string &errorMessage)
@@ -302,17 +351,181 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
-    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+    try
+    {
+        m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::onControllerInfoResponse, this, contextPtr, _1));
+    }
+    catch (const ControllerError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
-    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+    try
+    {
+        m_controller->getProcesses(boost::bind(&ControllerAPIWebService::onProcessesResponse, this, contextPtr, _1));
+    }
+    catch (const ControllerError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
     sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onProcessesResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessesResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onControllerInfoResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ControllerInfoResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    const ResourceParameters::const_iterator i = parameters.find("process_id");
+    if (i == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        return;
+    }
+
+    try
+    {
+        m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::onProcessConfigsResponse, this, contextPtr, _1));
+    }
+    catch (const ControllerError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onProcessConfigsResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessConfigsResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
+    const ResourceParameters::const_iterator itConfigName = parameters.find("config_name");
+    if (itProcessId == parameters.end() || itConfigName == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        return;
+    }
+
+    try
+    {
+        m_controller->getProcessConfig(itProcessId->second, 
+                                       itConfigName->second,
+                                       boost::bind(&ControllerAPIWebService::onProcessConfigResponse, this, contextPtr, _1));
+    }
+    catch (const ControllerError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onProcessConfigResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessConfigResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
+    const ResourceParameters::const_iterator itConfigName = parameters.find("config_name");
+    const ResourceParameters::const_iterator itOptionName = parameters.find("option_name");
+
+    if (itProcessId == parameters.end() || itConfigName == parameters.end() || itOptionName == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        return;
+    }
+
+    try
+    {
+        m_controller->getProcessOption(itProcessId->second,
+            itConfigName->second,
+            itOptionName->second,
+            boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Get, _1));
+    }
+    catch (const ControllerError &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr, ResourceActionType actionType, const GetProcessOptionResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
 }

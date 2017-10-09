@@ -15,6 +15,12 @@ ConfigScheme::~ConfigScheme()
 }
 
 //-------------------------------------------------------------------------------------------------
+bool ConfigScheme::hasOption(const std::string &name) const
+{
+    return m_optionsDesc.find(name) != m_optionsDesc.end();
+}
+
+//-------------------------------------------------------------------------------------------------
 void ConfigScheme::checkOption(const Option &opt)
 {
     const OptionDesc &desc = getOptionDesc(opt.name());
@@ -259,12 +265,12 @@ OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::
 
         if (!isList)
         {
-            defaultValue = OptionValueContainer(optConf.get("default"));
+            defaultValue = OptionValueContainer(optConf.get("default.value"));
         }
         else
         {
             OptionListValue defaultValues;
-            BOOST_FOREACH(const Tools::Configuration::ConfigurationView &defaultItem, optConf.getRangeOf("default"))
+            BOOST_FOREACH(const Tools::Configuration::ConfigurationView &defaultItem, optConf.getRangeOf("default.value"))
             {
                 defaultValues.push_back(defaultItem.get(""));
             }

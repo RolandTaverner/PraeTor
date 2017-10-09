@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -21,21 +22,30 @@ public:
 
     void addStorage(const std::string &name, IOptionsStoragePtr storagePtr);
 
+    template<typename Container> Container &getStorages(Container &c) const
+    {
+        for (const OptionsStorages::value_type &s : m_storages)
+        {
+            std::back_inserter(c) = s.first;
+        }
+        return c;
+    }
+
 private:
     typedef std::map<std::string, IOptionsStoragePtr> OptionsStorages;
 
     OptionsStorages m_storages;
 
-    // AbstractCollection<OptionDesc> implementation
+    // AbstractCollection<IOptionsStoragePtr> implementation
     CollectionType::Element *begin() const override;
     CollectionType::Element *end() const override;
     CollectionType::Element *next(const CollectionType::Element *current) const override;
     const CollectionType::CollectionValueType &dereference(const CollectionType::Element *current) const override;
 
-    class ConfigSchemeElement : public CollectionType::Element
+    class ProcessConfigElement : public CollectionType::Element
     {
     public:
-        ConfigSchemeElement(const CollectionType *storage, OptionsStorages::const_iterator it) :
+        ProcessConfigElement(const CollectionType *storage, OptionsStorages::const_iterator it) :
             CollectionType::Element(storage), m_iterator(it)
         {
         }
@@ -47,15 +57,15 @@ private:
 
         CollectionType::Element *clone() const override
         {
-            return new ConfigSchemeElement(getCollection(), m_iterator);
+            return new ProcessConfigElement(getCollection(), m_iterator);
         }
 
         bool equals(const Element *rhs) const override
         {
             BOOST_ASSERT(rhs != NULL);
             BOOST_ASSERT(this->getCollection() == rhs->getCollection());
-            BOOST_ASSERT(dynamic_cast<const ConfigSchemeElement*>(rhs) != NULL);
-            const ConfigSchemeElement *other = dynamic_cast<const ConfigSchemeElement*>(rhs);
+            BOOST_ASSERT(dynamic_cast<const ProcessConfigElement*>(rhs) != NULL);
+            const ProcessConfigElement *other = dynamic_cast<const ProcessConfigElement*>(rhs);
             return this->getIterator() == other->getIterator();
         }
 

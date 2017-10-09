@@ -20,7 +20,7 @@ public:
 
     RangeType getRange() const
     {
-        return RangeType(AbstractCollectionConstIterator(begin()), AbstractCollectionConstIterator(end()));
+        return RangeType(AbstractCollectionConstIterator<ValueType>(begin()), AbstractCollectionConstIterator<ValueType>(end()));
     }
 
 protected:
@@ -67,6 +67,7 @@ private:
     virtual const ValueType &dereference(const Element *current) const = 0;
 
     friend class Element;
+    friend class AbstractCollectionConstIterator<ValueType>;
 };
 
 template<typename ValueType>

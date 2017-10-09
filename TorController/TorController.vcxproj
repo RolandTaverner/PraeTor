@@ -109,6 +109,7 @@
     <ClInclude Include="Controller\ControllerActions.h" />
     <ClInclude Include="Controller\ControllerErrors.h" />
     <ClInclude Include="Options\ConfigScheme.h" />
+    <ClInclude Include="Options\DefaultFormatter.h" />
     <ClInclude Include="Options\IConfigScheme.h" />
     <ClInclude Include="Options\IFormatter.h" />
     <ClInclude Include="Options\IOptionsStorage.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="Controller\ControllerActions.cpp" />
     <ClCompile Include="Controller\ControllerErrors.cpp" />
     <ClCompile Include="Options\ConfigScheme.cpp" />
+    <ClCompile Include="Options\DefaultFormatter.cpp" />
     <ClCompile Include="Options\Option.cpp" />
     <ClCompile Include="Options\OptionsStorage.cpp" />
     <ClCompile Include="Process\ProcessErrors.cpp" />

@@ -6,6 +6,13 @@
 OptionsStorage::OptionsStorage(IConfigSchemePtr scheme) :
     m_scheme(scheme)
 {
+    for (const OptionDesc &desc : m_scheme->getRange())
+    {
+        if (desc.get<1>().is_initialized())
+        {
+            setValue(desc.get<0>(), desc.get<1>());
+        }
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -32,7 +39,6 @@ const OptionValueType &OptionsStorage::getValue(const std::string &name) const
 
     return i->second.value();
 }
-
 
 //-------------------------------------------------------------------------------------------------
 bool OptionsStorage::hasValue(const std::string &name) const
@@ -79,4 +85,16 @@ const OptionsStorage::CollectionType::CollectionValueType &OptionsStorage::deref
     BOOST_ASSERT(dynamic_cast<const OptionsStorageElement*>(current)->getIterator() != m_options.end());
 
     return dynamic_cast<const OptionsStorageElement*>(current)->getIterator()->second;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string OptionsStorage::formatOption(const std::string &name) const
+{
+    Options::const_iterator i = m_options.find(name);
+    if (i == m_options.end())
+    {
+        throw OptionNotFound("Option " + name + " not found in storage.", name);
+    }
+
+    return getScheme()->formatOption(name, i->second.value().get());
 }

@@ -108,6 +108,9 @@
     <ClInclude Include="Controller\ControllerActions.h">
       <Filter>Header Files\Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Options\DefaultFormatter.h">
+      <Filter>Header Files\Options</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Controller\ControllerActions.cpp">
       <Filter>Source Files\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="Options\DefaultFormatter.cpp">
+      <Filter>Source Files\Options</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

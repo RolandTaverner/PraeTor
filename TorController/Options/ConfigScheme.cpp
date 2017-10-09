@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 
 #include "Options/ConfigScheme.h"
+#include "Options/DefaultFormatter.h"
 
 //-------------------------------------------------------------------------------------------------
 ConfigScheme::ConfigScheme()
@@ -48,14 +49,16 @@ void ConfigScheme::registerOption(const std::string &name,
     const OptionConstraints &constraints,
     bool isList,
     OptionValueTag tag,
-    bool isSystem)
+    bool isSystem,
+    const OptionValueDomain &domain,
+    const Tools::Configuration::ConfigurationView &format)
 {
     if (m_optionsDesc.find(name) != m_optionsDesc.end())
     {
         throw OptionAlreadyRegistered("Option already registered.", name);
     }
 
-    m_optionsDesc[name] = OptionDesc(name, defaultValue, required, constraints, isList, tag, isSystem);
+    m_optionsDesc[name] = OptionDesc(name, defaultValue, required, constraints, isList, tag, isSystem, domain, format);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -119,6 +122,23 @@ void ConfigScheme::registerOption(const OptionDesc &od)
 }
 
 //-------------------------------------------------------------------------------------------------
+const OptionValueDomain &ConfigScheme::getOptionValueDomain(const std::string &name) const
+{
+    OptionsDesc::const_iterator it = m_optionsDesc.find(name);
+    if (it == m_optionsDesc.end())
+    {
+        throw OptionNotRegistered("Option is not registered.", name);
+    }
+
+    if (it->second.get<5>() != OVT_DOMAIN)
+    {
+        throw OptionValueHasNoDomain("Option is not domain value.", name);
+    }
+
+    return it->second.get<7>();
+}
+
+//-------------------------------------------------------------------------------------------------
 ConfigScheme::CollectionType::Element *ConfigScheme::begin() const
 {
     return new ConfigSchemeElement(this, m_optionsDesc.cbegin());
@@ -154,13 +174,13 @@ const ConfigScheme::CollectionType::CollectionValueType &ConfigScheme::dereferen
 }
 
 //-------------------------------------------------------------------------------------------------
-IConfigSchemePtr ConfigScheme::CreateFromConfig(const Tools::Configuration::ConfigurationView &conf)
+IConfigSchemePtr ConfigScheme::createFromConfig(const Tools::Configuration::ConfigurationView &conf)
 {
     ConfigSchemePtr scheme(new ConfigScheme());
     
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &optConf, conf.getRangeOf("option"))
     {
-        const OptionDesc od = CreateOptionDescFromConfig(optConf);
+        const OptionDesc od = createOptionDescFromConfig(optConf);
         scheme->registerOption(od);
     }
 
@@ -216,7 +236,7 @@ OptionValueTag optionTypeToTag(const std::string &type)
 }
 
 //-------------------------------------------------------------------------------------------------
-OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::ConfigurationView &optConf)
+OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::ConfigurationView &optConf)
 {
     // Check option attributes
     for (unsigned i = 0; i < (sizeof(s_optionAttributes) / sizeof(s_optionAttributes[0])); ++i)
@@ -280,9 +300,57 @@ OptionDesc ConfigScheme::CreateOptionDescFromConfig(const Tools::Configuration::
 
     const OptionValueTag typeTag = optionTypeToTag(type);
 
+    OptionValueDomain domain;
+    if (typeTag == OVT_DOMAIN)
+    {
+        BOOST_FOREACH(const Tools::Configuration::ConfigurationView &domainItem, optConf.getRangeOf("type.domain.value"))
+        {
+            domain.insert(domainItem.get(""));
+        }
+
+        if (domain.empty())
+        {
+            throw OptionDefinitionError("Empty domain not allowed.", name);
+        }
+    }
     // TODO: constraints and default value check
     OptionConstraints constraints;
-    OptionDesc od(name, defaultValue, isRequired, constraints, isList, typeTag, isSystem);
 
-    return od;
+    return OptionDesc(name, defaultValue, isRequired, constraints, isList, typeTag, isSystem, domain, optConf.branch("format"));
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ConfigScheme::formatOption(const std::string &name, const OptionValueContainer &value) const
+{
+    OptionsDesc::const_iterator it = m_optionsDesc.find(name);
+    if (it == m_optionsDesc.end())
+    {
+        throw OptionNotRegistered("Option is not registered.", name);
+    }
+
+    std::ostringstream out;
+
+    OptionsFormatters::const_iterator itFormatter = m_formatters.find(name);
+    if (itFormatter != m_formatters.end())
+    {
+        itFormatter->second->format(Option(name, value), it->second, out);
+    }
+    else
+    {
+        DefaultFormatter().format(Option(name, value), it->second, out);
+    }
+
+    return out.str();
+}
+
+//-------------------------------------------------------------------------------------------------
+void ConfigScheme::setFormatter(const std::string &name, IFormatterPtr formatterPtr)
+{
+    OptionsDesc::const_iterator it = m_optionsDesc.find(name);
+    if (it == m_optionsDesc.end())
+    {
+        throw OptionNotRegistered("Option is not registered.", name);
+    }
+
+    m_formatters[name] = formatterPtr;
 }

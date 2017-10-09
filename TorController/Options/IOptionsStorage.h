@@ -17,6 +17,7 @@ public:
     virtual void setValue(const std::string &name, const OptionValueType &value) = 0; /* throws */
     virtual const OptionValueType &getValue(const std::string &name) const = 0; /* throws */
     virtual bool hasValue(const std::string &name) const = 0;
+    virtual std::string formatOption(const std::string &name) const = 0;
     virtual IConfigSchemePtr getScheme() const = 0;
 };
 

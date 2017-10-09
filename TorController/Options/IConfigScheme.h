@@ -1,46 +1,13 @@
 #pragma once
 
-#include <list>
 #include <stdexcept>
 #include <string>
-#include <utility>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/tuple/tuple.hpp>
 
 #include "Options/AbstractCollection.h"
+#include "Options/IFormatter.h"
 #include "Options/Option.h"
-
-class IOptionConstraint
-{
-public:
-    virtual ~IOptionConstraint() {}
-
-    virtual bool isValid(const Option &opt) const = 0;
-
-    virtual std::string description() const = 0;
-};
-
-enum OptionValueTag { OVT_NUMBER, OVT_STRING, OVT_DOMAIN };
-
-typedef boost::shared_ptr<IOptionConstraint> IOptionConstraintPtr;
-typedef std::list<IOptionConstraintPtr> OptionConstraints;
-
-//struct OptionDesc
-//{
-//    std::string name;
-//    OptionValueType defaultValue;
-//    bool isRequired;
-//    OptionConstraints constraints;
-//    bool isList;
-//    OptionValueTag type;
-//    bool isSystem;
-//};
-
-// 0 = name, 1 = defaultValue, 2 = isRequired, 3 = contraints, 4 = isList, 5 = type, 6 = isSystem
-typedef boost::tuple<std::string, OptionValueType, bool, OptionConstraints, bool, OptionValueTag, bool> OptionDesc; 
-
-typedef std::pair<OptionDesc, OptionValueType> OptionDescValue;
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {
@@ -57,7 +24,9 @@ public:
         const OptionConstraints &constraints,
         bool isList,
         OptionValueTag tag,
-        bool isSystem) = 0;  /* throws */
+        bool isSystem,
+        const OptionValueDomain &domain,
+        const Tools::Configuration::ConfigurationView &format) = 0;  /* throws */
 
     virtual bool isRequired(const std::string &name) const = 0; /* throws */
 
@@ -70,6 +39,12 @@ public:
     virtual OptionValueContainer getDefaultValue(const std::string &name) const = 0; /* throws */
 
     virtual const OptionDesc &getOptionDesc(const std::string &name) const = 0; /* throws */
+
+    virtual const OptionValueDomain &getOptionValueDomain(const std::string &name) const = 0; /* throws */
+
+    virtual std::string formatOption(const std::string &name, const OptionValueContainer &value) const = 0; /* throws */
+
+    virtual void setFormatter(const std::string &name, IFormatterPtr formatterPtr) = 0; /* throws */
 };
 
 typedef boost::shared_ptr<IConfigScheme> IConfigSchemePtr;
@@ -165,6 +140,19 @@ public:
     }
 
     virtual ~OptionHasNoDefaultValue()
+    {
+    }
+};
+
+class OptionValueHasNoDomain : public OptionsSchemeError
+{
+public:
+    OptionValueHasNoDomain(const std::string &message, const std::string &name) :
+        OptionsSchemeError(message, name)
+    {
+    }
+
+    virtual ~OptionValueHasNoDomain()
     {
     }
 };

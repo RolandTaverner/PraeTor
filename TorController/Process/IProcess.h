@@ -15,9 +15,10 @@ typedef boost::function1<void, const boost::system::error_code &> ProcessActionH
 
 enum class ProcessState
 {
-  Stopped,
-  Initializing,
-  Running
+    Starting = 1,
+    Running = 2,
+    Stopping = 3,
+    Stopped = 4
 };
 
 class IProcess
@@ -50,6 +51,8 @@ public:
     virtual OptionDesc getOptionDesc(const std::string &configName, const std::string &optionName) const = 0;
 
     virtual OptionDescValue getOptionValue(const std::string &configName, const std::string &optionName) const = 0;
+
+    virtual ProcessState getState() const = 0;
 };
 
 typedef boost::shared_ptr<IProcess> IProcessPtr;

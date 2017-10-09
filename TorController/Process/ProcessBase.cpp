@@ -25,7 +25,7 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &schemeConf, conf.getRangeOf("options.scheme"))
     {
         const std::string name = schemeConf.getAttr("", "name");
-        IConfigSchemePtr scheme = ConfigScheme::CreateFromConfig(schemeConf);
+        IConfigSchemePtr scheme = ConfigScheme::createFromConfig(schemeConf);
         IOptionsStoragePtr storage(new OptionsStorage(scheme));
         m_configuration.addStorage(name, storage);
     }
@@ -136,7 +136,6 @@ boost::filesystem::path ProcessBase::createConfigFile()
     IOptionsStoragePtr configPtr = m_configuration.getStorage(s_configFileSection);
     IConfigSchemePtr schemePtr = configPtr->getScheme();
 
-
     BOOST_FOREACH(const Option &o, configPtr->getRange())
     {
     
@@ -211,9 +210,15 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
     }
 
     OptionDescValue result;
-    result.first = storagePtr->getScheme()->getOptionDesc(optionName);
-    result.second = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
+    const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
+    const OptionValueType value = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
         (schemePtr->hasDefaultValue(optionName) ? schemePtr->getDefaultValue(optionName) : OptionValueType());
+    const std::string presentation = storagePtr->hasValue(optionName) ? storagePtr->formatOption(optionName) : "";
+    return OptionDescValue(desc, value, presentation);
+}
 
-    return result;
+//-------------------------------------------------------------------------------------------------
+ProcessState ProcessBase::getState() const
+{
+    return m_state;
 }

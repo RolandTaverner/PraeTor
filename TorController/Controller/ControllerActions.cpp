@@ -194,7 +194,7 @@ private:
 Json::Value GetProcessOptionResult::toJson() const
 {
     Json::Value root;
-    const OptionDesc &desc = m_option.first;
+    const OptionDesc &desc = m_option.get<0>();
 
     root["name"] = desc.get<0>();
 
@@ -226,12 +226,26 @@ Json::Value GetProcessOptionResult::toJson() const
 
     root["system"] = desc.get<6>() ? "true" : "false";
 
-    if (m_option.second.is_initialized())
+    if (m_option.get<1>().is_initialized())
     {
-        const OptionValueContainer &value = m_option.second.get();
+        const OptionValueContainer &value = m_option.get<1>().get();
         OptionValueToJsonVisitor visitor(root, "value");
         boost::apply_visitor(visitor, value);
     }
 
+    if (desc.get<5>() == OVT_DOMAIN)
+    {
+        Json::Value arr(Json::arrayValue);
+        for (const std::string &item : desc.get<7>())
+        {
+            arr.append(item);
+        }
+        root["domain"] = arr;
+    }
+
+    if (!m_option.get<2>().empty())
+    {
+        root["presentation"] = m_option.get<2>();
+    }
     return root;
 }

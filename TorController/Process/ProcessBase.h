@@ -65,12 +65,7 @@ public:
 
     OptionDescValue getOptionValue(const std::string &configName, const std::string &optionName) const override;
 
-    template<typename Container> Container &getStorages(Container &c) const
-    {
-        SharedLockType lock(m_access);
-        m_configuration.getStorages(c);
-        return c;
-    }
+    ProcessState getState() const override;
 
 	static const char *s_configFileSection;
     static const char *s_cmdLineSection;
@@ -87,6 +82,7 @@ private:
     std::string m_executable;
     boost::filesystem::path m_rootPath;
     ProcessConfiguration m_configuration;
+    volatile ProcessState m_state;
 
 	boost::filesystem::path m_configFilePath;
 	ChildProcessPtr m_childPtr;

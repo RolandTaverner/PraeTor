@@ -12,7 +12,8 @@ API для управления Tor'ом
 ### Получить состояние контроллера [GET]
 + Response 200 (application/json)
     + Attributes (ControllerInfo)
-
++ Response 401
+  
 
 ## Список процессов [/api/controller/processes{?key}]
 + Parameters
@@ -21,7 +22,7 @@ API для управления Tor'ом
 ### Получить список процессов [GET]
 + Response 200 (application/json)
     + Attributes (array[string])
-
++ Response 401
 
 ## Информация о процессе [/api/controller/processes/{process_id}{?key}]
 + Parameters
@@ -31,7 +32,24 @@ API для управления Tor'ом
 ### Получить информацию о процессе [GET]
 + Response 200 (application/json)
     + Attributes (ProcessInfo)
++ Response 401
 + Response 404 
+
+
+## Управление процессом [/api/controller/processes/{process_id}/action{?key}]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+    + key (required, string) - ключ доступа
+
+### Запуск [POST]
++ Attributes (ProcessAction)
+
++ Response 200 (application/json)
+    + Attributes (ProcessActionResult)
++ Response 401
++ Response 403 (application/json)
+    + Attributes (ProcessActionResult)
++ Response 404
 
 
 ## Список конфигураций процесса [/api/controller/processes/{process_id}/configs{?key}]
@@ -42,6 +60,7 @@ API для управления Tor'ом
 ### Получить список конфигураций [GET]
 + Response 200 (application/json)
     + Attributes (array[string])
++ Response 401
 + Response 404 
 
 
@@ -54,6 +73,7 @@ API для управления Tor'ом
 ### Получить конфигурацию процесса [GET]
 + Response 200 (application/json)
     + Attributes (ProcessConfiguration)
++ Response 401
 + Response 404 
 
 ## Опция конфигурации [/api/controller/processes/{process_id}/configs/{config_name}/options/{option_name}{?key}]
@@ -66,6 +86,7 @@ API для управления Tor'ом
 ### Получить опцию [GET]
 + Response 200 (application/json)
     + Attributes (Option)
++ Response 401
 + Response 404 
 
 ### Задать опцию [PUT]
@@ -74,12 +95,13 @@ API для управления Tor'ом
 + Response 201 (application/json)
     + Attributes (Option)
 + Response 400
-+ Response 400
++ Response 401
 + Response 403
 + Response 404 
 
 ### Удалить опцию [DELETE]
 + Response 204 (application/json)
++ Response 401
 + Response 403
 + Response 404 
 
@@ -117,8 +139,25 @@ API для управления Tor'ом
         + `string`
         + `number`
         + `domain`
++ required (required, boolean) - является ли опция необходимой
++ default_value (optional, string) - значение по-умолчанию
 + list (required, boolean) - может ли содержать список значений или одно
 + system (required, boolean) - системные свойства нельзя изменить
-+ required (required, boolean) - является ли опция необходимой
 + value (optional, string)
-+ presentation (optional, string)
+
+# ProcessAction
+Действие над процессом
+## Properties
++ action (required, enum[string]) - состояние процесса
+    + Members
+        + `start`
+        + `stop`
+
+# ProcessActionResult
+Результат попытки управления процессом
+## Properties
++ status (required, enum[string])
+    + Members
+        + `OK`
+        + `FAIL`
++ error (optional, string)

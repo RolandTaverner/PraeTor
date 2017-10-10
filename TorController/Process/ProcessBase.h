@@ -5,6 +5,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/function/function0.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/lock_guard.hpp>
 #include <boost/thread/shared_lock_guard.hpp>
@@ -30,7 +31,7 @@ class child;
 typedef boost::shared_ptr<boost::process::child> ChildProcessPtr;
 
 class ProcessBase : 
-	public IProcess, 
+	public IProcess, public ISubstitutor,
 	public boost::enable_shared_from_this<ProcessBase>,
 	private boost::noncopyable
 {
@@ -67,6 +68,11 @@ public:
 
     ProcessState getState() const override;
 
+    // ISubstitutor
+    bool hasSubstitute(const std::string &value) const override;
+    
+    std::string substituteValue(const std::string &value) const override;
+
 	static const char *s_configFileSection;
     static const char *s_cmdLineSection;
 
@@ -84,7 +90,14 @@ private:
     ProcessConfiguration m_configuration;
     volatile ProcessState m_state;
 
-	boost::filesystem::path m_configFilePath;
+    typedef boost::function0<std::string> SubsituteHandler;
+    typedef std::map<std::string, SubsituteHandler> SubstituteHandlers;
+    SubstituteHandlers m_substituteHandlers;
+    static std::string substitutePID();
+    std::string substituteRootPath() const;
+    std::string substituteConfigFilePath() const;
+
+    boost::filesystem::path m_configFilePath;
 	ChildProcessPtr m_childPtr;
 
 	typedef boost::shared_mutex MutexType;

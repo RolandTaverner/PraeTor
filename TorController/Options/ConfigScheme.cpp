@@ -1,6 +1,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/assert.hpp>
 #include <boost/foreach.hpp>
+#include <boost/regex.hpp>
 
 #include "Options/ConfigScheme.h"
 #include "Options/DefaultFormatter.h"
@@ -320,7 +321,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string ConfigScheme::formatOption(const std::string &name, const OptionValueContainer &value) const
+std::string ConfigScheme::formatOption(const std::string &name, const OptionValueContainer &value, ISubstitutorPtr substitutorPtr) const
 {
     OptionsDesc::const_iterator it = m_optionsDesc.find(name);
     if (it == m_optionsDesc.end())
@@ -340,7 +341,27 @@ std::string ConfigScheme::formatOption(const std::string &name, const OptionValu
         DefaultFormatter().format(Option(name, value), it->second, out);
     }
 
-    return out.str();
+    const std::string formattedOption = out.str();
+    std::string result = formattedOption;
+
+    boost::regex r("\\%([\\d\\w]+)\\%");
+
+    boost::sregex_token_iterator iter(formattedOption.begin(), formattedOption.end(), r, 1);
+    boost::sregex_token_iterator end;
+
+    for (; iter != end; ++iter) 
+    {
+        const std::string token = *iter;
+        if (substitutorPtr->hasSubstitute(token))
+        {
+            boost::algorithm::replace_all(result, "%" + token + "%", substitutorPtr->substituteValue(token));
+        }
+        else
+        {
+        // TODO: throw?
+        }
+    }
+    return result;
 }
 
 //-------------------------------------------------------------------------------------------------

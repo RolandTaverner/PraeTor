@@ -111,6 +111,9 @@
     <ClInclude Include="Options\DefaultFormatter.h">
       <Filter>Header Files\Options</Filter>
     </ClInclude>
+    <ClInclude Include="Options\ISubstitutor.h">
+      <Filter>Header Files\Options</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

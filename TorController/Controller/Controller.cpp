@@ -50,7 +50,7 @@ void Controller::startProcess(const std::string &name, const StartProcessHandler
 
 	try
 	{
-		//i->second->start();
+		i->second->start(boost::bind(&Controller::startProcessHandler, this, handler, _1));
 	}
 	catch (const boost::system::system_error &e)
 	{
@@ -184,6 +184,14 @@ void Controller::getProcessOption(const std::string &processName,
             result.m_option = processPtr->getOptionValue(configName, optionName);
         }
     }
+
+    scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::startProcessHandler(const StartProcessHandler &handler, const std::error_condition &ec)
+{
+    StartProcessResult result;
 
     scheduleActionHandler<>(handler, result);
 }

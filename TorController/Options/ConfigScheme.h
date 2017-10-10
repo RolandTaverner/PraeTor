@@ -44,7 +44,7 @@ public:
 
     const OptionValueDomain &getOptionValueDomain(const std::string &name) const override; /* throws */
 
-    std::string formatOption(const std::string &name, const OptionValueContainer &value) const override; /* throws */
+    std::string formatOption(const std::string &name, const OptionValueContainer &value, ISubstitutorPtr substitutorPtr) const override; /* throws */
 
     void setFormatter(const std::string &name, IFormatterPtr formatterPtr) override; /* throws */
     // End of IConfigScheme implementation

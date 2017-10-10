@@ -1,62 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
-    <run>
-        <daemon>0</daemon>
+  <run>
+      <daemon>0</daemon>
 
-        <httpserver>
-            <host>127.0.0.1</host>
-            <port>30000</port>
-            <timeout>10</timeout>
-            <connectionlimit>300</connectionlimit>
-            <httpthreads>2</httpthreads>
-            <workerthreads>4</workerthreads>
-            <statservicename>torcontroller</statservicename>
-            <statservice>stat</statservice>
-        </httpserver>
+      <httpserver>
+          <host>127.0.0.1</host>
+          <port>30000</port>
+          <timeout>10</timeout>
+          <connectionlimit>300</connectionlimit>
+          <httpthreads>2</httpthreads>
+          <workerthreads>4</workerthreads>
+          <statservicename>torcontroller</statservicename>
+          <statservice>stat</statservice>
+      </httpserver>
 
-        <logger>
-            <level>
-                <all>
-                    <file>
-                        <name>x:\log.txt</name>
-                    </file>
-                </all>
-            </level>
-        </logger>
-    </run>
+      <logger>
+          <level>
+              <all>
+                  <file>
+                      <name>x:\log.txt</name>
+                  </file>
+              </all>
+          </level>
+      </logger>
+  </run>
 
-    <debug>true</debug>
+  <debug>true</debug>
 
   <serviceconfig>
     <controller>
       <processes>
         <process name="tor">
-            <root>x:\et\tor-win32-0.2.8.11</root>
-            <executable>tor.exe</executable>
-            <args>--quiet -f "%CONFIGFILE%" --__OwningControllerProcess %PID%</args>
-            <options>
-                <scheme name="config">
-                    <option name="HashedControlPassword" type="string" list="yes" required="yes" system="yes">
-                        <format>%NAME% %VALUE%</format>
-                    </option>
-                    <option name="DataDirectory" type="string" list="no">
-                        <format>%NAME% %VALUE%</format>
-                    </option>
-                    <option name="SafeLogging" type="domainvalue" list="no">
-                        <format>%NAME% %VALUE%</format>
-                        <type>
-                            <domain>
-                                <value>0</value>
-                                <value>1</value>
-                                <value>relay</value>
-                            </domain>
-                        </type>
-                        <default>
-                            <value>0</value>
-                        </default>
-                    </option>                        
-                </scheme>
-            </options>
+          <root>x:\et\tor-win32-0.2.8.11</root>
+          <executable>tor.exe</executable>
+          <args>--quiet</args>
+          <options>
+            <scheme name="cmdline">
+              <option name="torrc" type="string" list="no" system="yes" required="yes">
+                <format>-f %VALUE%</format>
+                <default>
+                  <value>%CONFIGFILE%</value>
+                </default>
+              </option>
+
+              <option name="OwningControllerProcess" type="string" list="no" system="yes" required="yes">
+                <format>--__%NAME% %VALUE%</format>
+                <default>
+                  <value>%PID%</value>
+                </default>
+              </option>
+            </scheme>
+
+            <scheme name="config">
+              <option name="HashedControlPassword" type="string" list="yes" system="yes"> <!-- required="yes" -->
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DataDirectory" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%ROOTPATH%\Data</value>
+                </default>
+              </option>
+ 
+              <option name="SafeLogging" type="domainvalue" list="no">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                    <value>relay</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>0</value>
+                </default>
+              </option>                        
+            </scheme>
+          </options>
         </process>
       </processes>
     </controller>

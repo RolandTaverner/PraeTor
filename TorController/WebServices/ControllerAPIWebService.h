@@ -70,4 +70,8 @@ private:
     void processOptionAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
     void onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr, ResourceActionType actionType, const GetProcessOptionResult &result);
 
+    void processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
+    void onStartProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StartProcessResult &result);
+    void onStopProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StopProcessResult &result);
+
 };

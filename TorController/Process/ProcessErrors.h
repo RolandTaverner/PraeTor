@@ -11,7 +11,9 @@ enum class ProcessErrors
 	alreadyRunning = 1,
     noSuchStorage = 2,
     noSuchOption = 3,
-    configFileWriteError = 4
+    missingRequiredOption = 4,
+    substitutionNotFound = 5,
+    configFileWriteError = 6
 };
 
 namespace std

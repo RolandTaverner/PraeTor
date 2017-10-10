@@ -23,9 +23,16 @@ OptionsStorage::~OptionsStorage()
 //-------------------------------------------------------------------------------------------------
 void OptionsStorage::setValue(const std::string &name, const OptionValueType &value)
 {
-    const Option newOption(name, value);
-    m_scheme->checkOption(newOption);
-    m_options[name] = newOption;
+    if (value.is_initialized())
+    {
+        const Option newOption(name, value);
+        m_scheme->checkOption(newOption);
+        m_options[name] = newOption;
+    }
+    else
+    {
+        m_options.erase(name);
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -88,7 +95,7 @@ const OptionsStorage::CollectionType::CollectionValueType &OptionsStorage::deref
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string OptionsStorage::formatOption(const std::string &name) const
+std::string OptionsStorage::formatOption(const std::string &name, ISubstitutorPtr substitutorPtr) const
 {
     Options::const_iterator i = m_options.find(name);
     if (i == m_options.end())
@@ -96,5 +103,5 @@ std::string OptionsStorage::formatOption(const std::string &name) const
         throw OptionNotFound("Option " + name + " not found in storage.", name);
     }
 
-    return getScheme()->formatOption(name, i->second.value().get());
+    return getScheme()->formatOption(name, i->second.value().get(), substitutorPtr);
 }

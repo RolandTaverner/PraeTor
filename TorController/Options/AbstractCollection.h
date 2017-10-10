@@ -2,6 +2,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/iterator_range.hpp>
 
 template<typename ValueType>
@@ -21,6 +22,11 @@ public:
     RangeType getRange() const
     {
         return RangeType(AbstractCollectionConstIterator<ValueType>(begin()), AbstractCollectionConstIterator<ValueType>(end()));
+    }
+
+    template<typename Filter> boost::filtered_range<Filter, const RangeType> getFilteredRange(const Filter &filter) const
+    {
+        return boost::adaptors::filter(getRange(), filter);
     }
 
 protected:

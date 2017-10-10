@@ -113,6 +113,7 @@
     <ClInclude Include="Options\IConfigScheme.h" />
     <ClInclude Include="Options\IFormatter.h" />
     <ClInclude Include="Options\IOptionsStorage.h" />
+    <ClInclude Include="Options\ISubstitutor.h" />
     <ClInclude Include="Options\Option.h" />
     <ClInclude Include="Options\AbstractCollection.h" />
     <ClInclude Include="Options\OptionsStorage.h" />

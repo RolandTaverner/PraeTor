@@ -21,7 +21,7 @@ public:
 
     IConfigSchemePtr getScheme() const override;
 
-    std::string formatOption(const std::string &name) const override;
+    std::string formatOption(const std::string &name, ISubstitutorPtr substitutorPtr) const override;
 
 private:
     typedef std::map<std::string, Option> Options;

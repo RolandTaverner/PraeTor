@@ -2,6 +2,7 @@
 
 #include <boost/assert.hpp>
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/process.hpp>
 
 #include "Options/ConfigScheme.h"
@@ -29,6 +30,10 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
         IOptionsStoragePtr storage(new OptionsStorage(scheme));
         m_configuration.addStorage(name, storage);
     }
+
+    m_substituteHandlers["PID"] = &ProcessBase::substitutePID;
+    m_substituteHandlers["ROOTPATH"] = boost::bind(&ProcessBase::substituteRootPath, this);
+    m_substituteHandlers["CONFIGFILE"] = boost::bind(&ProcessBase::substituteConfigFilePath, this);
 
     m_scheduler.add_active_user();
 }
@@ -74,8 +79,7 @@ void ProcessBase::start(const ProcessActionHandler &handler)
 
 	if (hasConfigFile())
 	{
-
-	  // create config
+        boost::filesystem::path configPath = createConfigFile();
 	}
 
 	const std::string exePath = (rootPath() / executable()).string();
@@ -122,8 +126,19 @@ bool ProcessBase::hasConfigFile() const
 boost::filesystem::path ProcessBase::createConfigFile()
 {
     BOOST_ASSERT(hasConfigFile());
-    //TODO: implement
     
+    IOptionsStoragePtr configPtr = m_configuration.getStorage(s_configFileSection);
+    IConfigSchemePtr schemePtr = configPtr->getScheme();
+    
+    for (const OptionDesc &od : schemePtr->getFilteredRange<>(OptionIsRequiredPred()))
+    {
+        const std::string &name = od.get<0>();
+        if (!configPtr->hasValue(name))
+        {
+            throw ProcessError(makeErrorCondition(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
+        }
+    }
+
     boost::filesystem::path outFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
 
     std::ofstream outFile(outFilePath.c_str(), std::ios_base::out | std::ios_base::trunc);
@@ -133,14 +148,14 @@ boost::filesystem::path ProcessBase::createConfigFile()
         throw ProcessError(makeErrorCondition(ProcessErrors::configFileWriteError), "Can't create file " + outFilePath.string());
     }
 
-    IOptionsStoragePtr configPtr = m_configuration.getStorage(s_configFileSection);
-    IConfigSchemePtr schemePtr = configPtr->getScheme();
-
     BOOST_FOREACH(const Option &o, configPtr->getRange())
     {
-    
+        const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
+        outFile << formattedString << std::endl;
     }
-    
+    outFile.close();
+
+    m_configFilePath = outFilePath;
 
     return m_configFilePath;
 }
@@ -213,7 +228,7 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
     const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
     const OptionValueType value = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
         (schemePtr->hasDefaultValue(optionName) ? schemePtr->getDefaultValue(optionName) : OptionValueType());
-    const std::string presentation = storagePtr->hasValue(optionName) ? storagePtr->formatOption(optionName) : "";
+    const std::string presentation = storagePtr->hasValue(optionName) ? storagePtr->formatOption(optionName, shared_from_this()) : "";
     return OptionDescValue(desc, value, presentation);
 }
 
@@ -221,4 +236,39 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
 ProcessState ProcessBase::getState() const
 {
     return m_state;
+}
+
+//-------------------------------------------------------------------------------------------------
+bool ProcessBase::hasSubstitute(const std::string &value) const
+{
+    return m_substituteHandlers.find(value) != m_substituteHandlers.end();
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substituteValue(const std::string &value) const
+{
+    SubstituteHandlers::const_iterator it = m_substituteHandlers.find(value);
+    if (it == m_substituteHandlers.end())
+    {
+        throw ProcessError(makeErrorCondition(ProcessErrors::substitutionNotFound), "Process " + name() + " has no substitution for " + value);
+    }
+    return (it->second)();
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substitutePID()
+{
+    return boost::lexical_cast<std::string>(GetCurrentProcessId());
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substituteRootPath() const
+{
+    return rootPath().string();
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substituteConfigFilePath() const
+{
+    return m_configFilePath.string();
 }

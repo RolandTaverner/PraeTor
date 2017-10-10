@@ -30,7 +30,6 @@ public:
 
     void getControllerInfo(const ControllerInfoHandler &handler);
     void getProcesses(const GetProcessesHandler &handler);
-    void startProcess(const std::string &name, const StartProcessHandler &handler);
     void getProcessInfo(const std::string &name, const GetProcessInfoHandler &handler);
     void getProcessConfigs(const std::string &name, const GetProcessConfigsHandler &handler);
     void getProcessConfig(const std::string &processName, const std::string &configName, const GetProcessConfigHandler &handler);
@@ -39,6 +38,7 @@ public:
                           const std::string &optionName,
                           const GetProcessOptionHandler &handler);
 
+    void startProcess(const std::string &name, const StartProcessHandler &handler);
     void stopProcess(const std::string &name, const StopProcessHandler &handler);
 
     const Tools::Configuration::ConfigurationView &getConf() const;
@@ -51,6 +51,8 @@ private:
 	{
 		m_scheduler.post(boost::bind(handler, result));
 	}
+
+    void startProcessHandler(const StartProcessHandler &handler, const std::error_condition &ec);
 
 	Tools::Configuration::ConfigurationView m_config;
     typedef std::map<std::string, ProcessBasePtr> Processes;

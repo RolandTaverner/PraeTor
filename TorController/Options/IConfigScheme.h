@@ -7,6 +7,7 @@
 
 #include "Options/AbstractCollection.h"
 #include "Options/IFormatter.h"
+#include "Options/ISubstitutor.h"
 #include "Options/Option.h"
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
@@ -42,12 +43,22 @@ public:
 
     virtual const OptionValueDomain &getOptionValueDomain(const std::string &name) const = 0; /* throws */
 
-    virtual std::string formatOption(const std::string &name, const OptionValueContainer &value) const = 0; /* throws */
+    virtual std::string formatOption(const std::string &name, const OptionValueContainer &value, ISubstitutorPtr substitutorPtr) const = 0; /* throws */
 
     virtual void setFormatter(const std::string &name, IFormatterPtr formatterPtr) = 0; /* throws */
 };
 
 typedef boost::shared_ptr<IConfigScheme> IConfigSchemePtr;
+
+struct OptionIsRequiredPred
+{
+    bool operator()(const OptionDesc &od) const { return od.get<2>(); }
+};
+
+struct OptionIsSystemPred
+{
+    bool operator()(const OptionDesc &od) const { return od.get<6>(); }
+};
 
 class OptionsSchemeError : public OptionError
 {

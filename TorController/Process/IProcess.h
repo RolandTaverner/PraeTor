@@ -7,11 +7,10 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/function/function1.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/system/error_code.hpp>
 
 #include "Process/ProcessConfiguration.h"
 
-typedef boost::function1<void, const boost::system::error_code &> ProcessActionHandler;
+typedef boost::function1<void, const std::error_condition &> ProcessActionHandler;
 
 enum class ProcessState
 {

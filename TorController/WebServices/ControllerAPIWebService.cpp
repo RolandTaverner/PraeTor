@@ -83,6 +83,7 @@ ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_handlers["ProcessConfigs"] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, _2);
     m_handlers["ProcessConfig"] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, _2);
     m_handlers["ProcessOption"] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, _2);
+    m_handlers["ProcessAction"] = boost::bind(&ControllerAPIWebService::processAction, this, _1, _2);
 
     // HTTP status messages
     {
@@ -528,4 +529,37 @@ void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::Connecti
     }
 
     sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
+
+    if (itProcessId == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        return;
+    }
+
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_POST)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Only POST method allowed.");
+        return;
+    }
+
+    m_controller->startProcess(itProcessId->second,
+                               boost::bind(&ControllerAPIWebService::onStartProcessResponse, this, contextPtr, _1));
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onStartProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StartProcessResult &result)
+{
+
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::onStopProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StopProcessResult &result)
+{
+
 }

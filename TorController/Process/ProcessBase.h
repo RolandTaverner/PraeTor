@@ -86,6 +86,7 @@ private:
     pion::scheduler &m_scheduler;
     std::string m_name;
     std::string m_executable;
+    std::string m_cmdLineFixedArgs;
     boost::filesystem::path m_rootPath;
     ProcessConfiguration m_configuration;
     volatile ProcessState m_state;

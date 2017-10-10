@@ -1,9 +1,14 @@
+#include <windows.h>
+
 #include <fstream>
 
 #include <boost/assert.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/process.hpp>
+#include <boost/process/extend.hpp>
+
+#include "Tools/Logger/Logger.h"
 
 #include "Options/ConfigScheme.h"
 #include "Options/OptionsStorage.h"
@@ -11,6 +16,7 @@
 #include "Process/ProcessErrors.h"
 
 namespace bp = boost::process;
+namespace ex = bp::extend;
 
 const char *ProcessBase::s_configFileSection = "config";
 const char *ProcessBase::s_cmdLineSection = "cmdline";
@@ -22,7 +28,8 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
     m_name = conf.getAttr("", "name");
     m_executable = conf.get("executable");
     m_rootPath = conf.get("root");
-    
+    m_cmdLineFixedArgs = conf.get("args", std::string());
+
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &schemeConf, conf.getRangeOf("options.scheme"))
     {
         const std::string name = schemeConf.getAttr("", "name");
@@ -79,13 +86,47 @@ void ProcessBase::start(const ProcessActionHandler &handler)
 
 	if (hasConfigFile())
 	{
-        boost::filesystem::path configPath = createConfigFile();
+        createConfigFile();
 	}
 
-	const std::string exePath = (rootPath() / executable()).string();
-	const std::string args;
+    const std::string exePath = (rootPath() / executable()).string();
+
+    std::vector<std::string> args;
+    std::string commandArgs;
+
+    if (!m_cmdLineFixedArgs.empty())
+    {
+        commandArgs = m_cmdLineFixedArgs;
+        args.push_back(m_cmdLineFixedArgs);
+    }
 	
-	m_childPtr.reset(new bp::child(bp::exe = exePath, bp::args = args));
+    if (m_configuration.hasStorage(s_cmdLineSection))
+    {
+        IOptionsStoragePtr configPtr = m_configuration.getStorage(s_cmdLineSection);
+        IConfigSchemePtr schemePtr = configPtr->getScheme();
+
+        for (const OptionDesc &od : schemePtr->getFilteredRange<>(OptionIsRequiredPred()))
+        {
+            const std::string &name = od.get<0>();
+            if (!configPtr->hasValue(name))
+            {
+                throw ProcessError(makeErrorCondition(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
+            }
+        }
+
+        BOOST_FOREACH(const Option &o, configPtr->getRange())
+        {
+            const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
+            commandArgs += " " + formattedString;
+            args.push_back(formattedString);
+        }
+
+    }
+    Tools::Logger::Logger::getInstance().debug("Starting process " + exePath + " " + commandArgs);
+
+    m_childPtr.reset(new bp::child(bp::exe = exePath,
+                                   bp::args = args,
+                                   ex::on_setup = [](auto &exec) { exec.creation_flags |= CREATE_NO_WINDOW; }));
 
 }
 

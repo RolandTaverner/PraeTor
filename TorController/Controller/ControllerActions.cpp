@@ -5,21 +5,24 @@
 //==============================================================================================================================================
 ActionResult::ActionResult() {}
 
-ActionResult::ActionResult(const std::error_condition & ec) :
+ActionResult::ActionResult(const ErrorCode &ec) :
     m_ec(ec)
 {
 }
 
+//==============================================================================================================================================
 ActionResult::~ActionResult()
 {
 }
 
-void ActionResult::setError(const std::error_condition & ec)
+//==============================================================================================================================================
+void ActionResult::setError(const ErrorCode &ec)
 {
     m_ec = ec;
 }
 
-const std::error_condition & ActionResult::getError() const
+//==============================================================================================================================================
+const ErrorCode &ActionResult::getError() const
 {
     return m_ec;
 }
@@ -27,7 +30,7 @@ const std::error_condition & ActionResult::getError() const
 //==============================================================================================================================================
 ControllerInfoResult::ControllerInfoResult() : m_pid(0) {}
 
-ControllerInfoResult::ControllerInfoResult(const std::error_condition & ec) :
+ControllerInfoResult::ControllerInfoResult(const ErrorCode &ec) :
     ActionResult(ec), m_pid(0)
 {
 }
@@ -44,7 +47,7 @@ Json::Value ControllerInfoResult::toJson() const
 //==============================================================================================================================================
 StartProcessResult::StartProcessResult() {}
 
-StartProcessResult::StartProcessResult(const std::error_condition & ec) :
+StartProcessResult::StartProcessResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -60,7 +63,7 @@ Json::Value StartProcessResult::toJson() const
 //==============================================================================================================================================
 StopProcessResult::StopProcessResult() {}
 
-StopProcessResult::StopProcessResult(const std::error_condition & ec) :
+StopProcessResult::StopProcessResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -76,7 +79,7 @@ Json::Value StopProcessResult::toJson() const
 //==============================================================================================================================================
 GetProcessesResult::GetProcessesResult() {}
 
-GetProcessesResult::GetProcessesResult(const std::error_condition & ec) :
+GetProcessesResult::GetProcessesResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -96,7 +99,7 @@ Json::Value GetProcessesResult::toJson() const
 //==============================================================================================================================================
 GetProcessInfoResult::GetProcessInfoResult() {}
 
-GetProcessInfoResult::GetProcessInfoResult(const std::error_condition & ec) :
+GetProcessInfoResult::GetProcessInfoResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -113,7 +116,7 @@ Json::Value GetProcessInfoResult::toJson() const
 //==============================================================================================================================================
 GetProcessConfigsResult::GetProcessConfigsResult() {}
 
-GetProcessConfigsResult::GetProcessConfigsResult(const std::error_condition & ec) :
+GetProcessConfigsResult::GetProcessConfigsResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -134,7 +137,7 @@ Json::Value GetProcessConfigsResult::toJson() const
 //==============================================================================================================================================
 GetProcessConfigResult::GetProcessConfigResult() {}
 
-GetProcessConfigResult::GetProcessConfigResult(const std::error_condition & ec) :
+GetProcessConfigResult::GetProcessConfigResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
@@ -154,7 +157,7 @@ Json::Value GetProcessConfigResult::toJson() const
 //==============================================================================================================================================
 GetProcessOptionResult::GetProcessOptionResult() {}
 
-GetProcessOptionResult::GetProcessOptionResult(const std::error_condition & ec) :
+GetProcessOptionResult::GetProcessOptionResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }

@@ -6,6 +6,7 @@
 
 #include "Controller/Controller.h"
 #include "WebServices/ResourceParser.h"
+#include "Error.h"
 
 enum class ResourceActionType { Get, Put, Delete };
 
@@ -44,6 +45,8 @@ private:
     void sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr,
         unsigned statusCode,
         const std::string &errorMessage);
+
+    void sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ErrorCode &ec);
 
     ResourceParser m_parser;
     const ResourceParser &resourceParser() const;

@@ -9,8 +9,9 @@
 #include <boost/shared_ptr.hpp>
 
 #include "Process/ProcessConfiguration.h"
+#include "Error.h"
 
-typedef boost::function1<void, const std::error_condition &> ProcessActionHandler;
+typedef boost::function1<void, const ErrorCode &> ProcessActionHandler;
 
 enum class ProcessState
 {

@@ -76,12 +76,18 @@ const ProcessConfiguration &ProcessBase::getConfiguration() const
 }
 
 //-------------------------------------------------------------------------------------------------
+class ProcessAyncHandler : public ex::async_handler
+{
+
+
+};
+
 void ProcessBase::start(const ProcessActionHandler &handler)
 {
 	UniqueLockType lock(m_access);
 
 	if (isRunningInternal()) {
-		throw ProcessError(makeErrorCondition(ProcessErrors::alreadyRunning));
+		throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
 	}
 
 	if (hasConfigFile())
@@ -92,11 +98,9 @@ void ProcessBase::start(const ProcessActionHandler &handler)
     const std::string exePath = (rootPath() / executable()).string();
 
     std::vector<std::string> args;
-    std::string commandArgs;
 
     if (!m_cmdLineFixedArgs.empty())
     {
-        commandArgs = m_cmdLineFixedArgs;
         args.push_back(m_cmdLineFixedArgs);
     }
 	
@@ -110,24 +114,28 @@ void ProcessBase::start(const ProcessActionHandler &handler)
             const std::string &name = od.get<0>();
             if (!configPtr->hasValue(name))
             {
-                throw ProcessError(makeErrorCondition(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
+                throw ProcessError(makeErrorCode(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
             }
         }
 
         BOOST_FOREACH(const Option &o, configPtr->getRange())
         {
             const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
-            commandArgs += " " + formattedString;
             args.push_back(formattedString);
         }
 
     }
-    Tools::Logger::Logger::getInstance().debug("Starting process " + exePath + " " + commandArgs);
+    std::string commandArgs = exePath;
+    for (const std::string &i : args)
+    {
+        commandArgs += " " + i;
+    }
+
+    Tools::Logger::Logger::getInstance().info("Starting process " + commandArgs);
 
     m_childPtr.reset(new bp::child(bp::exe = exePath,
-                                   bp::args = args,
-                                   ex::on_setup = [](auto &exec) { exec.creation_flags |= CREATE_NO_WINDOW; }));
-
+        bp::args = args,
+        ex::on_setup = [](auto &exec) { exec.creation_flags |= CREATE_NO_WINDOW; }));
 }
 
 
@@ -176,17 +184,17 @@ boost::filesystem::path ProcessBase::createConfigFile()
         const std::string &name = od.get<0>();
         if (!configPtr->hasValue(name))
         {
-            throw ProcessError(makeErrorCondition(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
+            throw ProcessError(makeErrorCode(ProcessErrors::missingRequiredOption), "Required option " + name + " has no value.");
         }
     }
 
-    boost::filesystem::path outFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
+    const boost::filesystem::path outFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
 
     std::ofstream outFile(outFilePath.c_str(), std::ios_base::out | std::ios_base::trunc);
 
     if (!outFile)
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::configFileWriteError), "Can't create file " + outFilePath.string());
+        throw ProcessError(makeErrorCode(ProcessErrors::configFileWriteError), "Can't create file " + outFilePath.string());
     }
 
     BOOST_FOREACH(const Option &o, configPtr->getRange())
@@ -214,7 +222,7 @@ void ProcessBase::getConfigurationOptions(const std::string &configName, std::li
     SharedLockType lock(m_access);
     if (!m_configuration.hasStorage(configName))
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::noSuchStorage),
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
                            "Cant't find storage " + configName + " in process " + name());
     }
 
@@ -231,7 +239,7 @@ OptionDesc ProcessBase::getOptionDesc(const std::string &configName, const std::
     SharedLockType lock(m_access);
     if (!m_configuration.hasStorage(configName))
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::noSuchStorage),
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
                            "Cant't find storage " + configName + " in process " + name());
     }
 
@@ -239,7 +247,7 @@ OptionDesc ProcessBase::getOptionDesc(const std::string &configName, const std::
 
     if (!storagePtr->getScheme()->hasOption(optionName))
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::noSuchOption),
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
                            "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
     }
 
@@ -252,7 +260,7 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
     SharedLockType lock(m_access);
     if (!m_configuration.hasStorage(configName))
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::noSuchStorage),
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
             "Cant't find storage " + configName + " in process " + name());
     }
 
@@ -261,7 +269,7 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
 
     if (!schemePtr->hasOption(optionName))
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::noSuchOption),
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
             "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
     }
 
@@ -291,7 +299,7 @@ std::string ProcessBase::substituteValue(const std::string &value) const
     SubstituteHandlers::const_iterator it = m_substituteHandlers.find(value);
     if (it == m_substituteHandlers.end())
     {
-        throw ProcessError(makeErrorCondition(ProcessErrors::substitutionNotFound), "Process " + name() + " has no substitution for " + value);
+        throw ProcessError(makeErrorCode(ProcessErrors::substitutionNotFound), "Process " + name() + " has no substitution for " + value);
     }
     return (it->second)();
 }

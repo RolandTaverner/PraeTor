@@ -9,6 +9,7 @@
 #include <boost/function/function1.hpp>
 
 #include "Options/IConfigScheme.h"
+#include "Error.h"
 
 //-------------------------------------------------------------------------
 class ActionResult
@@ -16,18 +17,18 @@ class ActionResult
 public:
     ActionResult();
 
-    explicit ActionResult(const std::error_condition &ec);
+    explicit ActionResult(const ErrorCode &ec);
 
     virtual ~ActionResult();
 
     virtual Json::Value toJson() const = 0;
 
-    void setError(const std::error_condition &ec);
+    void setError(const ErrorCode &ec);
 
-    const std::error_condition &getError() const;
+    const ErrorCode &getError() const;
 
 private:
-    std::error_condition m_ec;
+    ErrorCode m_ec;
 };
 
 //-------------------------------------------------------------------------
@@ -36,13 +37,14 @@ class StartProcessResult : public ActionResult
 public:
     StartProcessResult();
 
-    explicit StartProcessResult(const std::error_condition &ec);
+    explicit StartProcessResult(const ErrorCode &ec);
 
     virtual ~StartProcessResult();
 
     Json::Value toJson() const override;
+
+    typedef boost::function1<void, StartProcessResult> Handler;
 };
-typedef boost::function1<void, StartProcessResult> StartProcessHandler;
 
 //-------------------------------------------------------------------------
 class ControllerInfoResult : public ActionResult
@@ -50,15 +52,16 @@ class ControllerInfoResult : public ActionResult
 public:
     ControllerInfoResult();
 
-    explicit ControllerInfoResult(const std::error_condition &ec);
+    explicit ControllerInfoResult(const ErrorCode &ec);
 
     virtual ~ControllerInfoResult();
 
     Json::Value toJson() const override;
 
     std::int64_t m_pid;
+
+    typedef boost::function1<void, ControllerInfoResult> Handler;
 };
-typedef boost::function1<void, ControllerInfoResult> ControllerInfoHandler;
 
 //-------------------------------------------------------------------------
 class StopProcessResult : public ActionResult
@@ -66,13 +69,14 @@ class StopProcessResult : public ActionResult
 public:
     StopProcessResult();
 
-    explicit StopProcessResult(const std::error_condition &ec);
+    explicit StopProcessResult(const ErrorCode &ec);
 
     virtual ~StopProcessResult();
 
     Json::Value toJson() const override;
+
+    typedef boost::function1<void, StopProcessResult> Handler;
 };
-typedef boost::function1<void, StopProcessResult> StopProcessHandler;
 
 //-------------------------------------------------------------------------
 class GetProcessesResult : public ActionResult
@@ -80,15 +84,16 @@ class GetProcessesResult : public ActionResult
 public:
     GetProcessesResult();
 
-    explicit GetProcessesResult(const std::error_condition &ec);
+    explicit GetProcessesResult(const ErrorCode &ec);
 
     virtual ~GetProcessesResult();
 
     Json::Value toJson() const override;
 
     std::list<std::string> m_processes;
+
+    typedef boost::function1<void, GetProcessesResult> Handler;
 };
-typedef boost::function1<void, GetProcessesResult> GetProcessesHandler;
 
 //-------------------------------------------------------------------------
 class GetProcessInfoResult : public ActionResult
@@ -96,13 +101,14 @@ class GetProcessInfoResult : public ActionResult
 public:
     GetProcessInfoResult();
 
-    explicit GetProcessInfoResult(const std::error_condition &ec);
+    explicit GetProcessInfoResult(const ErrorCode &ec);
 
     virtual ~GetProcessInfoResult();
 
     Json::Value toJson() const override;
+
+    typedef boost::function1<void, GetProcessInfoResult> Handler;
 };
-typedef boost::function1<void, GetProcessInfoResult> GetProcessInfoHandler;
 
 //-------------------------------------------------------------------------
 class GetProcessConfigsResult : public ActionResult
@@ -110,15 +116,16 @@ class GetProcessConfigsResult : public ActionResult
 public:
     GetProcessConfigsResult();
 
-    explicit GetProcessConfigsResult(const std::error_condition &ec);
+    explicit GetProcessConfigsResult(const ErrorCode &ec);
 
     virtual ~GetProcessConfigsResult();
 
     Json::Value toJson() const override;
 
     std::list<std::string> m_configs;
+    
+    typedef boost::function1<void, GetProcessConfigsResult> Handler;
 };
-typedef boost::function1<void, GetProcessConfigsResult> GetProcessConfigsHandler;
 
 //-------------------------------------------------------------------------
 class GetProcessConfigResult : public ActionResult
@@ -126,15 +133,16 @@ class GetProcessConfigResult : public ActionResult
 public:
     GetProcessConfigResult();
 
-    explicit GetProcessConfigResult(const std::error_condition &ec);
+    explicit GetProcessConfigResult(const ErrorCode &ec);
 
     virtual ~GetProcessConfigResult();
 
     Json::Value toJson() const override;
 
     std::list<std::string> m_options;
+
+    typedef boost::function1<void, GetProcessConfigResult> Handler;
 };
-typedef boost::function1<void, GetProcessConfigResult> GetProcessConfigHandler;
 
 //-------------------------------------------------------------------------
 class GetProcessOptionResult : public ActionResult
@@ -142,14 +150,15 @@ class GetProcessOptionResult : public ActionResult
 public:
     GetProcessOptionResult();
 
-    explicit GetProcessOptionResult(const std::error_condition &ec);
+    explicit GetProcessOptionResult(const ErrorCode &ec);
 
     virtual ~GetProcessOptionResult();
 
     Json::Value toJson() const override;
 
     OptionDescValue m_option;
+
+    typedef boost::function1<void, GetProcessOptionResult> Handler;
 };
-typedef boost::function1<void, GetProcessOptionResult> GetProcessOptionHandler;
 
 

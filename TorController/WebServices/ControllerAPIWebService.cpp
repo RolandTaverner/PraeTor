@@ -356,10 +356,6 @@ void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionC
     {
         m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::onControllerInfoResponse, this, contextPtr, _1));
     }
-    catch (const ControllerError &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
-    }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
@@ -372,10 +368,6 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
     try
     {
         m_controller->getProcesses(boost::bind(&ControllerAPIWebService::onProcessesResponse, this, contextPtr, _1));
-    }
-    catch (const ControllerError &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
     }
     catch (const std::exception &e)
     {
@@ -394,7 +386,7 @@ void ControllerAPIWebService::onProcessesResponse(Tools::WebServer::ConnectionCo
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        sendErrorResponse(contextPtr, result.getError());
         return;
     }
 
@@ -406,9 +398,10 @@ void ControllerAPIWebService::onControllerInfoResponse(Tools::WebServer::Connect
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        sendErrorResponse(contextPtr, result.getError());
         return;
     }
+
 
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
@@ -427,10 +420,6 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
     {
         m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::onProcessConfigsResponse, this, contextPtr, _1));
     }
-    catch (const ControllerError &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
-    }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
@@ -442,9 +431,10 @@ void ControllerAPIWebService::onProcessConfigsResponse(Tools::WebServer::Connect
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        sendErrorResponse(contextPtr, result.getError());
         return;
     }
+
 
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
@@ -466,10 +456,6 @@ void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionCo
                                        itConfigName->second,
                                        boost::bind(&ControllerAPIWebService::onProcessConfigResponse, this, contextPtr, _1));
     }
-    catch (const ControllerError &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
-    }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
@@ -481,9 +467,10 @@ void ControllerAPIWebService::onProcessConfigResponse(Tools::WebServer::Connecti
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        sendErrorResponse(contextPtr, result.getError());
         return;
     }
+
 
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
@@ -508,15 +495,10 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
             itOptionName->second,
             boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Get, _1));
     }
-    catch (const ControllerError &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
-    }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
     }
-
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -524,9 +506,10 @@ void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::Connecti
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, result.getError().message());
+        sendErrorResponse(contextPtr, result.getError());
         return;
     }
+
 
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
@@ -555,11 +538,22 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::onStartProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StartProcessResult &result)
 {
-
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, result.getError());
+        return;
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::onStopProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StopProcessResult &result)
 {
 
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ErrorCode &ec)
+{
+    // TODO: impl
+    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, ec.message());
 }

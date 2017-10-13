@@ -1,10 +1,6 @@
 #pragma once
 
-#include <stdexcept>
-#include <string>
 #include <system_error>
-
-#include "BaseError.h"
 
 enum class ProcessErrors
 {
@@ -18,7 +14,7 @@ enum class ProcessErrors
 
 namespace std
 {
-	template<> struct is_error_condition_enum<ProcessErrors>
+	template<> struct is_error_code_enum<ProcessErrors>
 	{
 		static const bool value = true;
 	};
@@ -35,53 +31,14 @@ namespace Detail
 } // namespace Detail
 
 
-class ProcessError
-	: public BaseError
-{	// base of all system-error exceptions
-private:
-	typedef BaseError _Mybase;
-
-public:
-	ProcessError(const std::error_condition &error)
-		: _Mybase(error, "")
-	{	// construct from error condition
-	}
-
-	ProcessError(const std::error_condition &error, const std::string &message)
-		: _Mybase(error, message)
-	{	// construct from error condition and message string
-	}
-
-	ProcessError(const std::error_condition &error, const char *message)
-		: _Mybase(error, message)
-	{	// construct from error condition and message string
-	}
-
-	ProcessError(int errVal, const std::error_category &errCat)
-		: _Mybase(std::error_condition(errVal, errCat), "")
-	{	// construct from error condition components
-	}
-
-	ProcessError(int errVal, const std::error_category &errCat, const std::string &message)
-		: _Mybase(std::error_condition(errVal, errCat), message)
-	{	// construct from error condition components and message string
-	}
-
-	ProcessError(int errVal, const std::error_category &errCat, const char *message)
-		: _Mybase(std::error_condition(errVal, errCat), message)
-	{	// construct from error condition components and message string
-	}
-
-	const std::error_condition &error() const _NOEXCEPT
-	{	// return stored error condition
-		return m_error;
-	}
-};
-
 const std::error_category &getProcessErrorsCategory();
 
-inline std::error_condition makeErrorCondition(ProcessErrors e)
+inline std::error_code makeErrorCode(ProcessErrors e)
 {
-	return std::error_condition(static_cast<int>(e), getProcessErrorsCategory());
+	return std::error_code(static_cast<int>(e), getProcessErrorsCategory());
 }
 
+struct ProcessError : std::system_error
+{
+    using std::system_error::system_error;
+};

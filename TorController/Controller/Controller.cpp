@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/process/exception.hpp>
@@ -8,7 +9,7 @@ namespace bp = boost::process;
 
 //-------------------------------------------------------------------------------------------------
 Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
-    m_config(config)
+    m_config(config), m_logger(Tools::Logger::Logger::getInstance())
 {
 	// TODO: read config
 	m_scheduler.set_num_threads(4);
@@ -37,43 +38,38 @@ const Tools::Configuration::ConfigurationView &Controller::getConf() const
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::startProcess(const std::string &name, const StartProcessHandler &handler)
+void Controller::startProcessImpl(const std::string &name, const StartProcessResult::Handler &handler)
 {
-	UniqueLockType lock(m_access);
+    UniqueLockType lock(m_access);
 
-	Processes::const_iterator i = m_processes.find(name);
-	if (i == m_processes.end())
-	{
-		scheduleActionHandler<>(handler, StartProcessResult(makeErrorCondition(ControllerErrors::processNotFound)));
-		return;
-	}
+    Processes::const_iterator i = m_processes.find(name);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
 
-	try
-	{
-		i->second->start(boost::bind(&Controller::startProcessHandler, this, handler, _1));
-	}
-	catch (const boost::system::system_error &e)
-	{
-		scheduleActionHandler<>(handler, StartProcessResult(makeErrorCondition(ControllerErrors::startProcessError)));
-	}
-	catch (const bp::process_error &e)
-	{
-		scheduleActionHandler<>(handler, StartProcessResult(makeErrorCondition(ControllerErrors::startProcessError)));
-	}
-	catch (const std::exception &e)
-	{
-		scheduleActionHandler<>(handler, StartProcessResult(makeErrorCondition(ControllerErrors::startProcessError)));
-	}
+    i->second->start(boost::bind(&Controller::startProcessHandler, this, handler, _1));
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::stopProcess(const std::string &name, const StopProcessHandler &handler)
+void Controller::startProcess(const std::string &name, const StartProcessResult::Handler &handler)
 {
-
+    safeActionCall<StartProcessResult>(boost::bind(&Controller::startProcessImpl, this, name, handler), handler);
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::getProcessInfo(const std::string &name, const GetProcessInfoHandler &handler)
+void Controller::stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::stopProcess(const std::string &name, const StopProcessResult::Handler &handler)
+{
+    safeActionCall<StopProcessResult>(boost::bind(&Controller::stopProcessImpl, this, name, handler), handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessInfoImpl(const std::string &name, const GetProcessInfoResult::Handler &handler)
 {
     GetProcessInfoResult result;
     {
@@ -82,41 +78,45 @@ void Controller::getProcessInfo(const std::string &name, const GetProcessInfoHan
         Processes::const_iterator i = m_processes.find(name);
         if (i == m_processes.end())
         {
-            //result.ec = 
+            throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
         }
-        else
-        {
 
-        }
     }
 
     scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::getProcessConfigs(const std::string &name, const GetProcessConfigsHandler &handler)
+void Controller::getProcessInfo(const std::string &name, const GetProcessInfoResult::Handler &handler)
 {
-    GetProcessConfigsResult result;
-    {
-        boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    safeActionCall<GetProcessInfoResult>(boost::bind(&Controller::getProcessInfoImpl, this, name, handler), handler);
+}
 
-        Processes::const_iterator i = m_processes.find(name);
-        if (i == m_processes.end())
-        {
-            result.setError(makeErrorCondition(ControllerErrors::processNotFound));
-        }
-        else
-        {
-            IProcessPtr processPtr = i->second;
-            processPtr->getConfigurations(result.m_configs);
-        }
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessConfigsImpl(const std::string &name, const GetProcessConfigsResult::Handler &handler)
+{
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+
+    Processes::const_iterator i = m_processes.find(name);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
     }
 
+    GetProcessConfigsResult result;
+    IProcessPtr processPtr = i->second;
+    processPtr->getConfigurations(result.m_configs);
     scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::getProcesses(const GetProcessesHandler &handler)
+void Controller::getProcessConfigs(const std::string &name, const GetProcessConfigsResult::Handler &handler)
+{
+    safeActionCall<GetProcessConfigsResult>(boost::bind(&Controller::getProcessConfigsImpl, this, name, handler), handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessesImpl(const GetProcessesResult::Handler &handler)
 {
     GetProcessesResult result;
     {
@@ -126,12 +126,18 @@ void Controller::getProcesses(const GetProcessesHandler &handler)
             result.m_processes.push_back(v.first);
         }
     }
-    
+
     scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::getControllerInfo(const ControllerInfoHandler &handler)
+void Controller::getProcesses(const GetProcessesResult::Handler &handler)
+{
+    safeActionCall<GetProcessesResult>(boost::bind(&Controller::getProcessesImpl, this, handler), handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getControllerInfoImpl(const ControllerInfoResult::Handler &handler)
 {
     ControllerInfoResult result;
     result.m_pid = GetCurrentProcessId();
@@ -140,25 +146,57 @@ void Controller::getControllerInfo(const ControllerInfoHandler &handler)
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::getProcessConfig(const std::string &processName,
-                                  const std::string &configName,
-                                  const GetProcessConfigHandler &handler)
+void Controller::getControllerInfo(const ControllerInfoResult::Handler &handler)
+{
+    safeActionCall<ControllerInfoResult>(boost::bind(&Controller::getControllerInfoImpl, this, handler), handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessConfigImpl(const std::string &processName,
+    const std::string &configName,
+    const GetProcessConfigResult::Handler &handler)
 {
     GetProcessConfigResult result;
-    {
-        boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
 
-        Processes::const_iterator i = m_processes.find(processName);
-        if (i == m_processes.end())
-        {
-            result.setError(makeErrorCondition(ControllerErrors::processNotFound));
-        }
-        else
-        {
-            IProcessPtr processPtr = i->second;
-            processPtr->getConfigurationOptions(configName, result.m_options);
-        }
+    Processes::const_iterator i = m_processes.find(processName);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
     }
+
+    IProcessPtr processPtr = i->second;
+    processPtr->getConfigurationOptions(configName, result.m_options);
+
+    scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessConfig(const std::string &processName,
+                                  const std::string &configName,
+                                  const GetProcessConfigResult::Handler &handler)
+{
+    safeActionCall<GetProcessConfigResult>(
+        boost::bind(&Controller::getProcessConfigImpl, this, processName, configName, handler), 
+        handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessOptionImpl(const std::string &processName,
+    const std::string &configName,
+    const std::string &optionName,
+    const GetProcessOptionResult::Handler &handler)
+{
+    GetProcessOptionResult result;
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+
+    Processes::const_iterator i = m_processes.find(processName);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
+    IProcessPtr processPtr = i->second;
+    result.m_option = processPtr->getOptionValue(configName, optionName);
 
     scheduleActionHandler<>(handler, result);
 }
@@ -167,29 +205,15 @@ void Controller::getProcessConfig(const std::string &processName,
 void Controller::getProcessOption(const std::string &processName,
                                   const std::string &configName,
                                   const std::string &optionName,
-                                  const GetProcessOptionHandler &handler)
+                                  const GetProcessOptionResult::Handler &handler)
 {
-    GetProcessOptionResult result;
-    {
-        boost::shared_lock<boost::upgrade_mutex> lock(m_access);
-
-        Processes::const_iterator i = m_processes.find(processName);
-        if (i == m_processes.end())
-        {
-            result.setError(makeErrorCondition(ControllerErrors::processNotFound));
-        }
-        else
-        {
-            IProcessPtr processPtr = i->second;
-            result.m_option = processPtr->getOptionValue(configName, optionName);
-        }
-    }
-
-    scheduleActionHandler<>(handler, result);
+    safeActionCall<GetProcessOptionResult>(
+        boost::bind(&Controller::getProcessOptionImpl, this, processName, configName, optionName, handler), 
+        handler);
 }
 
 //-------------------------------------------------------------------------------------------------
-void Controller::startProcessHandler(const StartProcessHandler &handler, const std::error_condition &ec)
+void Controller::startProcessHandler(const StartProcessResult::Handler &handler, const ErrorCode &ec)
 {
     StartProcessResult result;
 

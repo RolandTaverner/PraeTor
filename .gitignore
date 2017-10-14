@@ -49,3 +49,4 @@ obj/
 [Rr]elease*/
 *.VC.db
 *.VC.opendb
+.vs/

@@ -76,10 +76,14 @@ public:
 	static const char *s_configFileSection;
     static const char *s_cmdLineSection;
 
+protected:
+    virtual void onProcessStart(const ProcessActionHandler &handler, const std::error_code &ec);
+    virtual void onProcessExit(int exitCode, const std::error_code &ec);
+
 private:
     
 	bool isRunningInternal() const;
-
+    
 	boost::filesystem::path createConfigFile();
 
 		

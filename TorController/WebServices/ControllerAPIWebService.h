@@ -26,6 +26,7 @@ public:
 
     void onControllerResponse(Tools::WebServer::ConnectionContextPtr contextPtr, pion::http::response_ptr responsePtr);
 
+    void defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const ActionResult &result);
 
 private:
     ControllerPtr m_controller;

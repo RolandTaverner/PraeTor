@@ -215,7 +215,7 @@ void Controller::getProcessOption(const std::string &processName,
 //-------------------------------------------------------------------------------------------------
 void Controller::startProcessHandler(const StartProcessResult::Handler &handler, const ErrorCode &ec)
 {
-    StartProcessResult result;
+    StartProcessResult result(ec);
 
     scheduleActionHandler<>(handler, result);
 }

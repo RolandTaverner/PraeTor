@@ -3,7 +3,11 @@
 #include <fstream>
 
 #include <boost/assert.hpp>
+#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function/function0.hpp>
+#include <boost/function/function1.hpp>
+#include <boost/function/function2.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/process.hpp>
 #include <boost/process/extend.hpp>
@@ -76,12 +80,57 @@ const ProcessConfiguration &ProcessBase::getConfiguration() const
 }
 
 //-------------------------------------------------------------------------------------------------
-class ProcessAyncHandler : public ex::async_handler
+class AsyncProcessHandler : public ex::async_handler
 {
+public:
+    typedef boost::function2<void, int, const std::error_code &> OnExitHandler;
+    typedef boost::function0<void> OnSuccessHandler;
+    typedef boost::function1<void, const std::error_code &> OnErrorHandler;
 
+    AsyncProcessHandler(const OnExitHandler &onExit,
+        const OnSuccessHandler &onSuccess,
+        const OnErrorHandler &onError):
+        m_onExit(onExit), m_onSuccess(onSuccess), m_onError(onError) {}
 
+    virtual ~AsyncProcessHandler() {}
+
+    template<typename Executor>
+    std::function<void(int, const std::error_code&)> on_exit_handler(Executor &exec)
+    {
+        auto handler = this->m_onExit;
+        return [handler](int exitCode, const std::error_code &ec)
+        {
+            handler(exitCode, ec);
+        };
+    }
+
+    template <class Executor>
+    void on_setup(Executor &exec) const 
+    {
+        exec.creation_flags |= CREATE_NO_WINDOW;
+    }
+
+    template <class Executor>
+    void on_error(Executor &exec, const std::error_code &ec) const
+    {
+        boost::asio::io_service &ios = ex::get_io_service(exec.seq);
+        ios.post(boost::bind<>(m_onError, ec));
+    }
+
+    template <class Executor>
+    void on_success(Executor &exec) const 
+    {
+        boost::asio::io_service &ios = ex::get_io_service(exec.seq);
+        ios.post(m_onSuccess);
+    }
+
+private:
+    OnExitHandler m_onExit;
+    OnSuccessHandler m_onSuccess;
+    OnErrorHandler m_onError;
 };
 
+//-------------------------------------------------------------------------------------------------
 void ProcessBase::start(const ProcessActionHandler &handler)
 {
 	UniqueLockType lock(m_access);
@@ -134,10 +183,29 @@ void ProcessBase::start(const ProcessActionHandler &handler)
     Tools::Logger::Logger::getInstance().info("Starting process " + commandArgs);
 
     m_childPtr.reset(new bp::child(bp::exe = exePath,
-        bp::args = args,
-        ex::on_setup = [](auto &exec) { exec.creation_flags |= CREATE_NO_WINDOW; }));
+        bp::args = args, m_scheduler.get_io_service(),
+        AsyncProcessHandler(boost::bind<>(&ProcessBase::onProcessExit, shared_from_this(), _1, _2),
+            boost::bind<>(&ProcessBase::onProcessStart, shared_from_this(), handler, std::error_code()),
+            boost::bind<>(&ProcessBase::onProcessStart, shared_from_this(), handler, _1))
+        ));
 }
 
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::onProcessStart(const ProcessActionHandler &handler, const std::error_code &ec)
+{
+    // TODO: implement
+    if (ec)
+    {
+    }
+    handler(ec);
+}
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::onProcessExit(int exitCode, const std::error_code &ec)
+{
+    // TODO: implement
+}
 
 //-------------------------------------------------------------------------------------------------
 std::string ProcessBase::cmdLineConfigName() const

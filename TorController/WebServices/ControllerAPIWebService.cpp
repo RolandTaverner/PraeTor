@@ -532,7 +532,7 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
     }
 
     m_controller->startProcess(itProcessId->second,
-                               boost::bind(&ControllerAPIWebService::onStartProcessResponse, this, contextPtr, _1));
+                               boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -556,4 +556,15 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 {
     // TODO: impl
     sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, ec.message());
+}
+
+void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const ActionResult &result)
+{
+    if (result.getError())
+    {
+        sendErrorResponse(contextPtr, result.getError());
+        return;
+    }
+
+    sendResponse(contextPtr, result.toJson().toStyledString());
 }

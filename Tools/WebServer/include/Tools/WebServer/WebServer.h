@@ -69,6 +69,7 @@ public:
     void addPluginService(const std::string &resource,
                           PluginServicePtr servicePtr,
                           const PluginServiceOptions &options);
+    void addRedirect(const std::string &from, const std::string &to);
     void setAuth(pion::http::auth_ptr authPtr);
 
 protected:
@@ -99,6 +100,8 @@ private:
     typedef std::pair<PluginServicePtr, PluginServiceOptions> PluginServiceDesc;
     typedef std::map<std::string, PluginServiceDesc> PluginServices;
     PluginServices m_pluginServices;
+
+    std::map<std::string, std::string> m_redirects;
 
     // stat options
     bool m_enableStat;

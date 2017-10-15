@@ -153,20 +153,20 @@ public:
 };
 
 //-------------------------------------------------------------------------
-class GetProcessOptionResult : public ActionResult
+class ProcessOptionResult : public ActionResult
 {
 public:
-    GetProcessOptionResult();
+    ProcessOptionResult();
 
-    explicit GetProcessOptionResult(const ErrorCode &ec);
+    explicit ProcessOptionResult(const ErrorCode &ec);
 
-    virtual ~GetProcessOptionResult();
+    virtual ~ProcessOptionResult();
 
     Json::Value toJson() const override;
 
     OptionDescValue m_option;
 
-    typedef boost::function1<void, GetProcessOptionResult> Handler;
+    typedef boost::function1<void, ProcessOptionResult> Handler;
 };
 
 

@@ -270,11 +270,22 @@ void WebServer::start()
         }
     }
 
+    for(std::map<std::string, std::string>::const_iterator i = m_redirects.begin(); i != m_redirects.end(); ++i)
+    {
+        m_pImpl->m_pionWebServerCorePtr->add_redirect(i->first, i->second);
+    }
+
     m_pImpl->m_pionWebServerCorePtr->set_authentication(m_authPtr);
 
     m_workSchedulerPtr->start();
     m_pImpl->m_pionWebServerCorePtr->start();
     setRunning(true);
+}
+
+//--------------------------------------------------------------------------------------------------
+void WebServer::addRedirect(const std::string &from, const std::string &to)
+{
+    m_redirects[from] = to;
 }
 
 //--------------------------------------------------------------------------------------------------

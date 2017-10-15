@@ -17,6 +17,7 @@
 #include "Tools/Configuration/XmlParser.h"
 #include "Tools/Logger/Logger.h"
 #include "Tools/MiscUtils/ShutdownManager.h"
+#include "Tools/WebServer/RedirectService.h"
 
 // This
 #include "Tools/WebSvcApp/WebSvcApp.h"
@@ -204,7 +205,7 @@ int WebSvcApp::run(Tools::Configuration::Configuration &conf)
             logger.info("Initializing plugin web-services...");
             
             ConfigurationView pluginsConf = getConf().branch("serviceconfig.plugins");
-            BOOST_FOREACH(const ConfigurationView &pluginConf, getConf().getRangeOf("serviceconfig.plugins.plugin"))
+            BOOST_FOREACH(const ConfigurationView &pluginConf, pluginsConf.getRangeOf("plugin"))
             {
                 const std::string pluginName = pluginConf.getAttr("", "name");
                 const std::string resource = pluginConf.get<std::string>("resource", std::string("/"));
@@ -225,6 +226,30 @@ int WebSvcApp::run(Tools::Configuration::Configuration &conf)
                 }
             }
             logger.info("Plugin web-services initialized.");
+        }
+
+        if (getConf().exists("serviceconfig.redirects"))
+        {
+            logger.info("Initializing redirects...");
+
+            ConfigurationView redirectsConf = getConf().branch("serviceconfig.redirects");
+            BOOST_FOREACH(const ConfigurationView &redirectConf, redirectsConf.getRangeOf("redirect"))
+            {
+                const std::string from = redirectConf.getAttr("", "from");
+                const std::string to = redirectConf.getAttr("", "to");
+                if (redirectConf.hasAttr("", "with_status"))
+                {
+                    const int httpStatus = redirectConf.getAttr<int>("", "with_status");
+                    Tools::WebServer::IWebServicePtr redirectServicePtr(new Tools::WebServer::RedirectService(from, to, httpStatus));
+                    webServerPtr->addService(from, redirectServicePtr);
+                }
+                else
+                {
+                    webServerPtr->addRedirect(from, to);
+                }
+
+            }
+            logger.info("Redirects initialized.");
         }
 
         // Запуск HTTP-сервера

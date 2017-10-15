@@ -37,8 +37,12 @@ public:
     void getProcessOption(const std::string &processName,
                           const std::string &configName,
                           const std::string &optionName,
-                          const GetProcessOptionResult::Handler &handler);
-
+                          const ProcessOptionResult::Handler &handler);
+    void setProcessOption(const std::string &processName,
+        const std::string &configName,
+        const std::string &optionName,
+        const OptionValueContainer &optionValue,
+        const ProcessOptionResult::Handler &handler);
     void startProcess(const std::string &name, const StartProcessResult::Handler &handler);
     void stopProcess(const std::string &name, const StopProcessResult::Handler &handler);
 
@@ -53,7 +57,12 @@ private:
     void getProcessOptionImpl(const std::string &processName,
         const std::string &configName,
         const std::string &optionName,
-        const GetProcessOptionResult::Handler &handler);
+        const ProcessOptionResult::Handler &handler);
+    void setProcessOptionImpl(const std::string &processName,
+        const std::string &configName,
+        const std::string &optionName,
+        const OptionValueContainer &optionValue,
+        const ProcessOptionResult::Handler &handler);
 
     void startProcessImpl(const std::string &name, const StartProcessResult::Handler &handler);
     void stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler);

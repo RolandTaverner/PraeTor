@@ -222,6 +222,9 @@
     <ClInclude Include="AsyncHttpClient\include\Tools\AsyncHttpClient\SingleRequestManager.h">
       <Filter>Header Files\AsyncHttpClient</Filter>
     </ClInclude>
+    <ClInclude Include="WebServer\include\Tools\WebServer\RedirectService.h">
+      <Filter>Header Files\WebServer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WebServer\src\ConfService.cpp">
@@ -325,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="AsyncHttpClient\src\SingleRequestManager.cpp">
       <Filter>Source Files\AsyncHttpClient</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServer\src\RedirectService.cpp">
+      <Filter>Source Files\WebServer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

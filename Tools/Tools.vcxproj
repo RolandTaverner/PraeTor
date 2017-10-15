@@ -179,6 +179,7 @@ XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs_2017\Tools\include\
     <ClInclude Include="WebServer\include\Tools\WebServer\IStat.h" />
     <ClInclude Include="WebServer\include\Tools\WebServer\IWebService.h" />
     <ClInclude Include="WebServer\include\Tools\WebServer\PionWebServerCore.h" />
+    <ClInclude Include="WebServer\include\Tools\WebServer\RedirectService.h" />
     <ClInclude Include="WebServer\include\Tools\WebServer\Scheduler.h" />
     <ClInclude Include="WebServer\include\Tools\WebServer\ServiceHandler.h" />
     <ClInclude Include="WebServer\include\Tools\WebServer\StatService.h" />
@@ -215,6 +216,7 @@ XCOPY /R /E /Y "$(ProjectDir)\WebSvcApp\include" x:\libs_2017\Tools\include\
     <ClCompile Include="WebServer\src\ConfService.cpp" />
     <ClCompile Include="WebServer\src\ConnectionContext.cpp" />
     <ClCompile Include="WebServer\src\PionWebServerCore.cpp" />
+    <ClCompile Include="WebServer\src\RedirectService.cpp" />
     <ClCompile Include="WebServer\src\Scheduler.cpp" />
     <ClCompile Include="WebServer\src\ServiceHandler.cpp" />
     <ClCompile Include="WebServer\src\StatService.cpp" />

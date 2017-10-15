@@ -408,10 +408,34 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
 
     try
     {
-        m_controller->getProcessOption(itProcessId->second,
-            itConfigName->second,
-            itOptionName->second,
-            boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Get, _1));
+        if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_GET)
+        {
+            m_controller->getProcessOption(itProcessId->second,
+                itConfigName->second,
+                itOptionName->second,
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Get, _1));
+        }
+        else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_PUT)
+        {
+            Json::Value v;
+            if (!Json::Reader().parse(contextPtr->getRequest()->get_content(), v, false) || v["value"].isNull())
+            {
+                sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse set process option request content.");
+                return;
+            }
+
+            OptionValueContainer val;
+            // TODO
+            m_controller->setProcessOption(itProcessId->second,
+                itConfigName->second,
+                itOptionName->second,
+                val,
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Put, _1));
+        }
+        else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_DELETE)
+        {
+        }
+
     }
     catch (const std::exception &e)
     {
@@ -420,7 +444,9 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr, ResourceActionType actionType, const GetProcessOptionResult &result)
+void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr,
+    ResourceActionType actionType,
+    const ProcessOptionResult &result)
 {
     if (result.getError())
     {

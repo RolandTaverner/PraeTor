@@ -367,7 +367,6 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
             "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
     }
 
-    OptionDescValue result;
     const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
     const OptionValueType value = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
         (schemePtr->hasDefaultValue(optionName) ? schemePtr->getDefaultValue(optionName) : OptionValueType());
@@ -445,4 +444,35 @@ void ProcessBase::stop(const StopProcessHandler &handler)
     setState(ProcessState::Stopping);
     std::error_code ec;
     m_childPtr->terminate(ec);
+}
+
+//-------------------------------------------------------------------------------------------------
+OptionDescValue ProcessBase::setOptionValue(const std::string &configName,
+    const std::string &optionName,
+    const OptionValueContainer &optionValue)
+{
+    UniqueLockType lock(m_access);
+    if (!m_configuration.hasStorage(configName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
+            "Cant't find storage " + configName + " in process " + name());
+    }
+
+    IOptionsStoragePtr storagePtr = m_configuration.getStorage(configName);
+    IConfigSchemePtr schemePtr = storagePtr->getScheme();
+
+    if (!schemePtr->hasOption(optionName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
+            "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
+    }
+
+    storagePtr->setValue(optionName, optionValue);
+
+    const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
+    const OptionValueType value = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
+        (schemePtr->hasDefaultValue(optionName) ? schemePtr->getDefaultValue(optionName) : OptionValueType());
+    const std::string presentation = storagePtr->hasValue(optionName) ? storagePtr->formatOption(optionName, shared_from_this()) : "";
+
+    return OptionDescValue(desc, value, presentation);
 }

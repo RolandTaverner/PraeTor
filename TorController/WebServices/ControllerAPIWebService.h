@@ -66,7 +66,7 @@ private:
     void processConfigAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
 
     void processOptionAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
-    void onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr, ResourceActionType actionType, const GetProcessOptionResult &result);
+    void onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr, ResourceActionType actionType, const ProcessOptionResult &result);
 
     void processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
 

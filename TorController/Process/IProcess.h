@@ -70,6 +70,10 @@ public:
 
     virtual OptionDescValue getOptionValue(const std::string &configName, const std::string &optionName) const = 0;
 
+    virtual OptionDescValue setOptionValue(const std::string &configName,
+        const std::string &optionName,
+        const OptionValueContainer &optionValue) = 0;
+
     virtual ProcessState getState() const = 0;
 
     virtual ExitStatus getExitStatus() const = 0;

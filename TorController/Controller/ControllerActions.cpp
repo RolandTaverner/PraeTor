@@ -198,14 +198,14 @@ Json::Value GetProcessConfigResult::toJson() const
 }
 
 //==============================================================================================================================================
-GetProcessOptionResult::GetProcessOptionResult() {}
+ProcessOptionResult::ProcessOptionResult() {}
 
-GetProcessOptionResult::GetProcessOptionResult(const ErrorCode &ec) :
+ProcessOptionResult::ProcessOptionResult(const ErrorCode &ec) :
     ActionResult(ec)
 {
 }
 
-GetProcessOptionResult::~GetProcessOptionResult() {}
+ProcessOptionResult::~ProcessOptionResult() {}
 
 class OptionValueToJsonVisitor
     : public boost::static_visitor<>
@@ -237,7 +237,7 @@ private:
     const std::string m_name;
 };
 
-Json::Value GetProcessOptionResult::toJson() const
+Json::Value ProcessOptionResult::toJson() const
 {
     Json::Value root;
     const OptionDesc &desc = m_option.get<0>();
@@ -251,9 +251,9 @@ Json::Value GetProcessOptionResult::toJson() const
         boost::apply_visitor(visitor, defaultValue);
     }
 
-    root["required"] = desc.get<2>() ? "true" : "false";
+    root["required"] = desc.get<2>();
 
-    root["list"] = desc.get<4>() ? "true" : "false";
+    root["list"] = desc.get<4>();
 
     switch (desc.get<5>())
     {
@@ -270,7 +270,7 @@ Json::Value GetProcessOptionResult::toJson() const
         BOOST_ASSERT(false);
     }
 
-    root["system"] = desc.get<6>() ? "true" : "false";
+    root["system"] = desc.get<6>();
 
     if (m_option.get<1>().is_initialized())
     {

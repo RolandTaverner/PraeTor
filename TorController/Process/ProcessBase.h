@@ -68,6 +68,10 @@ public:
 
     OptionDescValue getOptionValue(const std::string &configName, const std::string &optionName) const override;
 
+    OptionDescValue setOptionValue(const std::string &configName,
+        const std::string &optionName,
+        const OptionValueContainer &optionValue) override;
+
     ProcessState getState() const override;
 
     ExitStatus getExitStatus() const override;

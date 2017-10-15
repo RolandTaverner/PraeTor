@@ -37,10 +37,15 @@
       </plugin>
     </plugins>
 
+    <redirects>
+      <redirect from="/" to="/tor/procs.html" with_status="308" />
+      <redirect from="/favicon.ico" to="/tor/favicon.ico" with_status="308" />
+    </redirects>
+    
     <controller>
       <processes>
         <process name="tor">
-          <root>x:\et\tor-win32-0.2.8.11</root>
+          <root>x:\et\tor-win32-0.3.1.7</root>
           <executable>Tor\tor.exe</executable>
           <args>--quiet</args>
           <options>
@@ -72,21 +77,13 @@
                 </default>
               </option>
 
-              <option name="Log notice" type="string" list="no" system="yes" required="yes">
+              <option name="Log" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
                 <default>
-                  <value>file x:\et\notices.log</value>
+                  <value>notice file x:\et\notices.log</value>
                 </default>
               </option>
 
-<!--
-              <option name="Log debug" type="string" list="no" system="yes" required="yes">
-                <format>%NAME% %VALUE%</format>
-                <default>
-                  <value>file x:\et\debug.log</value>
-                </default>
-              </option>
--->
               <option name="SafeLogging" type="domainvalue" list="no">
                 <format>%NAME% %VALUE%</format>
                 <type>

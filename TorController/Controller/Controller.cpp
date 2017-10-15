@@ -197,9 +197,9 @@ void Controller::getProcessConfig(const std::string &processName,
 void Controller::getProcessOptionImpl(const std::string &processName,
     const std::string &configName,
     const std::string &optionName,
-    const GetProcessOptionResult::Handler &handler)
+    const ProcessOptionResult::Handler &handler)
 {
-    GetProcessOptionResult result;
+    ProcessOptionResult result;
     boost::shared_lock<boost::upgrade_mutex> lock(m_access);
 
     Processes::const_iterator i = m_processes.find(processName);
@@ -217,9 +217,9 @@ void Controller::getProcessOptionImpl(const std::string &processName,
 void Controller::getProcessOption(const std::string &processName,
                                   const std::string &configName,
                                   const std::string &optionName,
-                                  const GetProcessOptionResult::Handler &handler)
+                                  const ProcessOptionResult::Handler &handler)
 {
-    safeActionCall<GetProcessOptionResult>(
+    safeActionCall<ProcessOptionResult>(
         boost::bind(&Controller::getProcessOptionImpl, this, processName, configName, optionName, handler), 
         handler);
 }
@@ -239,4 +239,38 @@ void Controller::stopProcessHandler(const StopProcessResult::Handler &handler, c
     result.m_exitStatus = es;
 
     scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::setProcessOptionImpl(const std::string &processName,
+    const std::string &configName,
+    const std::string &optionName,
+    const OptionValueContainer &optionValue,
+    const ProcessOptionResult::Handler &handler)
+{
+    ProcessOptionResult result;
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+
+    Processes::const_iterator i = m_processes.find(processName);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
+    IProcessPtr processPtr = i->second;
+    result.m_option = processPtr->setOptionValue(configName, optionName, optionValue);
+
+    scheduleActionHandler<>(handler, result);
+
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::setProcessOption(const std::string &processName,
+    const std::string &configName,
+    const std::string &optionName,
+    const OptionValueContainer &optionValue,
+    const ProcessOptionResult::Handler &handler)
+{
+    safeActionCall<ProcessOptionResult>(
+        boost::bind(&Controller::setProcessOptionImpl, this, processName, configName, optionName, optionValue, handler),
+        handler);
 }

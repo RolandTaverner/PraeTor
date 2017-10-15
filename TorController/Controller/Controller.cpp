@@ -89,6 +89,9 @@ void Controller::getProcessInfoImpl(const std::string &name, const GetProcessInf
             throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
         }
 
+        result.m_name = i->first;
+        result.m_state = i->second->getState();
+        i->second->getConfigurations(result.m_configs);
     }
 
     scheduleActionHandler<>(handler, result);

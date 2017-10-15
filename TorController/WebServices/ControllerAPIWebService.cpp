@@ -333,9 +333,22 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
-    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
-}
+    const ResourceParameters::const_iterator i = parameters.find("process_id");
+    if (i == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        return;
+    }
 
+    try
+    {
+        m_controller->getProcessInfo(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+}
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)

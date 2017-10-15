@@ -28,6 +28,15 @@
   <debug>true</debug>
 
   <serviceconfig>
+    <plugins>
+      <plugin name="fileservice">
+        <resource>/tor</resource>
+        <options>
+          <directory>x:\EasyTorExtension</directory>
+        </options>
+      </plugin>
+    </plugins>
+
     <controller>
       <processes>
         <process name="tor">

@@ -7,8 +7,12 @@
 #include <stdexcept>
 
 // Boost
+#include <boost/foreach.hpp>
 #include <boost/program_options.hpp>
 #include <boost/scoped_array.hpp>
+
+// Pion
+#include <pion/services/FileService.hpp>
 
 #include "Tools/Configuration/XmlParser.h"
 #include "Tools/Logger/Logger.h"
@@ -193,6 +197,34 @@ int WebSvcApp::run(Tools::Configuration::Configuration &conf)
             }
 
             logger.info("Web-services initialized.");
+        }
+
+        if (getConf().exists("serviceconfig.plugins"))
+        {
+            logger.info("Initializing plugin web-services...");
+            
+            ConfigurationView pluginsConf = getConf().branch("serviceconfig.plugins");
+            BOOST_FOREACH(const ConfigurationView &pluginConf, getConf().getRangeOf("serviceconfig.plugins.plugin"))
+            {
+                const std::string pluginName = pluginConf.getAttr("", "name");
+                const std::string resource = pluginConf.get<std::string>("resource", std::string("/"));
+                Tools::WebServer::PluginServiceOptions opts;
+                if (pluginConf.exists("options"))
+                {
+                    BOOST_FOREACH(const ConfigurationView &optConf, pluginConf.branch("options").getChildren())
+                    {
+                        opts[*optConf.pathLocation().getElements().crbegin()] = optConf.get("");
+                    }
+                }
+
+                if (pluginName == "fileservice")
+                {
+                    Tools::WebServer::PluginServicePtr servicePtr(new pion::plugins::FileService());
+
+                    webServerPtr->addPluginService(resource, servicePtr, opts);
+                }
+            }
+            logger.info("Plugin web-services initialized.");
         }
 
         // Запуск HTTP-сервера

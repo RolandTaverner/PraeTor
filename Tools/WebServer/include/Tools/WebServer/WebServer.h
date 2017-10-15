@@ -14,6 +14,7 @@
 
 // Pion
 #include <pion/http/auth.hpp>
+#include <pion/http/plugin_service.hpp>
 
 #include "Tools/WebServer/Errors.h"
 #include "Tools/WebServer/IStat.h"
@@ -24,6 +25,9 @@ namespace Tools
 {
 namespace WebServer
 {
+
+typedef boost::shared_ptr<pion::http::plugin_service> PluginServicePtr;
+typedef std::map<std::string, std::string> PluginServiceOptions;
 
 class WebServer : boost::noncopyable
 {
@@ -62,6 +66,9 @@ public:
                            const std::string &resource = "/conf");
     IStatPtr getStatService();
     void addService(const std::string &resource, IWebServicePtr servicePtr);
+    void addPluginService(const std::string &resource,
+                          PluginServicePtr servicePtr,
+                          const PluginServiceOptions &options);
     void setAuth(pion::http::auth_ptr authPtr);
 
 protected:
@@ -88,6 +95,10 @@ private:
 
     typedef std::map<std::string, IWebServicePtr> Services;
     Services m_services;
+
+    typedef std::pair<PluginServicePtr, PluginServiceOptions> PluginServiceDesc;
+    typedef std::map<std::string, PluginServiceDesc> PluginServices;
+    PluginServices m_pluginServices;
 
     // stat options
     bool m_enableStat;

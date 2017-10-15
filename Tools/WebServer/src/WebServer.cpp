@@ -192,11 +192,30 @@ void WebServer::addService(const std::string &resource, IWebServicePtr servicePt
         throw WebServerError("WebServer already running");
     }
 
-    if (m_services.find(resource) != m_services.end())
+    if (m_services.find(resource) != m_services.end() || m_pluginServices.find(resource) != m_pluginServices.end())
     {
         throw WebServerError("Resource \"" + resource + "\" already in use");
     }
+
     m_services[resource] = servicePtr;
+}
+
+//--------------------------------------------------------------------------------------------------
+void WebServer::addPluginService(const std::string &resource,
+    PluginServicePtr servicePtr,
+    const PluginServiceOptions &options)
+{
+    if (isRunning())
+    {
+        throw WebServerError("WebServer already running");
+    }
+
+    if (m_services.find(resource) != m_services.end() || m_pluginServices.find(resource) != m_pluginServices.end())
+    {
+        throw WebServerError("Resource \"" + resource + "\" already in use");
+    }
+
+    m_pluginServices[resource] = std::make_pair<>(servicePtr, options);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -207,7 +226,7 @@ void WebServer::start()
         throw WebServerError("WebServer already running");
     }
 
-    if (m_services.empty())
+    if (m_services.empty() && m_pluginServices.empty())
     {
         throw WebServerError("No services added");
     }
@@ -238,6 +257,17 @@ void WebServer::start()
         pion::http::server::request_handler_t handler = boost::bind(&ServiceHandler::operator(), handlerPtr, _1, _2);
 
         m_pImpl->m_pionWebServerCorePtr->add_resource(i->first, handler);
+    }
+
+    for (PluginServices::iterator i = m_pluginServices.begin(); i != m_pluginServices.end(); ++i)
+    {
+        m_pImpl->m_pionWebServerCorePtr->add_service(i->first, i->second.first.get());
+        const PluginServiceOptions &opts = i->second.second;
+
+        for (PluginServiceOptions::const_iterator j = opts.begin(); j != opts.end(); ++j)
+        {
+            m_pImpl->m_pionWebServerCorePtr->set_service_option(i->first, j->first, j->second);
+        }
     }
 
     m_pImpl->m_pionWebServerCorePtr->set_authentication(m_authPtr);

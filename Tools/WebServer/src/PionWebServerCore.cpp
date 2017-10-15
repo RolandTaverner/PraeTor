@@ -16,7 +16,7 @@ PionWebServerCore::PionWebServerCore(pion::scheduler &scheduler,
                                      const boost::asio::ip::tcp::endpoint &endpoint,
                                      std::size_t timeout,
                                      std::size_t connectionLimit):
-        pion::http::server(scheduler, endpoint),
+        pion::http::plugin_server(scheduler, endpoint),
         m_timeout(timeout),
         m_connectionLimit(connectionLimit)
 {

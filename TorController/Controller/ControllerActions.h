@@ -111,6 +111,10 @@ public:
     Json::Value toJson() const override;
 
     typedef boost::function1<void, GetProcessInfoResult> Handler;
+
+    std::string m_name;
+    ProcessState m_state;
+    std::list<std::string> m_configs;
 };
 
 //-------------------------------------------------------------------------

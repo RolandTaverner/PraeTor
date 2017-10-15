@@ -28,6 +28,7 @@ const char *ProcessBase::s_cmdLineSection = "cmdline";
 //-------------------------------------------------------------------------------------------------
 ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pion::scheduler &scheduler) :
     m_scheduler(scheduler),
+    m_state(ProcessState::Stopped),
     m_exitCode(0),
     m_unexpectedExit(false)
 {

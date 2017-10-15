@@ -122,6 +122,33 @@ Json::Value GetProcessInfoResult::toJson() const
 {
     Json::Value root;
 
+    root["name"] = m_name;
+
+    switch (m_state)
+    {
+    case ProcessState::Running:
+        root["status"] = "running";
+        break;
+    case ProcessState::Starting:
+        root["status"] = "starting";
+        break;
+    case ProcessState::Stopping:
+        root["status"] = "stopping";
+        break;
+    case ProcessState::Stopped:
+        root["status"] = "stopped";
+        break;
+    default:
+        root["status"] = "unknown";
+    }
+
+    Json::Value arr(Json::arrayValue);
+    for (const std::string &item : m_configs)
+    {
+        arr.append(item);
+    }
+    root["configs"] = arr;
+
     return root;
 }
 

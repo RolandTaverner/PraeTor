@@ -3,7 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <pion/http/server.hpp>
+#include <pion/http/plugin_server.hpp>
 
 namespace Tools
 {
@@ -12,7 +12,7 @@ namespace WebServer
 namespace Detail
 {
 
-class PionWebServerCore : public pion::http::server
+class PionWebServerCore : public pion::http::plugin_server
 {
 public:
     PionWebServerCore(pion::scheduler &scheduler,

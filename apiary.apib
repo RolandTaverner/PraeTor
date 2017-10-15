@@ -5,6 +5,8 @@ HOST: http://127.0.0.1:30000/
 
 API для управления Tor'ом
 
+# Group Контроллер
+
 ## Состояние контроллера [/api/controller{?key}]
 + Parameters
     + key (required, string) - ключ доступа
@@ -24,6 +26,8 @@ API для управления Tor'ом
     + Attributes (array[string])
 + Response 401
 
+# Group Процесс
+
 ## Информация о процессе [/api/controller/processes/{process_id}{?key}]
 + Parameters
     + process_id (required, string) - идентификатор процесса
@@ -41,7 +45,7 @@ API для управления Tor'ом
     + process_id (required, string) - идентификатор процесса
     + key (required, string) - ключ доступа
 
-### Запуск [POST]
+### Запуск/остановка [POST]
 + Attributes (ProcessAction)
 
 + Response 200 (application/json)
@@ -144,8 +148,8 @@ API для управления Tor'ом
 + list (required, boolean) - может ли содержать список значений или одно
 + system (required, boolean) - системные свойства нельзя изменить
 + domain (optional, array[string]) - домен значений для опций доменного типа
-+ value (optional, string)
-
++ value (optional, string) - значение опции
++ presentation  (optional, string) - форматированное значение опции
 # ProcessAction
 Действие над процессом
 ## Properties
@@ -161,4 +165,3 @@ API для управления Tor'ом
     + Members
         + `OK`
         + `FAIL`
-+ error (optional, string)

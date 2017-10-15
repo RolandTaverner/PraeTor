@@ -177,6 +177,7 @@ void Controller::getProcessConfigImpl(const std::string &processName,
     }
 
     IProcessPtr processPtr = i->second;
+    result.m_name = configName;
     processPtr->getConfigurationOptions(configName, result.m_options);
 
     scheduleActionHandler<>(handler, result);

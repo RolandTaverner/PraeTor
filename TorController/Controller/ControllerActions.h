@@ -146,6 +146,7 @@ public:
 
     Json::Value toJson() const override;
 
+    std::string m_name;
     std::list<std::string> m_options;
 
     typedef boost::function1<void, GetProcessConfigResult> Handler;

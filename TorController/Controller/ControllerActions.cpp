@@ -185,11 +185,15 @@ GetProcessConfigResult::~GetProcessConfigResult() {}
 
 Json::Value GetProcessConfigResult::toJson() const
 {
-    Json::Value root(Json::arrayValue);
+    Json::Value root;
+    root["name"] = m_name;
+
+    Json::Value arr(Json::arrayValue);
     for (const std::string &option : m_options)
     {
-        root.append(option);
+        arr.append(option);
     }
+    root["options"] = arr;
     return root;
 }
 

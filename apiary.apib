@@ -37,7 +37,8 @@ API для управления Tor'ом
 + Response 200 (application/json)
     + Attributes (ProcessInfo)
 + Response 401
-+ Response 404 
++ Response 404 (application/json)
+    + Attributes (Error)
 
 
 ## Управление процессом [/api/controller/processes/{process_id}/action{?key}]
@@ -53,7 +54,8 @@ API для управления Tor'ом
 + Response 401
 + Response 403 (application/json)
     + Attributes (ProcessActionResult)
-+ Response 404
++ Response 404 (application/json)
+    + Attributes (Error)
 
 
 ## Список конфигураций процесса [/api/controller/processes/{process_id}/configs{?key}]
@@ -65,7 +67,8 @@ API для управления Tor'ом
 + Response 200 (application/json)
     + Attributes (array[string])
 + Response 401
-+ Response 404 
++ Response 404 (application/json)
+    + Attributes (Error)
 
 
 ## Конфигурация процесса [/api/controller/processes/{process_id}/configs/{config_name}{?key}]
@@ -78,7 +81,9 @@ API для управления Tor'ом
 + Response 200 (application/json)
     + Attributes (ProcessConfiguration)
 + Response 401
-+ Response 404 
++ Response 404 (application/json) 
+    + Attributes (Error)
+
 
 ## Опция конфигурации [/api/controller/processes/{process_id}/configs/{config_name}/options/{option_name}{?key}]
 + Parameters
@@ -91,9 +96,12 @@ API для управления Tor'ом
 + Response 200 (application/json)
     + Attributes (Option)
 + Response 401
-+ Response 404 
++ Response 404 (application/json) 
+    + Attributes (Error)
 
 ### Задать опцию [PUT]
++ Attributes (OptionValue)
+
 + Response 200 (application/json)
     + Attributes (Option)
 + Response 201 (application/json)
@@ -101,13 +109,15 @@ API для управления Tor'ом
 + Response 400
 + Response 401
 + Response 403
-+ Response 404 
++ Response 404 (application/json) 
+    + Attributes (Error)
 
 ### Удалить опцию [DELETE]
 + Response 204 (application/json)
 + Response 401
 + Response 403
-+ Response 404 
++ Response 404 (application/json) 
+    + Attributes (Error)
 
 ## Data Structures
 
@@ -150,6 +160,12 @@ API для управления Tor'ом
 + domain (optional, array[string]) - домен значений для опций доменного типа
 + value (optional, string) - значение опции
 + presentation  (optional, string) - форматированное значение опции
+
+# OptionValue
+Значение параметра конфигурации
+## Properties
++ value (required, array[string]) - значение
+
 # ProcessAction
 Действие над процессом
 ## Properties
@@ -165,3 +181,10 @@ API для управления Tor'ом
     + Members
         + `OK`
         + `FAIL`
+
+# Error
+Описание ошибки.
+## Properties
++ message (required, string)
++ category (optional, string)
++ value (optional, number)

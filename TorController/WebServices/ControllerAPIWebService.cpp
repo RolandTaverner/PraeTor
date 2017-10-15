@@ -7,6 +7,7 @@
 
 #include <json/value.h>
 #include <json/writer.h>
+#include <json/reader.h>
 
 #include "Tools/CompressUtils/Compress.h"
 #include "Tools/Logger/Logger.h"
@@ -265,52 +266,6 @@ bool ControllerAPIWebService::isStatusCodeValid(unsigned statusCode) const
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onControllerResponse(Tools::WebServer::ConnectionContextPtr contextPtr, 
-    pion::http::response_ptr responsePtr)
-{
-    Tools::Logger::Logger &logger = Tools::Logger::Logger::getInstance();
-
-    pion::http::request_ptr requestPtr = contextPtr->getRequest();
-    const bool isGzipEnabled = (requestPtr->get_header("Accept-Encoding").find("gzip") != std::string::npos);
-
-    const std::string &url = requestPtr->get_resource();
-    //if (!isStatusCodeValid(responsePtr->get_status_code()))
-    //{
-    //    logger.error(std::string("Processor returned unknown status code: ") + boost::lexical_cast<std::string>(responsePtr->get_status_code()));
-
-    //    const std::string errorResponseData = std::string() +
-    //        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-    //        "<document version=\"" + HttpCollector::Version::getMajor() + "." + HttpCollector::Version::getMinor() + "." + HttpCollector::Version::getPatch() + "\">\n" +
-    //        "    <error>\n" +
-    //        "        <type>internal error</type>\n" +
-    //        "        <description>Processor returned unknown status code " + boost::lexical_cast<std::string>(responsePtr->get_status_code()) + "</description>\n" +
-    //        "    </error>\n" +
-    //        "</document>\n";
-    //    responsePtr = createResponse(pion::http::types::RESPONSE_CODE_SERVER_ERROR, errorResponseData, isGzipEnabled);
-    //}
-
-    //if (responsePtr->get_content_length() == 0)
-    //{
-    //    logger.error("Processor returned empty content");
-
-    //    const std::string errorResponseData = std::string() +
-    //        "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" +
-    //        "<document version=\"" + HttpCollector::Version::getMajor() + "." + HttpCollector::Version::getMinor() + "." + HttpCollector::Version::getPatch() + "\">\n" +
-    //        "    <error>\n" +
-    //        "        <type>internal error</type>\n" +
-    //        "        <description>Processor returned empty content" + "</description>\n" +
-    //        "    </error>\n" +
-    //        "</document>\n";
-    //    responsePtr = createResponse(pion::http::types::RESPONSE_CODE_SERVER_ERROR, errorResponseData, isGzipEnabled);
-    //}
-
-    responsePtr->change_header(pion::http::types::HEADER_CONNECTION,
-        contextPtr->getRequest()->check_keep_alive() ? "Keep-Alive" : "close");
-
-    contextPtr->sendResponse(responsePtr);
-}
-
-//-------------------------------------------------------------------------------------------------
 const ResourceParser &ControllerAPIWebService::resourceParser() const
 {
     return m_parser;
@@ -354,7 +309,7 @@ void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionC
 {
     try
     {
-        m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::onControllerInfoResponse, this, contextPtr, _1));
+        m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
     }
     catch (const std::exception &e)
     {
@@ -367,7 +322,7 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
 {
     try
     {
-        m_controller->getProcesses(boost::bind(&ControllerAPIWebService::onProcessesResponse, this, contextPtr, _1));
+        m_controller->getProcesses(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
     }
     catch (const std::exception &e)
     {
@@ -381,30 +336,6 @@ void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionCont
     sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
 }
 
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onProcessesResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessesResult &result)
-{
-    if (result.getError())
-    {
-        sendErrorResponse(contextPtr, result.getError());
-        return;
-    }
-
-    sendResponse(contextPtr, result.toJson().toStyledString());
-}
-
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onControllerInfoResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ControllerInfoResult &result)
-{
-    if (result.getError())
-    {
-        sendErrorResponse(contextPtr, result.getError());
-        return;
-    }
-
-
-    sendResponse(contextPtr, result.toJson().toStyledString());
-}
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
@@ -418,25 +349,12 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
 
     try
     {
-        m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::onProcessConfigsResponse, this, contextPtr, _1));
+        m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
     }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
     }
-}
-
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onProcessConfigsResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessConfigsResult &result)
-{
-    if (result.getError())
-    {
-        sendErrorResponse(contextPtr, result.getError());
-        return;
-    }
-
-
-    sendResponse(contextPtr, result.toJson().toStyledString());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -454,25 +372,12 @@ void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionCo
     {
         m_controller->getProcessConfig(itProcessId->second, 
                                        itConfigName->second,
-                                       boost::bind(&ControllerAPIWebService::onProcessConfigResponse, this, contextPtr, _1));
+                                       boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
     }
     catch (const std::exception &e)
     {
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
     }
-}
-
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onProcessConfigResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const GetProcessConfigResult &result)
-{
-    if (result.getError())
-    {
-        sendErrorResponse(contextPtr, result.getError());
-        return;
-    }
-
-
-    sendResponse(contextPtr, result.toJson().toStyledString());
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -510,10 +415,8 @@ void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::Connecti
         return;
     }
 
-
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
-
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
@@ -531,24 +434,28 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
         return;
     }
 
-    m_controller->startProcess(itProcessId->second,
-                               boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
-}
-
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onStartProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StartProcessResult &result)
-{
-    if (result.getError())
+    Json::Value v;
+    if (!Json::Reader().parse(contextPtr->getRequest()->get_content(), v, false) || v["action"].isNull())
     {
-        sendErrorResponse(contextPtr, result.getError());
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse process action request content.");
         return;
     }
-}
 
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::onStopProcessResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const StopProcessResult &result)
-{
+    const Json::Value &action = v["action"];
+    if (boost::algorithm::equals(action.asString(), "start"))
+    {
+        m_controller->startProcess(itProcessId->second,
+            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        return;
+    }
+    else if (boost::algorithm::equals(action.asString(), "stop"))
+    {
+        m_controller->stopProcess(itProcessId->second,
+            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        return;
+    }
 
+    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Unknown process action requested.");
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -558,6 +465,7 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
     sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, ec.message());
 }
 
+//-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const ActionResult &result)
 {
     if (result.getError())

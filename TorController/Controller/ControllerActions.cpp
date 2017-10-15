@@ -57,6 +57,14 @@ StartProcessResult::~StartProcessResult() {}
 Json::Value StartProcessResult::toJson() const
 {
     Json::Value root;
+    if (getError())
+    {
+        root["status"] = "FAIL";
+    }
+    else
+    {
+        root["status"] = "OK";
+    }
     return root;
 }
 
@@ -73,6 +81,10 @@ StopProcessResult::~StopProcessResult() {}
 Json::Value StopProcessResult::toJson() const
 {
     Json::Value root;
+
+    root["exit_code"] = m_exitStatus.exitCode;
+    root["unexpected_exit"] = m_exitStatus.unexpectedExit;
+
     return root;
 }
 

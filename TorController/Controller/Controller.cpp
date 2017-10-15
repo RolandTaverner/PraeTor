@@ -60,6 +60,14 @@ void Controller::startProcess(const std::string &name, const StartProcessResult:
 //-------------------------------------------------------------------------------------------------
 void Controller::stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler)
 {
+    UniqueLockType lock(m_access);
+    Processes::const_iterator i = m_processes.find(name);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
+    
+    i->second->stop(boost::bind(&Controller::stopProcessHandler, this, handler, _1, _2));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -216,6 +224,15 @@ void Controller::getProcessOption(const std::string &processName,
 void Controller::startProcessHandler(const StartProcessResult::Handler &handler, const ErrorCode &ec)
 {
     StartProcessResult result(ec);
+
+    scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::stopProcessHandler(const StopProcessResult::Handler &handler, const ErrorCode &ec, const ExitStatus &es)
+{
+    StopProcessResult result(ec);
+    result.m_exitStatus = es;
 
     scheduleActionHandler<>(handler, result);
 }

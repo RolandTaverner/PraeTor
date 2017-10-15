@@ -1,0 +1,7 @@
+[SearchableFiles.include]
+*.cpp
+*.h
+*.xml
+*.json
+*.html
+*.js

@@ -10,6 +10,7 @@
 
 #include "Options/IConfigScheme.h"
 #include "Error.h"
+#include "Process/IProcess.h"
 
 //-------------------------------------------------------------------------
 class ActionResult
@@ -32,21 +33,6 @@ private:
 };
 
 //-------------------------------------------------------------------------
-class StartProcessResult : public ActionResult
-{
-public:
-    StartProcessResult();
-
-    explicit StartProcessResult(const ErrorCode &ec);
-
-    virtual ~StartProcessResult();
-
-    Json::Value toJson() const override;
-
-    typedef boost::function1<void, StartProcessResult> Handler;
-};
-
-//-------------------------------------------------------------------------
 class ControllerInfoResult : public ActionResult
 {
 public:
@@ -64,6 +50,21 @@ public:
 };
 
 //-------------------------------------------------------------------------
+class StartProcessResult : public ActionResult
+{
+public:
+    StartProcessResult();
+
+    explicit StartProcessResult(const ErrorCode &ec);
+
+    virtual ~StartProcessResult();
+
+    Json::Value toJson() const override;
+
+    typedef boost::function1<void, StartProcessResult> Handler;
+};
+
+//-------------------------------------------------------------------------
 class StopProcessResult : public ActionResult
 {
 public:
@@ -76,6 +77,8 @@ public:
     Json::Value toJson() const override;
 
     typedef boost::function1<void, StopProcessResult> Handler;
+
+    ExitStatus m_exitStatus;
 };
 
 //-------------------------------------------------------------------------

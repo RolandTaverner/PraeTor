@@ -27,7 +27,9 @@ const char *ProcessBase::s_cmdLineSection = "cmdline";
 
 //-------------------------------------------------------------------------------------------------
 ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pion::scheduler &scheduler) :
-    m_scheduler(scheduler)
+    m_scheduler(scheduler),
+    m_exitCode(0),
+    m_unexpectedExit(false)
 {
     m_name = conf.getAttr("", "name");
     m_executable = conf.get("executable");
@@ -131,7 +133,7 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------
-void ProcessBase::start(const ProcessActionHandler &handler)
+void ProcessBase::start(const StartProcessHandler &handler)
 {
 	UniqueLockType lock(m_access);
 
@@ -168,8 +170,7 @@ void ProcessBase::start(const ProcessActionHandler &handler)
         }
 
         BOOST_FOREACH(const Option &o, configPtr->getRange())
-        {
-            const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
+        {const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
             args.push_back(formattedString);
         }
 
@@ -181,6 +182,11 @@ void ProcessBase::start(const ProcessActionHandler &handler)
     }
 
     Tools::Logger::Logger::getInstance().info("Starting process " + commandArgs);
+    
+    setState(ProcessState::Starting);
+    m_exitCode = 0;
+    m_exitErrorCode = std::error_code();
+    m_unexpectedExit = false;
 
     m_childPtr.reset(new bp::child(bp::exe = exePath,
         bp::args = args, m_scheduler.get_io_service(),
@@ -190,13 +196,19 @@ void ProcessBase::start(const ProcessActionHandler &handler)
         ));
 }
 
-
 //-------------------------------------------------------------------------------------------------
-void ProcessBase::onProcessStart(const ProcessActionHandler &handler, const std::error_code &ec)
+void ProcessBase::onProcessStart(const StartProcessHandler &handler, const std::error_code &ec)
 {
-    // TODO: implement
+    UniqueLockType lock(m_access);
+
     if (ec)
     {
+        setState(ProcessState::Stopped);
+        m_childPtr.reset();
+    }
+    else
+    {
+        setState(ProcessState::Running);
     }
     handler(ec);
 }
@@ -204,7 +216,20 @@ void ProcessBase::onProcessStart(const ProcessActionHandler &handler, const std:
 //-------------------------------------------------------------------------------------------------
 void ProcessBase::onProcessExit(int exitCode, const std::error_code &ec)
 {
-    // TODO: implement
+    UniqueLockType lock(m_access);
+    if (m_state != ProcessState::Stopping)
+    {
+        m_unexpectedExit = true;
+    }
+    m_exitCode = exitCode;
+    m_exitErrorCode = ec;
+    setState(ProcessState::Stopped);
+    m_childPtr.reset();
+    if (!m_stopHandler.empty())
+    {
+        m_stopHandler(ec, ExitStatus(m_exitCode, ec, m_unexpectedExit));
+        m_stopHandler.clear();
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -388,4 +413,35 @@ std::string ProcessBase::substituteRootPath() const
 std::string ProcessBase::substituteConfigFilePath() const
 {
     return m_configFilePath.string();
+}
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::setState(ProcessState newState)
+{
+    m_state = newState;
+}
+
+//-------------------------------------------------------------------------------------------------
+ExitStatus ProcessBase::getExitStatus() const
+{
+    SharedLockType lock(m_access);
+    return ExitStatus(m_exitCode, m_exitErrorCode, m_unexpectedExit);
+}
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::stop(const StopProcessHandler &handler)
+{
+    UniqueLockType lock(m_access);
+
+    if (!isRunningInternal() || getState() != ProcessState::Running)
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::processNotRunning));
+    }
+
+    BOOST_ASSERT(m_stopHandler.empty());
+
+    m_stopHandler = handler;
+    setState(ProcessState::Stopping);
+    std::error_code ec;
+    m_childPtr->terminate(ec);
 }

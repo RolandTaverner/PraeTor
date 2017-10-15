@@ -6,12 +6,11 @@
 
 #include <boost/filesystem/path.hpp>
 #include <boost/function/function1.hpp>
+#include <boost/function/function2.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "Process/ProcessConfiguration.h"
 #include "Error.h"
-
-typedef boost::function1<void, const ErrorCode &> ProcessActionHandler;
 
 enum class ProcessState
 {
@@ -20,6 +19,23 @@ enum class ProcessState
     Stopping = 3,
     Stopped = 4
 };
+
+struct ExitStatus
+{
+    ExitStatus() : exitCode(0), unexpectedExit(false) {}
+
+    ExitStatus(int _exitCode, const std::error_code &_errorCode, bool _unexpectedExit) :
+        exitCode(_exitCode),
+        errorCode(_errorCode),
+        unexpectedExit(_unexpectedExit) {}
+    
+    int exitCode;
+    std::error_code errorCode;
+    bool unexpectedExit;
+};
+
+typedef boost::function1<void, const ErrorCode &> StartProcessHandler;
+typedef boost::function2<void, const ErrorCode &, const ExitStatus &> StopProcessHandler;
 
 class IProcess
 {
@@ -34,7 +50,9 @@ public:
 
     virtual const ProcessConfiguration &getConfiguration() const = 0;
 
-    virtual void start(const ProcessActionHandler &handler) = 0;
+    virtual void start(const StartProcessHandler &handler) = 0;
+
+    virtual void stop(const StopProcessHandler &handler) = 0;
 
     virtual std::string cmdLineConfigName() const = 0;
 
@@ -53,6 +71,8 @@ public:
     virtual OptionDescValue getOptionValue(const std::string &configName, const std::string &optionName) const = 0;
 
     virtual ProcessState getState() const = 0;
+
+    virtual ExitStatus getExitStatus() const = 0;
 };
 
 typedef boost::shared_ptr<IProcess> IProcessPtr;

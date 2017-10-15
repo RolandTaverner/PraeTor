@@ -68,6 +68,7 @@ private:
 	}
 
     void startProcessHandler(const StartProcessResult::Handler &handler, const ErrorCode &ec);
+    void stopProcessHandler(const StopProcessResult::Handler &handler, const ErrorCode &ec, const ExitStatus &es);
 
     template<typename ActionResultType>
     void safeActionCall(const boost::function0<void> &call, const typename ActionResultType::Handler &handler)

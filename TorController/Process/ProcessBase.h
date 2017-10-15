@@ -48,8 +48,10 @@ public:
 
     const ProcessConfiguration &getConfiguration() const override;
 
-    void start(const ProcessActionHandler &handler) override;
+    void start(const StartProcessHandler &handler) override;
 
+    void stop(const StopProcessHandler &handler) override;
+    
     std::string cmdLineConfigName() const override;
 
     std::string fileConfigName() const override;
@@ -68,6 +70,8 @@ public:
 
     ProcessState getState() const override;
 
+    ExitStatus getExitStatus() const override;
+
     // ISubstitutor
     bool hasSubstitute(const std::string &value) const override;
     
@@ -77,13 +81,14 @@ public:
     static const char *s_cmdLineSection;
 
 protected:
-    virtual void onProcessStart(const ProcessActionHandler &handler, const std::error_code &ec);
+    virtual void onProcessStart(const StartProcessHandler &handler, const std::error_code &ec);
     virtual void onProcessExit(int exitCode, const std::error_code &ec);
 
 private:
     
 	bool isRunningInternal() const;
-    
+    void setState(ProcessState newState);
+
 	boost::filesystem::path createConfigFile();
 
 		
@@ -104,6 +109,11 @@ private:
 
     boost::filesystem::path m_configFilePath;
 	ChildProcessPtr m_childPtr;
+    StopProcessHandler m_stopHandler;
+
+    int m_exitCode;
+    std::error_code m_exitErrorCode;
+    bool m_unexpectedExit;
 
 	typedef boost::shared_mutex MutexType;
 	typedef boost::shared_lock_guard<MutexType> SharedLockType;

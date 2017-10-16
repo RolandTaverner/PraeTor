@@ -26,7 +26,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);$(TOOLS_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sicudt.lib;sicuin.lib;sicuio.lib;sicutu.lib;sicuuc.lib;libboost_bzip2-vc141-mt-1_65_1.lib;libboost_chrono-vc141-mt-1_65_1.lib;libboost_date_time-vc141-mt-1_65_1.lib;libboost_filesystem-vc141-mt-1_65_1.lib;libboost_iostreams-vc141-mt-1_65_1.lib;libboost_locale-vc141-mt-1_65_1.lib;libboost_program_options-vc141-mt-1_65_1.lib;libboost_regex-vc141-mt-1_65_1.lib;libboost_system-vc141-mt-1_65_1.lib;libboost_thread-vc141-mt-1_65_1.lib;libboost_zlib-vc141-mt-1_65_1.lib;libboost_serialization-vc141-mt-1_65_1.lib;pion.lib;FileService.libTools.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sicudt.lib;sicuin.lib;sicuio.lib;sicutu.lib;sicuuc.lib;libboost_bzip2-vc141-mt-1_65_1.lib;libboost_chrono-vc141-mt-1_65_1.lib;libboost_date_time-vc141-mt-1_65_1.lib;libboost_filesystem-vc141-mt-1_65_1.lib;libboost_iostreams-vc141-mt-1_65_1.lib;libboost_locale-vc141-mt-1_65_1.lib;libboost_program_options-vc141-mt-1_65_1.lib;libboost_regex-vc141-mt-1_65_1.lib;libboost_system-vc141-mt-1_65_1.lib;libboost_thread-vc141-mt-1_65_1.lib;libboost_zlib-vc141-mt-1_65_1.lib;libboost_serialization-vc141-mt-1_65_1.lib;pion.lib;FileService.lib;Tools.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(BOOST_LIB);$(BZIP2_LIB);$(ICU_LIB);$(OPENSSL_LIB);$(ZLIB_LIB);$(PION_LIB);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

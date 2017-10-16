@@ -116,6 +116,7 @@
     <ClInclude Include="Options\ISubstitutor.h" />
     <ClInclude Include="Options\Option.h" />
     <ClInclude Include="Options\AbstractCollection.h" />
+    <ClInclude Include="Options\OptionErrors.h" />
     <ClInclude Include="Options\OptionsStorage.h" />
     <ClInclude Include="Process\ProcessErrors.h" />
     <ClInclude Include="Process\IProcess.h" />
@@ -137,6 +138,7 @@
     <ClCompile Include="Options\ConfigScheme.cpp" />
     <ClCompile Include="Options\DefaultFormatter.cpp" />
     <ClCompile Include="Options\Option.cpp" />
+    <ClCompile Include="Options\OptionErrors.cpp" />
     <ClCompile Include="Options\OptionsStorage.cpp" />
     <ClCompile Include="Process\ProcessErrors.cpp" />
     <ClCompile Include="Process\ProcessBase.cpp" />

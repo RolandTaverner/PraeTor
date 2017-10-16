@@ -76,17 +76,3 @@ typedef boost::tuple<std::string,
     Tools::Configuration::ConfigurationView> OptionDesc;
 
 typedef boost::tuple<OptionDesc, OptionValueType, std::string> OptionDescValue;
-
-
-class OptionError : public std::runtime_error
-{
-public:
-    explicit OptionError(const std::string &message) :
-        std::runtime_error(message)
-    {
-    }
-
-    virtual ~OptionError()
-    {
-    }
-};

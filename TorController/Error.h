@@ -89,11 +89,11 @@ public:
     {
         if (isBoostError())
         {
-            return m_message.empty() ? m_boostError.message() : (m_boostError.message() + ": " + m_message);
+            return m_message.empty() ? m_boostError.message() : m_message;
         }
         else if (isStdError())
         {
-            return m_message.empty() ? m_stdError.message() : (m_stdError.message() + ": " + m_message);
+            return m_message.empty() ? m_stdError.message() : m_message;
         }
         return std::string();
     }

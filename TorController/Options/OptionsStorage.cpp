@@ -41,7 +41,7 @@ const OptionValueType &OptionsStorage::getValue(const std::string &name) const
     Options::const_iterator i = m_options.find(name);
     if (i == m_options.end())
     {
-        throw OptionNotFound("Option " + name + " not found in storage.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notFoundInStorage), name);
     }
 
     return i->second.value();
@@ -100,7 +100,7 @@ std::string OptionsStorage::formatOption(const std::string &name, ISubstitutorPt
     Options::const_iterator i = m_options.find(name);
     if (i == m_options.end())
     {
-        throw OptionNotFound("Option " + name + " not found in storage.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notFoundInStorage), name);
     }
 
     return getScheme()->formatOption(name, i->second.value().get(), substitutorPtr);

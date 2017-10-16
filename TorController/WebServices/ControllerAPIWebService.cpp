@@ -336,7 +336,7 @@ void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionCont
     const ResourceParameters::const_iterator i = parameters.find("process_id");
     if (i == parameters.end())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
         return;
     }
 
@@ -356,7 +356,7 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
     const ResourceParameters::const_iterator i = parameters.find("process_id");
     if (i == parameters.end())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
         return;
     }
 
@@ -377,7 +377,7 @@ void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionCo
     const ResourceParameters::const_iterator itConfigName = parameters.find("config_name");
     if (itProcessId == parameters.end() || itConfigName == parameters.end())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
         return;
     }
 
@@ -402,7 +402,7 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
 
     if (itProcessId == parameters.end() || itConfigName == parameters.end() || itOptionName == parameters.end())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
         return;
     }
 
@@ -418,22 +418,64 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
         else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_PUT)
         {
             Json::Value v;
-            if (!Json::Reader().parse(contextPtr->getRequest()->get_content(), v, false) || v["value"].isNull())
+            if (!Json::Reader().parse(contextPtr->getRequest()->get_content(), v, false) 
+                || (v["value"].isNull() && v["array_value"].isNull()))
             {
                 sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse set process option request content.");
                 return;
             }
 
-            OptionValueContainer val;
-            // TODO
+            if (!v["value"].isNull() && !v["array_value"].isNull())
+            {
+                sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Process option value can't has both value and array_value fields.");
+                return;
+            }
+
+            OptionValueContainer newOptionValue;
+            if (!v["value"].isNull())
+            {
+                newOptionValue = OptionSingleValue(v["value"].asString());
+            }
+            else
+            {
+                OptionListValue listValue;
+                Json::Value arrayValue = v["array_value"];
+                if (!arrayValue.isArray())
+                {
+                    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "array_value field should be array of strings or numbers.");
+                    return;
+                }
+                
+                for (Json::ArrayIndex i = 0; i < arrayValue.size(); ++i)
+                {
+                    const Json::Value &item = arrayValue[i];
+                    if (item.isNumeric() || item.isString())
+                    {
+                        listValue.push_back(item.asString());
+                    }
+                    else
+                    {
+                        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "array_value field should be array of strings or numbers.");
+                        return;
+                    }
+                }
+                newOptionValue = listValue;
+            }
+
             m_controller->setProcessOption(itProcessId->second,
                 itConfigName->second,
                 itOptionName->second,
-                val,
+                newOptionValue,
                 boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Put, _1));
         }
         else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_DELETE)
         {
+            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
+            return;
+        }
+        else
+        {
+            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
         }
 
     }
@@ -463,7 +505,7 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
 
     if (itProcessId == parameters.end())
     {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "");
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
         return;
     }
 

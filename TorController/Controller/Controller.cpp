@@ -260,7 +260,6 @@ void Controller::setProcessOptionImpl(const std::string &processName,
     result.m_option = processPtr->setOptionValue(configName, optionName, optionValue);
 
     scheduleActionHandler<>(handler, result);
-
 }
 
 //-------------------------------------------------------------------------------------------------

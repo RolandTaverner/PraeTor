@@ -9,6 +9,7 @@
 #include "Options/IConfigScheme.h"
 #include "Options/ISubstitutor.h"
 #include "Options/Option.h"
+#include "Options/OptionErrors.h"
 
 class IOptionsStorage : public AbstractCollection<Option>
 {
@@ -25,37 +26,3 @@ public:
 
 typedef boost::shared_ptr<IOptionsStorage> IOptionsStoragePtr;
 typedef boost::shared_ptr<const IOptionsStorage> IOptionsStorageConstPtr;
-
-class OptionsStorageError : public OptionError
-{
-public:
-    OptionsStorageError(const std::string &message, const std::string &name) :
-        OptionError(message), m_name(name)
-    {
-    }
-
-    virtual ~OptionsStorageError()
-    {
-    }
-
-    const std::string &getName() const
-    {
-        return m_name;
-    }
-
-private:
-    std::string m_name;
-};
-
-class OptionNotFound : public OptionsStorageError
-{
-public:
-    OptionNotFound(const std::string &message, const std::string &name) :
-        OptionsStorageError(message, name)
-    {
-    }
-
-    virtual ~OptionNotFound()
-    {
-    }
-};

@@ -39,7 +39,7 @@
 
     <redirects>
       <redirect from="/" to="/tor/procs.html" with_status="308" />
-      <redirect from="/favicon.ico" to="/tor/favicon.ico" with_status="308" />
+      <redirect from="/favicon.ico" to="/tor/favicon.ico"/>
     </redirects>
     
     <controller>
@@ -100,6 +100,27 @@
             </scheme>
           </options>
         </process>
+
+        <process name="privoxy">
+          <root>x:\et\privoxy-3.0.26</root>
+          <executable>privoxy.exe</executable>
+          <args></args>
+          <options>
+            <scheme name="cmdline">
+              <option name="config" type="string" list="no" system="yes" required="yes">
+                <format>%VALUE%</format>
+                <default>
+                  <value>%CONFIGFILE%</value>
+                </default>
+              </option>
+            </scheme>
+
+            <scheme name="config">
+            </scheme>
+
+          </options>
+        </process>
+
       </processes>
     </controller>
   </serviceconfig>

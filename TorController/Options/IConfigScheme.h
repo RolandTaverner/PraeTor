@@ -9,6 +9,7 @@
 #include "Options/IFormatter.h"
 #include "Options/ISubstitutor.h"
 #include "Options/Option.h"
+#include "Options/OptionErrors.h"
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {
@@ -58,112 +59,4 @@ struct OptionIsRequiredPred
 struct OptionIsSystemPred
 {
     bool operator()(const OptionDesc &od) const { return od.get<6>(); }
-};
-
-class OptionsSchemeError : public OptionError
-{
-public:
-    OptionsSchemeError(const std::string &message, const std::string &name) :
-        OptionError(message), m_name(name)
-    {
-    }
-
-    virtual ~OptionsSchemeError()
-    {
-    }
-
-    const std::string &getName() const
-    {
-        return m_name;
-    }
-
-private:
-    std::string m_name;
-};
-
-class OptionNotRegistered : public OptionsSchemeError
-{
-public:
-    OptionNotRegistered(const std::string &message, const std::string &name) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~OptionNotRegistered()
-    {
-    }
-};
-
-class OptionAlreadyRegistered : public OptionsSchemeError
-{
-public:
-    OptionAlreadyRegistered(const std::string &message, const std::string &name) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~OptionAlreadyRegistered()
-    {
-    }
-};
-
-class ConstraintCheckFailed : public OptionsSchemeError
-{
-public:
-    ConstraintCheckFailed(const std::string &message, const std::string &name, const OptionConstraints &failedConstraints) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~ConstraintCheckFailed()
-    {
-    }
-
-    const OptionConstraints &failedCOnstraints()
-    {
-        return m_failedConstraints;
-    }
-
-private:
-    OptionConstraints m_failedConstraints;
-};
-
-
-class OptionDefinitionError : public OptionsSchemeError
-{
-public:
-    OptionDefinitionError(const std::string &message, const std::string &name) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~OptionDefinitionError()
-    {
-    }
-};
-
-class OptionHasNoDefaultValue : public OptionsSchemeError
-{
-public:
-    OptionHasNoDefaultValue(const std::string &message, const std::string &name) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~OptionHasNoDefaultValue()
-    {
-    }
-};
-
-class OptionValueHasNoDomain : public OptionsSchemeError
-{
-public:
-    OptionValueHasNoDomain(const std::string &message, const std::string &name) :
-        OptionsSchemeError(message, name)
-    {
-    }
-
-    virtual ~OptionValueHasNoDomain()
-    {
-    }
 };

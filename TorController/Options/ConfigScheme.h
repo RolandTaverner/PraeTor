@@ -102,5 +102,4 @@ private:
 
 };
 
-
 typedef boost::shared_ptr<ConfigScheme> ConfigSchemePtr;

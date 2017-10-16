@@ -114,6 +114,9 @@
     <ClInclude Include="Error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Options\OptionErrors.h">
+      <Filter>Header Files\Options</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -163,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="Error.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Options\OptionErrors.cpp">
+      <Filter>Source Files\Options</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

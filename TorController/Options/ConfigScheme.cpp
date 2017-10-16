@@ -39,7 +39,7 @@ void ConfigScheme::checkOption(const Option &opt)
 
     if (!failedConstraints.empty())
     {
-        throw ConstraintCheckFailed("Constraints check failed.", opt.name(), failedConstraints);
+        throw OptionError(makeErrorCode(OptionErrors::constraintCheckFailed), opt.name());
     }
 }
 
@@ -56,7 +56,7 @@ void ConfigScheme::registerOption(const std::string &name,
 {
     if (m_optionsDesc.find(name) != m_optionsDesc.end())
     {
-        throw OptionAlreadyRegistered("Option already registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::alreadyRegistered), name);
     }
 
     m_optionsDesc[name] = OptionDesc(name, defaultValue, required, constraints, isList, tag, isSystem, domain, format);
@@ -92,7 +92,7 @@ OptionValueContainer ConfigScheme::getDefaultValue(const std::string &name) cons
     const OptionDesc &od = getOptionDesc(name);
     if (!od.get<1>().is_initialized())
     {
-        throw OptionHasNoDefaultValue("Option has no default value.", name);
+        throw OptionError(makeErrorCode(OptionErrors::missingDefaultValue), name);
     }
 
     return od.get<1>().value();
@@ -104,7 +104,7 @@ const OptionDesc &ConfigScheme::getOptionDesc(const std::string &name) const
     OptionsDesc::const_iterator it = m_optionsDesc.find(name);
     if (it == m_optionsDesc.end())
     {
-        throw OptionNotRegistered("Option is not registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notRegistered), name);
     }
 
     return it->second;
@@ -116,7 +116,7 @@ void ConfigScheme::registerOption(const OptionDesc &od)
     const std::string name = od.get<0>();
     if (m_optionsDesc.find(name) != m_optionsDesc.end())
     {
-        throw OptionAlreadyRegistered("Option already registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::alreadyRegistered), name);
     }
 
     m_optionsDesc[name] = od;
@@ -128,12 +128,12 @@ const OptionValueDomain &ConfigScheme::getOptionValueDomain(const std::string &n
     OptionsDesc::const_iterator it = m_optionsDesc.find(name);
     if (it == m_optionsDesc.end())
     {
-        throw OptionNotRegistered("Option is not registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notRegistered), name);
     }
 
     if (it->second.get<5>() != OVT_DOMAIN)
     {
-        throw OptionValueHasNoDomain("Option is not domain value.", name);
+        throw OptionError(makeErrorCode(OptionErrors::missingDomain), name);
     }
 
     return it->second.get<7>();
@@ -247,7 +247,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
         
         if (isRequiredAttr && !optConf.hasAttr("", attrName))
         {
-            throw OptionDefinitionError("Required attribute not found.", "");
+            throw OptionError(makeErrorCode(OptionErrors::missingRequiredAttrInDefinition), attrName);
         }
 
         if (s_optionAttributes[i].values != NULL && s_optionAttributes[i].valuesCount > 0u && optConf.hasAttr("", attrName))
@@ -265,7 +265,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
 
             if (!found)
             {
-                throw OptionDefinitionError("Attribute value not in list.", "");
+                throw OptionError(makeErrorCode(OptionErrors::unknownAttributeValueInDefinition), "\"" + attrName + "\"=\"" +  attrValue + "\"");
             }
         }
     }
@@ -281,7 +281,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
     {
         if (!isList && optConf.getCountOf("default") > 1u)
         {
-            throw OptionDefinitionError("More than one default value specified for single-value option.", name);
+            throw OptionError(makeErrorCode(OptionErrors::assigningListToSingleValue), name);
         }
 
         if (!isList)
@@ -311,7 +311,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
 
         if (domain.empty())
         {
-            throw OptionDefinitionError("Empty domain not allowed.", name);
+            throw OptionError(makeErrorCode(OptionErrors::emptyDomain), name);
         }
     }
     // TODO: constraints and default value check
@@ -326,7 +326,7 @@ std::string ConfigScheme::formatOption(const std::string &name, const OptionValu
     OptionsDesc::const_iterator it = m_optionsDesc.find(name);
     if (it == m_optionsDesc.end())
     {
-        throw OptionNotRegistered("Option is not registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notRegistered), name);
     }
 
     std::ostringstream out;
@@ -370,7 +370,7 @@ void ConfigScheme::setFormatter(const std::string &name, IFormatterPtr formatter
     OptionsDesc::const_iterator it = m_optionsDesc.find(name);
     if (it == m_optionsDesc.end())
     {
-        throw OptionNotRegistered("Option is not registered.", name);
+        throw OptionError(makeErrorCode(OptionErrors::notRegistered), name);
     }
 
     m_formatters[name] = formatterPtr;

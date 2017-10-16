@@ -542,8 +542,26 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ErrorCode &ec)
 {
-    // TODO: impl
-    sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, ec.message());
+    const bool isGzipEnabled = (contextPtr->getRequest()->get_header("Accept-Encoding").find("gzip") != std::string::npos);
+
+    Json::Value error(Json::objectValue);
+    error["error"] = ec.message();
+    error["category"] = ec.category();
+    error["value"] = ec.value();
+
+    const std::string responseBody = Json::FastWriter().write(error);
+
+    // TODO: set proper HTTP status
+    pion::http::response_ptr response = createResponse(pion::http::types::RESPONSE_CODE_SERVER_ERROR,
+        contextPtr->getRequest()->get_method(), 
+        "application/json", 
+        responseBody, 
+        isGzipEnabled);
+
+    response->change_header(pion::http::types::HEADER_CONNECTION,
+        contextPtr->getRequest()->check_keep_alive() ? "Keep-Alive" : "close");
+
+    contextPtr->sendResponse(response);
 }
 
 //-------------------------------------------------------------------------------------------------

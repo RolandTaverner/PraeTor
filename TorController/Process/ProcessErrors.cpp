@@ -23,6 +23,10 @@ namespace Detail
             return "Can't write config file.";
         case static_cast<int>(ProcessErrors::processNotRunning) :
             return "Process is not running.";
+        case static_cast<int>(ProcessErrors::systemOptionEditForbidden) :
+            return "Can't change value of system option.";
+        case static_cast<int>(ProcessErrors::cantEditConfigOfRunningProcess) :
+            return "Can't edit config of running process.";
         }
         return "Process error";
     }

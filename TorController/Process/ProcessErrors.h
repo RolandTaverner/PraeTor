@@ -10,7 +10,9 @@ enum class ProcessErrors
     missingRequiredOption = 4,
     substitutionNotFound = 5,
     configFileWriteError = 6,
-    processNotRunning = 7
+    processNotRunning = 7,
+    systemOptionEditForbidden = 8,
+    cantEditConfigOfRunningProcess = 9
 };
 
 namespace std

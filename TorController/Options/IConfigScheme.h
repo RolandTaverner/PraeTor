@@ -9,7 +9,6 @@
 #include "Options/IFormatter.h"
 #include "Options/ISubstitutor.h"
 #include "Options/Option.h"
-#include "Options/OptionErrors.h"
 
 class IConfigScheme : public AbstractCollection<OptionDesc>
 {

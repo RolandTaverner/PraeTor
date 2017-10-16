@@ -1,10 +1,14 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/assert.hpp>
+#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function/function1.hpp>
 #include <boost/regex.hpp>
+#include <boost/variant/static_visitor.hpp>
 
 #include "Options/ConfigScheme.h"
 #include "Options/DefaultFormatter.h"
+#include "Options/OptionErrors.h"
 
 //-------------------------------------------------------------------------------------------------
 ConfigScheme::ConfigScheme()
@@ -22,10 +26,124 @@ bool ConfigScheme::hasOption(const std::string &name) const
     return m_optionsDesc.find(name) != m_optionsDesc.end();
 }
 
+namespace
+{
+    class OptionValueCheckVisitor
+        : public boost::static_visitor<>
+    {
+    public:
+        explicit OptionValueCheckVisitor(const boost::function1<bool, const OptionSingleValue &> &pred) :
+            m_pred(pred), m_checkPassed(false)
+        {
+        }
+
+        void operator()(const OptionSingleValue &v)
+        {
+            m_checkPassed = m_pred(v);
+        }
+
+        void operator()(const OptionListValue &v)
+        {
+            m_checkPassed = true;
+            for (const OptionSingleValue &s : v)
+            {
+                m_checkPassed = m_checkPassed && m_pred(s);
+            }
+        }
+
+        bool checkPassed() const
+        {
+            return m_checkPassed;
+        }
+
+    private:
+        boost::function1<bool, const OptionSingleValue &> m_pred;
+        bool m_checkPassed;
+    };
+
+
+    bool isNumber(const OptionSingleValue &v)
+    {
+        return true;
+    }
+
+    bool isDomain(const OptionValueDomain &domain, const OptionSingleValue &v)
+    {
+        return domain.find(v) != domain.end();
+    }
+
+    bool isString(const OptionSingleValue &v)
+    {
+        return true;
+    }
+
+    bool check(const OptionValueContainer &value, boost::function1<bool, const OptionSingleValue &> &pred)
+    {
+        OptionValueCheckVisitor checkVisitor(pred);
+        boost::apply_visitor(checkVisitor, value);
+        return checkVisitor.checkPassed();
+    }
+
+} // namespace
+
 //-------------------------------------------------------------------------------------------------
 void ConfigScheme::checkOption(const Option &opt)
 {
     const OptionDesc &desc = getOptionDesc(opt.name());
+
+    // Check required
+    if (desc.get<2>() && !opt.hasValue())
+    {
+        throw OptionError(makeErrorCode(OptionErrors::missingValue), opt.name());
+    }
+
+    if (opt.hasValue())
+    {
+        // Check list/single
+        if (desc.get<4>() && opt.value().get().which() == 0) // isList and SingleValue
+        {
+            throw OptionError(makeErrorCode(OptionErrors::assigningSingleToListValue), opt.name());
+        }
+        if (!desc.get<4>() && opt.value().get().which() == 1) // !isList and ListValue
+        {
+            throw OptionError(makeErrorCode(OptionErrors::assigningListToSingleValue), opt.name());
+        }
+
+        // TODO: check type
+        switch (desc.get<5>())
+        {
+            case OVT_NUMBER:
+            {
+                boost::function1<bool, const OptionSingleValue &> pred = &isNumber;
+                if (!check(opt.value().get(), pred))
+                {
+                    throw OptionError(makeErrorCode(OptionErrors::typeCheckFailed), opt.name() + " type is number");
+                }
+            };
+            break;
+            case OVT_STRING:
+            {
+                boost::function1<bool, const OptionSingleValue &> pred = &isString;
+                if (!check(opt.value().get(), pred))
+                {
+                    throw OptionError(makeErrorCode(OptionErrors::typeCheckFailed), opt.name() + " type is string");
+                }
+            };
+            break;
+            case OVT_DOMAIN:
+            {
+                boost::function1<bool, const OptionSingleValue &> pred = boost::bind(&isDomain, desc.get<7>(), _1);
+                if (!check(opt.value().get(), pred))
+                {
+                    throw OptionError(makeErrorCode(OptionErrors::typeCheckFailed), opt.name() + " type is domain");
+                }
+            };
+            break;
+            default:
+                BOOST_ASSERT(false);
+        }
+    }
+
     const OptionConstraints constraints = desc.get<3>();
     OptionConstraints failedConstraints;
 

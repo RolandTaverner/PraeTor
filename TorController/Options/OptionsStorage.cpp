@@ -1,5 +1,6 @@
 #include <boost/assert.hpp>
 
+#include "Options/OptionErrors.h"
 #include "Options/OptionsStorage.h"
 
 //-------------------------------------------------------------------------------------------------

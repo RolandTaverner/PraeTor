@@ -9,7 +9,6 @@
 #include "Options/IConfigScheme.h"
 #include "Options/ISubstitutor.h"
 #include "Options/Option.h"
-#include "Options/OptionErrors.h"
 
 class IOptionsStorage : public AbstractCollection<Option>
 {

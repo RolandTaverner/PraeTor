@@ -14,8 +14,11 @@ enum class OptionErrors
     notFoundInStorage = 8,
     emptyDomain = 9,
     assigningListToSingleValue = 10,
-    missingRequiredAttrInDefinition = 11,
-    unknownAttributeValueInDefinition = 12
+    assigningSingleToListValue = 11,
+    missingRequiredAttrInDefinition = 12,
+    unknownAttributeValueInDefinition = 13,
+    missingValue = 14,
+    typeCheckFailed = 15
 };
 
 namespace std

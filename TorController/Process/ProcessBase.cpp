@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include <boost/algorithm/string/compare.hpp>
 #include <boost/assert.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -317,7 +318,7 @@ void ProcessBase::getConfigurationOptions(const std::string &configName, std::li
     if (!m_configuration.hasStorage(configName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
-                           "Cant't find storage " + configName + " in process " + name());
+            name() + "." + configName);
     }
 
     IOptionsStorageConstPtr storagePtr = m_configuration.getStorage(configName);
@@ -334,7 +335,7 @@ OptionDesc ProcessBase::getOptionDesc(const std::string &configName, const std::
     if (!m_configuration.hasStorage(configName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
-                           "Cant't find storage " + configName + " in process " + name());
+            name() + "." + configName);
     }
 
     IOptionsStorageConstPtr storagePtr = m_configuration.getStorage(configName);
@@ -342,7 +343,7 @@ OptionDesc ProcessBase::getOptionDesc(const std::string &configName, const std::
     if (!storagePtr->getScheme()->hasOption(optionName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
-                           "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
+            name() + "." + configName + "." + optionName);
     }
 
     return storagePtr->getScheme()->getOptionDesc(optionName);
@@ -355,7 +356,7 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
     if (!m_configuration.hasStorage(configName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
-            "Cant't find storage " + configName + " in process " + name());
+            name() + "." + configName);
     }
 
     IOptionsStorageConstPtr storagePtr = m_configuration.getStorage(configName);
@@ -364,7 +365,7 @@ OptionDescValue ProcessBase::getOptionValue(const std::string &configName, const
     if (!schemePtr->hasOption(optionName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
-            "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
+            name() + "." + configName + "." + optionName);
     }
 
     const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
@@ -455,7 +456,14 @@ OptionDescValue ProcessBase::setOptionValue(const std::string &configName,
     if (!m_configuration.hasStorage(configName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
-            "Cant't find storage " + configName + " in process " + name());
+            name() + "." + configName);
+    }
+
+    if (getState() != ProcessState::Stopped &&
+        (configName == s_configFileSection || configName == s_cmdLineSection))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::cantEditConfigOfRunningProcess),
+            name() + "." + configName);
     }
 
     IOptionsStoragePtr storagePtr = m_configuration.getStorage(configName);
@@ -464,7 +472,13 @@ OptionDescValue ProcessBase::setOptionValue(const std::string &configName,
     if (!schemePtr->hasOption(optionName))
     {
         throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
-            "Cant't find option " + optionName + " in storage " + configName + " in process " + name());
+            name() + "." + configName + "." + optionName);
+    }
+
+    if (schemePtr->isSystem(optionName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::systemOptionEditForbidden),
+            name() + "." + configName + "." + optionName);
     }
 
     storagePtr->setValue(optionName, optionValue);

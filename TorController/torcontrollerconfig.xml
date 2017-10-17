@@ -18,7 +18,7 @@
           <level>
               <all>
                   <file>
-                      <name>x:\log.txt</name>
+                      <name>x:\torcontroller.log</name>
                   </file>
               </all>
           </level>
@@ -43,15 +43,19 @@
     </redirects>
     
     <controller>
+      <installroot>C:\Users\Alexander\AppData\Local\Easy Tor</installroot>
+      <dataroot>C:\Users\Alexander\AppData\Local\Easy Tor\Data</dataroot>
+
       <processes>
         <process name="tor">
-          <root>x:\et\tor-win32-0.3.1.7</root>
-          <executable>Tor\tor.exe</executable>
+          <root>C:\Users\Alexander\AppData\Local\Easy Tor\Tor</root>
+          <data>C:\Users\Alexander\AppData\Local\Easy Tor\Data\Tor</data>
+          <executable>Tor\tor.exe</executable> <!-- relative to root -->
           <args>--quiet</args>
           <options>
             <scheme name="cmdline">
               <option name="torrc" type="string" list="no" system="yes" required="yes">
-                <format>-f %VALUE%</format>
+                <format>-f "%VALUE%"</format>
                 <default>
                   <value>%CONFIGFILE%</value>
                 </default>
@@ -73,14 +77,14 @@
               <option name="DataDirectory" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
                 <default>
-                  <value>%ROOTPATH%\Data\Tor</value>
+                  <value>%DATAROOTPATH%</value>
                 </default>
               </option>
 
               <option name="Log" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
                 <default>
-                  <value>notice file x:\et\notices.log</value>
+                  <value>notice file %LOGFILE%</value>
                 </default>
               </option>
 
@@ -94,16 +98,55 @@
                   </domain>
                 </type>
                 <default>
-                    <value>0</value>
+                    <value>1</value>
                 </default>
               </option>                        
+
+              <option name="GeoIPFile" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%ROOTPATH%\Data\Tor\geoip</value>
+                </default>
+              </option>
+
+              <option name="GeoIPv6File" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%ROOTPATH%\Data\Tor\geoip6</value>
+                </default>
+              </option>
+
+              <option name="ExitPolicy" type="string" list="yes" system="no" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>reject *:*</value>
+                </default>
+              </option>
+
+              <option name="ExcludeExitNodes" type="domainvalue" list="yes" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>{ua}</value>
+                    <value>{ru}</value>
+                    <value>{jp}</value>
+                    <value>{us}</value>
+                  </domain>
+                </type>
+                <default>
+                  <value>{ua}</value>
+                  <value>{ru}</value>
+                </default>
+              </option>
+              
             </scheme>
           </options>
         </process>
 
         <process name="privoxy">
-          <root>x:\et\privoxy-3.0.26</root>
-          <executable>privoxy.exe</executable>
+          <root>C:\Users\Alexander\AppData\Local\Easy Tor\Privoxy</root>
+          <data>C:\Users\Alexander\AppData\Local\Easy Tor\Data\Privoxy</data>
+          <executable>privoxy.exe</executable> <!-- relative to root -->
           <args></args>
           <options>
             <scheme name="cmdline">

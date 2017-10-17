@@ -31,9 +31,9 @@ class child;
 typedef boost::shared_ptr<boost::process::child> ChildProcessPtr;
 
 class ProcessBase : 
-	public IProcess, public ISubstitutor,
-	public boost::enable_shared_from_this<ProcessBase>,
-	private boost::noncopyable
+    public IProcess, public ISubstitutor,
+    public boost::enable_shared_from_this<ProcessBase>,
+    private boost::noncopyable
 {
 public:
     ProcessBase(const Tools::Configuration::ConfigurationView &conf, pion::scheduler &scheduler);
@@ -46,6 +46,8 @@ public:
 
     const boost::filesystem::path &rootPath() const override;
 
+    const boost::filesystem::path &dataRootPath() const override;
+
     const ProcessConfiguration &getConfiguration() const override;
 
     void start(const StartProcessHandler &handler) override;
@@ -55,10 +57,10 @@ public:
     std::string cmdLineConfigName() const override;
 
     std::string fileConfigName() const override;
-	
+    
     bool isRunning() const override;
 
-	bool hasConfigFile() const override;
+    bool hasConfigFile() const override;
 
     void getConfigurations(std::list<std::string> &configs) const override;
 
@@ -81,7 +83,7 @@ public:
     
     std::string substituteValue(const std::string &value) const override;
 
-	static const char *s_configFileSection;
+    static const char *s_configFileSection;
     static const char *s_cmdLineSection;
 
 protected:
@@ -89,41 +91,45 @@ protected:
     virtual void onProcessExit(int exitCode, const std::error_code &ec);
 
 private:
-    
-	bool isRunningInternal() const;
+
+    bool isRunningInternal() const;
     void setState(ProcessState newState);
 
-	boost::filesystem::path createConfigFile();
+    boost::filesystem::path createConfigFile();
 
-		
     pion::scheduler &m_scheduler;
     std::string m_name;
     std::string m_executable;
     std::string m_cmdLineFixedArgs;
     boost::filesystem::path m_rootPath;
+    boost::filesystem::path m_dataRootPath;
     ProcessConfiguration m_configuration;
     volatile ProcessState m_state;
 
     typedef boost::function0<std::string> SubsituteHandler;
     typedef std::map<std::string, SubsituteHandler> SubstituteHandlers;
     SubstituteHandlers m_substituteHandlers;
+
     static std::string substitutePID();
     std::string substituteRootPath() const;
+    std::string substituteDataRootPath() const;
     std::string substituteConfigFilePath() const;
+    std::string substituteLogFilePath() const;
 
     boost::filesystem::path m_configFilePath;
-	ChildProcessPtr m_childPtr;
+    boost::filesystem::path m_logFilePath;
+    ChildProcessPtr m_childPtr;
     StopProcessHandler m_stopHandler;
 
     int m_exitCode;
     std::error_code m_exitErrorCode;
     bool m_unexpectedExit;
 
-	typedef boost::shared_mutex MutexType;
-	typedef boost::shared_lock_guard<MutexType> SharedLockType;
-	typedef boost::lock_guard<MutexType> UniqueLockType;
-	
-	mutable MutexType m_access;
+    typedef boost::shared_mutex MutexType;
+    typedef boost::shared_lock_guard<MutexType> SharedLockType;
+    typedef boost::lock_guard<MutexType> UniqueLockType;
+
+    mutable MutexType m_access;
 };
 
 typedef boost::shared_ptr<ProcessBase> ProcessBasePtr;

@@ -2,7 +2,6 @@
 
 #include <map>
 #include <string>
-#include <ostream>
 
 #include <json/value.h>
 
@@ -114,6 +113,9 @@ private:
     Tools::Configuration::ConfigurationView m_config;
     typedef std::map<std::string, ProcessBasePtr> Processes;
     Processes m_processes;
+
+    std::string m_installRoot;
+    std::string m_dataRoot;
 
 	typedef boost::shared_mutex MutexType;
 	typedef boost::shared_lock_guard<MutexType> SharedLockType;

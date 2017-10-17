@@ -47,6 +47,8 @@ public:
     virtual const std::string &executable() const = 0;
 
     virtual const boost::filesystem::path &rootPath() const = 0;
+    
+    virtual const boost::filesystem::path &dataRootPath() const = 0;
 
     virtual const ProcessConfiguration &getConfiguration() const = 0;
 

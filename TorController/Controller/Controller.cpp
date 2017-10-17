@@ -21,6 +21,8 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
         m_processes[processPtr->name()] = processPtr;
     }
 
+    m_installRoot = getConf().get("installroot");
+    m_dataRoot = getConf().get("dataroot");
 }
 
 //-------------------------------------------------------------------------------------------------

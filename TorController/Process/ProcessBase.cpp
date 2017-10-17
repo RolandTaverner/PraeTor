@@ -36,6 +36,8 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
     m_name = conf.getAttr("", "name");
     m_executable = conf.get("executable");
     m_rootPath = conf.get("root");
+    m_dataRootPath = conf.get("data");
+
     m_cmdLineFixedArgs = conf.get("args", std::string());
 
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &schemeConf, conf.getRangeOf("options.scheme"))
@@ -48,7 +50,9 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
 
     m_substituteHandlers["PID"] = &ProcessBase::substitutePID;
     m_substituteHandlers["ROOTPATH"] = boost::bind(&ProcessBase::substituteRootPath, this);
+    m_substituteHandlers["DATAROOTPATH"] = boost::bind(&ProcessBase::substituteDataRootPath, this);
     m_substituteHandlers["CONFIGFILE"] = boost::bind(&ProcessBase::substituteConfigFilePath, this);
+    m_substituteHandlers["LOGFILE"] = boost::bind(&ProcessBase::substituteLogFilePath, this);
 
     m_scheduler.add_active_user();
 }
@@ -75,6 +79,12 @@ const std::string &ProcessBase::executable() const
 const boost::filesystem::path &ProcessBase::rootPath() const
 {
     return m_rootPath;
+}
+
+//-------------------------------------------------------------------------------------------------
+const boost::filesystem::path &ProcessBase::dataRootPath() const
+{
+    return m_dataRootPath;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -137,18 +147,26 @@ private:
 //-------------------------------------------------------------------------------------------------
 void ProcessBase::start(const StartProcessHandler &handler)
 {
-	UniqueLockType lock(m_access);
+    UniqueLockType lock(m_access);
 
-	if (isRunningInternal()) {
-		throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
-	}
+    if (isRunningInternal())
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
+    }
 
-	if (hasConfigFile())
-	{
+    // Set it before createConfigFile()!
+    m_logFilePath = dataRootPath() / boost::filesystem::unique_path(name() + "-%%%%-%%%%-%%%%-%%%%.log");
+
+    if (hasConfigFile())
+    {
         createConfigFile();
-	}
+    }
 
-    const std::string exePath = (rootPath() / executable()).string();
+    std::string exePath = (rootPath() / executable()).string();
+    if (exePath.find(' ') != std::string::npos)
+    {
+        exePath = "\"" + exePath + "\"";
+    }
 
     std::vector<std::string> args;
 
@@ -156,7 +174,7 @@ void ProcessBase::start(const StartProcessHandler &handler)
     {
         args.push_back(m_cmdLineFixedArgs);
     }
-	
+    
     if (m_configuration.hasStorage(s_cmdLineSection))
     {
         IOptionsStoragePtr configPtr = m_configuration.getStorage(s_cmdLineSection);
@@ -172,26 +190,27 @@ void ProcessBase::start(const StartProcessHandler &handler)
         }
 
         BOOST_FOREACH(const Option &o, configPtr->getRange())
-        {const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
+        {
+            const std::string formattedString = configPtr->formatOption(o.name(), shared_from_this());
             args.push_back(formattedString);
         }
 
     }
-    std::string commandArgs = exePath;
+    std::string command = exePath;
     for (const std::string &i : args)
     {
-        commandArgs += " " + i;
+        command += " " + i;
     }
 
-    Tools::Logger::Logger::getInstance().info("Starting process " + commandArgs);
+    Tools::Logger::Logger::getInstance().info("Starting process " + command);
     
     setState(ProcessState::Starting);
     m_exitCode = 0;
     m_exitErrorCode = std::error_code();
     m_unexpectedExit = false;
 
-    m_childPtr.reset(new bp::child(bp::exe = exePath,
-        bp::args = args, m_scheduler.get_io_service(),
+    m_childPtr.reset(new bp::child(bp::cmd = command,
+        m_scheduler.get_io_service(),
         AsyncProcessHandler(boost::bind<>(&ProcessBase::onProcessExit, shared_from_this(), _1, _2),
             boost::bind<>(&ProcessBase::onProcessStart, shared_from_this(), handler, std::error_code()),
             boost::bind<>(&ProcessBase::onProcessStart, shared_from_this(), handler, _1))
@@ -249,21 +268,21 @@ std::string ProcessBase::fileConfigName() const
 //-------------------------------------------------------------------------------------------------
 bool ProcessBase::isRunning() const
 {
-	SharedLockType lock(m_access);
+    SharedLockType lock(m_access);
 
-	return isRunningInternal();
+    return isRunningInternal();
 }
 
 //-------------------------------------------------------------------------------------------------
 bool ProcessBase::isRunningInternal() const
 {
-	return m_childPtr && m_childPtr->running();
+    return m_childPtr && m_childPtr->running();
 }
 
 //-------------------------------------------------------------------------------------------------
 bool ProcessBase::hasConfigFile() const
 {
-	return m_configuration.hasStorage(s_configFileSection);
+    return m_configuration.hasStorage(s_configFileSection);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -283,7 +302,7 @@ boost::filesystem::path ProcessBase::createConfigFile()
         }
     }
 
-    const boost::filesystem::path outFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
+    const boost::filesystem::path outFilePath = dataRootPath() / boost::filesystem::unique_path(name() + "-%%%%-%%%%-%%%%-%%%%.config");
 
     std::ofstream outFile(outFilePath.c_str(), std::ios_base::out | std::ios_base::trunc);
 
@@ -411,9 +430,21 @@ std::string ProcessBase::substituteRootPath() const
 }
 
 //-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substituteDataRootPath() const
+{
+    return dataRootPath().string();
+}
+
+//-------------------------------------------------------------------------------------------------
 std::string ProcessBase::substituteConfigFilePath() const
 {
     return m_configFilePath.string();
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ProcessBase::substituteLogFilePath() const
+{
+    return m_logFilePath.string();
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -1,18 +1,17 @@
 Unicode true
 
-!define /ifndef PRODUCT "EasyTor"
+!define /ifndef PRODUCT "Easy Tor"
 
 !define /ifndef VER_MAJOR 0
 !define /ifndef VER_MINOR 1
-
-!ifdef VER_MAJOR & VER_MINOR
-  !define /ifndef VER_REVISION 0
-  !define /ifndef VER_BUILD 0
-!endif
+!define /ifndef VER_REVISION 0
+!define /ifndef VER_BUILD 0
 
 !define /ifndef VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
 
 !define /ifndef OUTFILE "out\${PRODUCT}-${VERSION}-setup.exe"
+
+!define DATA_ROOT "$LOCALAPPDATA\${PRODUCT}\Data"
 
 Name "${PRODUCT}"
 Caption "${PRODUCT} ${VERSION} Setup"
@@ -28,8 +27,13 @@ RequestExecutionLevel user
 ShowInstDetails show
 SetOverwrite off
 
-
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+
+;--------------------------------
+;Header Files
+
+!include StrRep.nsh
+!include ReplaceInFile.nsh
 
 ;--------------------------------
 ;Version Information
@@ -54,18 +58,41 @@ UninstPage instfiles
 
 ;--------------------------------
 ; The stuff to install
+
 Section "Install files"
 
   SectionIn RO
   
   ; Set output path to the installation directory.
-  SetOutPath $INSTDIR
-  
-  ; Put file there
+  SetOutPath "$INSTDIR"
   File "..\Release\TorController.exe"
+
+  ; Tor files
+  SetOutPath "$INSTDIR\Tor"
+  File /r "EtApps\tor-win32-0.3.1.7\*.*"
+
+  ; Privoxy files
+  SetOutPath "$INSTDIR\Privoxy"
+  File /r "EtApps\privoxy-3.0.26\*.*"
+  
+  CreateDirectory "${DATA_ROOT}\Tor"
+  CreateDirectory "${DATA_ROOT}\Privoxy"
+
+  ; Config template
+  SetOutPath "${DATA_ROOT}"
+  File /oname=torcontroller.xml "..\TorController\torcontroller.xml.template"
+
+  ; Replace %_DATA_ROOT_%
+  !insertmacro _ReplaceInFile "${DATA_ROOT}\torcontroller.xml" "%_DATA_ROOT_%" "${DATA_ROOT}"
+  Delete "${DATA_ROOT}\torcontroller.xml.old"
+
+  ; Replace %_INSTALL_ROOT_%
+  !insertmacro _ReplaceInFile "${DATA_ROOT}\torcontroller.xml" "%_INSTALL_ROOT_%" "$INSTDIR"
+  Delete "${DATA_ROOT}\torcontroller.xml.old"
   
   ; Write the installation path into the registry
   WriteRegStr HKCU "SOFTWARE\${PRODUCT}" "Install_Dir" "$INSTDIR"
+  WriteRegStr HKCU "SOFTWARE\${PRODUCT}" "Data_Dir" "${DATA_ROOT}"
   
   ; Write the uninstall keys for Windows
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "DisplayName" "${PRODUCT}"
@@ -77,17 +104,16 @@ Section "Install files"
 SectionEnd
 
 ; Optional section (can be disabled by the user)
-/*
+
 Section "Start Menu Shortcuts"
 
-  CreateDirectory "$SMPROGRAMS\Example2"
-  CreateShortcut "$SMPROGRAMS\Example2\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortcut "$SMPROGRAMS\Example2\Example2 (MakeNSISW).lnk" "$INSTDIR\example2.nsi" "" "$INSTDIR\example2.nsi" 0
+  CreateDirectory "$SMPROGRAMS\${PRODUCT}"
+  CreateShortcut "$SMPROGRAMS\${PRODUCT}\Uninstall ${PRODUCT}.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortcut "$SMPROGRAMS\${PRODUCT}\Start ${PRODUCT}.lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
   
 SectionEnd
-*/
-;--------------------------------
 
+;--------------------------------
 ; Uninstaller
 
 Section "Uninstall"
@@ -97,8 +123,12 @@ Section "Uninstall"
   DeleteRegKey HKCU "SOFTWARE\${PRODUCT}"
 
   ; Remove files and uninstaller
-  Delete $INSTDIR\TorController.exe
-  Delete $INSTDIR\uninstall.exe
+  Delete "$INSTDIR\TorController.exe"
+  Delete "$INSTDIR\uninstall.exe"
+  RMDir /r "$INSTDIR\Tor"
+  RMDir /r "$INSTDIR\Privoxy"
+  Delete "${DATA_ROOT}\torcontroller.xml"
+  RMDir /r "${DATA_ROOT}"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\${PRODUCT}\*.*"

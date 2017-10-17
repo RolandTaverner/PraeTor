@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <run>
+      <daemon>0</daemon>
+
+      <httpserver>
+          <host>127.0.0.1</host>
+          <port>30000</port>
+          <timeout>10</timeout>
+          <connectionlimit>300</connectionlimit>
+          <httpthreads>2</httpthreads>
+          <workerthreads>4</workerthreads>
+          <statservicename>torcontroller</statservicename>
+          <statservice>stat</statservice>
+      </httpserver>
+
+      <logger>
+          <level>
+              <all>
+                  <file>
+                      <name>%_DATA_ROOT_%\torcontroller.log</name>
+                  </file>
+              </all>
+          </level>
+      </logger>
+  </run>
+
+  <debug>true</debug>
+
+  <serviceconfig>
+    <plugins>
+      <plugin name="fileservice">
+        <resource>/tor</resource>
+        <options>
+          <directory>x:\EasyTorExtension</directory>
+        </options>
+      </plugin>
+    </plugins>
+
+    <redirects>
+      <redirect from="/" to="/tor/procs.html" with_status="308" />
+      <redirect from="/favicon.ico" to="/tor/favicon.ico"/>
+    </redirects>
+    
+    <controller>
+      <installroot>%_INSTALL_ROOT_%</installroot>
+      <dataroot>%_DATA_ROOT_%</dataroot>
+
+      <processes>
+        <process name="tor">
+          <root>%_INSTALL_ROOT_%\Tor</root>
+          <data>%_DATA_ROOT_%\Tor</data>
+          <executable>Tor\tor.exe</executable> <!-- relative to root -->
+          <args>--quiet</args>
+          <options>
+            <scheme name="cmdline">
+              <option name="torrc" type="string" list="no" system="yes" required="yes">
+                <format>-f "%VALUE%"</format>
+                <default>
+                  <value>%CONFIGFILE%</value>
+                </default>
+              </option>
+
+              <option name="OwningControllerProcess" type="string" list="no" system="yes" required="yes">
+                <format>--__%NAME% %VALUE%</format>
+                <default>
+                  <value>%PID%</value>
+                </default>
+              </option>
+            </scheme>
+
+            <scheme name="config">
+              <option name="HashedControlPassword" type="string" list="no" system="yes"> <!-- required="yes" -->
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DataDirectory" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%DATAROOTPATH%</value>
+                </default>
+              </option>
+
+              <option name="Log" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>notice file %LOGFILE%</value>
+                </default>
+              </option>
+
+              <option name="SafeLogging" type="domainvalue" list="no">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                    <value>relay</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>1</value>
+                </default>
+              </option>                        
+
+              <option name="GeoIPFile" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%ROOTPATH%\Data\Tor\geoip</value>
+                </default>
+              </option>
+
+              <option name="GeoIPv6File" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%ROOTPATH%\Data\Tor\geoip6</value>
+                </default>
+              </option>
+
+              <option name="ExitPolicy" type="string" list="yes" system="no" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>reject *:*</value>
+                </default>
+              </option>
+
+              <option name="ExcludeExitNodes" type="domainvalue" list="yes" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>{ua}</value>
+                    <value>{ru}</value>
+                    <value>{jp}</value>
+                    <value>{us}</value>
+                  </domain>
+                </type>
+                <default>
+                  <value>{ua}</value>
+                  <value>{ru}</value>
+                </default>
+              </option>
+
+            </scheme>
+          </options>
+        </process>
+
+        <process name="privoxy">
+          <root>%_INSTALL_ROOT_%\Privoxy</root>
+          <data>%_DATA_ROOT_%\Privoxy</data>
+          <executable>privoxy.exe</executable> <!-- relative to root -->
+          <args></args>
+          <options>
+            <scheme name="cmdline">
+              <option name="config" type="string" list="no" system="yes" required="yes">
+                <format>%VALUE%</format>
+                <default>
+                  <value>%CONFIGFILE%</value>
+                </default>
+              </option>
+            </scheme>
+
+            <scheme name="config">
+            </scheme>
+
+          </options>
+        </process>
+
+      </processes>
+    </controller>
+  </serviceconfig>
+
+</document>

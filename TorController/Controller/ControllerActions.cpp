@@ -295,3 +295,54 @@ Json::Value ProcessOptionResult::toJson() const
     }
     return root;
 }
+
+//==============================================================================================================================================
+PresetGroupsResult::PresetGroupsResult() {}
+
+PresetGroupsResult::PresetGroupsResult(const ErrorCode &ec) :
+    ActionResult(ec)
+{
+}
+
+PresetGroupsResult::~PresetGroupsResult() {}
+
+Json::Value PresetGroupsResult::toJson() const
+{
+    Json::Value root;
+
+    return root;
+}
+
+//==============================================================================================================================================
+ApplyPresetGroupResult::ApplyPresetGroupResult() {}
+
+ApplyPresetGroupResult::ApplyPresetGroupResult(const ErrorCode &ec) :
+    ActionResult(ec)
+{
+}
+
+ApplyPresetGroupResult::~ApplyPresetGroupResult() {}
+
+Json::Value ApplyPresetGroupResult::toJson() const
+{
+    Json::Value root;
+
+    return root;
+}
+
+//==============================================================================================================================================
+PresetsResult::PresetsResult() {}
+
+PresetsResult::PresetsResult(const ErrorCode &ec) :
+    ActionResult(ec)
+{
+}
+
+PresetsResult::~PresetsResult() {}
+
+Json::Value PresetsResult::toJson() const
+{
+    Json::Value root;
+
+    return root;
+}

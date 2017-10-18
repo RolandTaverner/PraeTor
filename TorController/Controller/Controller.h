@@ -29,6 +29,9 @@ public:
     virtual ~Controller();
 
     void getControllerInfo(const ControllerInfoResult::Handler &handler);
+    void getPresetGroups(const PresetGroupsResult::Handler &handler);
+    void applyPresetGroup(const std::string &name, const ApplyPresetGroupResult::Handler &handler);
+    void getPresets(const std::string &name, const PresetsResult::Handler &handler);
     void getProcesses(const GetProcessesResult::Handler &handler);
     void getProcessInfo(const std::string &name, const GetProcessInfoResult::Handler &handler);
     void getProcessConfigs(const std::string &name, const GetProcessConfigsResult::Handler &handler);
@@ -49,6 +52,9 @@ public:
 
 private:
     void getControllerInfoImpl(const ControllerInfoResult::Handler &handler);
+    void getPresetGroupsImpl(const PresetGroupsResult::Handler &handler);
+    void applyPresetGroupImpl(const std::string &name, const ApplyPresetGroupResult::Handler &handler);
+    void getPresetsImpl(const std::string &name, const PresetsResult::Handler &handler);
     void getProcessesImpl(const GetProcessesResult::Handler &handler);
     void getProcessInfoImpl(const std::string &name, const GetProcessInfoResult::Handler &handler);
     void getProcessConfigsImpl(const std::string &name, const GetProcessConfigsResult::Handler &handler);
@@ -67,13 +73,13 @@ private:
     void stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler);
 
 private:
-	pion::single_service_scheduler m_scheduler;
+    pion::single_service_scheduler m_scheduler;
 
-	template<typename ActionHandler, typename ActionResult>
-	void scheduleActionHandler(const ActionHandler &handler, const ActionResult &result)
-	{
-		m_scheduler.post(boost::bind(handler, result));
-	}
+    template<typename ActionHandler, typename ActionResult>
+    void scheduleActionHandler(const ActionHandler &handler, const ActionResult &result)
+    {
+        m_scheduler.post(boost::bind(handler, result));
+    }
 
     void startProcessHandler(const StartProcessResult::Handler &handler, const ErrorCode &ec);
     void stopProcessHandler(const StopProcessResult::Handler &handler, const ErrorCode &ec, const ExitStatus &es);
@@ -108,7 +114,7 @@ private:
             scheduleActionHandler<>(handler, ActionResultType(errorCode));
         }
     }
-	
+    
         
     Tools::Configuration::ConfigurationView m_config;
     typedef std::map<std::string, ProcessBasePtr> Processes;
@@ -117,13 +123,13 @@ private:
     std::string m_installRoot;
     std::string m_dataRoot;
 
-	typedef boost::shared_mutex MutexType;
-	typedef boost::shared_lock_guard<MutexType> SharedLockType;
-	typedef boost::lock_guard<MutexType> UniqueLockType;
+    typedef boost::shared_mutex MutexType;
+    typedef boost::shared_lock_guard<MutexType> SharedLockType;
+    typedef boost::lock_guard<MutexType> UniqueLockType;
 
     Tools::Logger::Logger &m_logger;
 
-	mutable MutexType m_access;
+    mutable MutexType m_access;
 };
 
 typedef boost::shared_ptr<Controller> ControllerPtr;

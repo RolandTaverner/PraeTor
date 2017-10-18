@@ -11,9 +11,9 @@ namespace bp = boost::process;
 Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
     m_config(config), m_logger(Tools::Logger::Logger::getInstance())
 {
-	// TODO: read config
-	m_scheduler.set_num_threads(4);
-	m_scheduler.add_active_user();
+    // TODO: read config
+    m_scheduler.set_num_threads(4);
+    m_scheduler.add_active_user();
 
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &processConf, config.getRangeOf("processes.process"))
     {
@@ -28,9 +28,9 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
 //-------------------------------------------------------------------------------------------------
 Controller::~Controller()
 {
-	m_scheduler.remove_active_user();
-	m_scheduler.shutdown();
-	m_scheduler.join();
+    m_scheduler.remove_active_user();
+    m_scheduler.shutdown();
+    m_scheduler.join();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -273,5 +273,44 @@ void Controller::setProcessOption(const std::string &processName,
 {
     safeActionCall<ProcessOptionResult>(
         boost::bind(&Controller::setProcessOptionImpl, this, processName, configName, optionName, optionValue, handler),
+        handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getPresetGroupsImpl(const PresetGroupsResult::Handler &handler)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getPresetGroups(const PresetGroupsResult::Handler &handler)
+{
+    safeActionCall<PresetGroupsResult>(
+        boost::bind(&Controller::getPresetGroupsImpl, this, handler),
+        handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::applyPresetGroupImpl(const std::string &name, const ApplyPresetGroupResult::Handler &handler)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::applyPresetGroup(const std::string &name, const ApplyPresetGroupResult::Handler &handler)
+{
+    safeActionCall<ApplyPresetGroupResult>(
+        boost::bind(&Controller::applyPresetGroupImpl, this, name, handler),
+        handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getPresetsImpl(const std::string &name, const PresetsResult::Handler &handler)
+{
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getPresets(const std::string &name, const PresetsResult::Handler &handler)
+{
+    safeActionCall<PresetsResult>(
+        boost::bind(&Controller::getPresetsImpl, this, name, handler),
         handler);
 }

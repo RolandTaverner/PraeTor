@@ -8,6 +8,17 @@
       "next" :
       [
         {
+          "node" : "presets",
+          "action":  "Presets",
+          "next" :
+          [
+            {
+              "node" : "$preset_name",
+              "action":  "GetPresetsGroup"
+            }
+          ]
+        },
+        {
           "node" : "processes",
           "action":  "Processes",
           "next" :

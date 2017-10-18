@@ -28,6 +28,17 @@ static const char *s_resourceScheme =
 "      \"next\" :"
 "      ["
 "        {"
+"          \"node\" : \"presets\","
+"          \"action\":  \"Presets\","
+"          \"next\" :"
+"          ["
+"            {"
+"              \"node\" : \"$preset_name\","
+"              \"action\":  \"GetPresetsGroup\""
+"            }"
+"          ]"
+"        },"
+"        {"
 "          \"node\" : \"processes\","
 "          \"action\":  \"Processes\","
 "          \"next\" :"
@@ -79,6 +90,8 @@ ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_controller(controller), m_parser(s_resourceScheme)
 {
     m_handlers["ControllerInfo"] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, _2);
+    m_handlers["Presets"] = boost::bind(&ControllerAPIWebService::presetsAction, this, _1, _2);
+    m_handlers["GetPresetsGroup"] = boost::bind(&ControllerAPIWebService::getPresetsGroupAction, this, _1, _2);
     m_handlers["Processes"] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, _2);
     m_handlers["ProcessInfo"] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, _2);
     m_handlers["ProcessConfigs"] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, _2);
@@ -307,6 +320,12 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
     try
     {
         m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
@@ -320,6 +339,12 @@ void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionC
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
     try
     {
         m_controller->getProcesses(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
@@ -333,6 +358,12 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
     const ResourceParameters::const_iterator i = parameters.find("process_id");
     if (i == parameters.end())
     {
@@ -353,6 +384,12 @@ void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionCont
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
     const ResourceParameters::const_iterator i = parameters.find("process_id");
     if (i == parameters.end())
     {
@@ -373,6 +410,12 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
 {
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
     const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
     const ResourceParameters::const_iterator itConfigName = parameters.find("config_name");
     if (itProcessId == parameters.end() || itConfigName == parameters.end())
@@ -574,4 +617,75 @@ void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::Connectio
     }
 
     sendResponse(contextPtr, result.toJson().toStyledString());
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::presetsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_GET)
+    {
+        try
+        {
+            m_controller->getPresetGroups(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        }
+        catch (const std::exception &e)
+        {
+            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+        }
+    }
+    else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_POST)
+    {
+        try
+        {
+            Json::Value v;
+            if (!Json::Reader().parse(contextPtr->getRequest()->get_content(), v, false) 
+                || v["name"].isNull() 
+                || !v["name"].isString())
+            {
+                sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_BAD_REQUEST, "Can't parse process action request content.");
+                return;
+            }
+
+            const std::string name = v["name"].asString();
+
+            m_controller->applyPresetGroup(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        }
+        catch (const std::exception &e)
+        {
+            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+        }
+    }
+    else
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
+    const ResourceParameters::const_iterator itPresetGroupName = parameters.find("preset_name");
+
+    if (itPresetGroupName == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
+        return;
+    }
+
+    const std::string &name = itPresetGroupName->second;
+
+    try
+    {
+        m_controller->getPresets(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
 }

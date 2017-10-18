@@ -57,6 +57,10 @@ private:
 
     void controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
 
+    void presetsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
+
+    void getPresetsGroupAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
+
     void processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
 
     void processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);

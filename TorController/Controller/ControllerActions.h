@@ -169,4 +169,47 @@ public:
     typedef boost::function1<void, ProcessOptionResult> Handler;
 };
 
+//-------------------------------------------------------------------------
+class PresetGroupsResult : public ActionResult
+{
+public:
+    PresetGroupsResult();
 
+    explicit PresetGroupsResult(const ErrorCode &ec);
+
+    virtual ~PresetGroupsResult();
+
+    Json::Value toJson() const override;
+
+    typedef boost::function1<void, PresetGroupsResult> Handler;
+};
+
+//-------------------------------------------------------------------------
+class ApplyPresetGroupResult : public ActionResult
+{
+public:
+    ApplyPresetGroupResult();
+
+    explicit ApplyPresetGroupResult(const ErrorCode &ec);
+
+    virtual ~ApplyPresetGroupResult();
+
+    Json::Value toJson() const override;
+
+    typedef boost::function1<void, ApplyPresetGroupResult> Handler;
+};
+
+//-------------------------------------------------------------------------
+class PresetsResult : public ActionResult
+{
+public:
+    PresetsResult();
+
+    explicit PresetsResult(const ErrorCode &ec);
+
+    virtual ~PresetsResult();
+
+    Json::Value toJson() const override;
+
+    typedef boost::function1<void, PresetsResult> Handler;
+};

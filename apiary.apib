@@ -7,9 +7,7 @@ API для управления Tor'ом
 
 # Group Контроллер
 
-## Состояние контроллера [/api/controller{?key}]
-+ Parameters
-    + key (required, string) - ключ доступа
+## Состояние контроллера [/api/controller]
 
 ### Получить состояние контроллера [GET]
 + Response 200 (application/json)
@@ -17,9 +15,30 @@ API для управления Tor'ом
 + Response 401
   
 
-## Список процессов [/api/controller/processes{?key}]
-+ Parameters
-    + key (required, string) - ключ доступа
+## Список групп предустановленных настроек [/api/controller/presets]
+
+### Получить список групп предустановленных настроек [GET]
++ Response 200 (application/json)
+    + Attributes (array[PresetGroupDesc])
++ Response 404 (application/json)
+    + Attributes (Error)
+
+### Применить группу предустановленных настроек [POST]
++ Attributes (PresetName)
+
++ Response 200 (application/json)
+    + Attributes (array[PresetGroupDesc])
++ Response 404 (application/json)
+    + Attributes (Error)
+
+
+## Предустановленные настройки [/api/controller/presets/{preset_name}]
+
+### Получить список предустановленных настроек [GET]
++ Response 200 (application/json)
+    + Attributes (array[PresetDesc])
+
+## Список процессов [/api/controller/processes]
 
 ### Получить список процессов [GET]
 + Response 200 (application/json)
@@ -28,10 +47,9 @@ API для управления Tor'ом
 
 # Group Процесс
 
-## Информация о процессе [/api/controller/processes/{process_id}{?key}]
+## Информация о процессе [/api/controller/processes/{process_id}]
 + Parameters
     + process_id (required, string) - идентификатор процесса
-    + key (required, string) - ключ доступа
 
 ### Получить информацию о процессе [GET]
 + Response 200 (application/json)
@@ -41,10 +59,9 @@ API для управления Tor'ом
     + Attributes (Error)
 
 
-## Управление процессом [/api/controller/processes/{process_id}/action{?key}]
+## Управление процессом [/api/controller/processes/{process_id}/action]
 + Parameters
     + process_id (required, string) - идентификатор процесса
-    + key (required, string) - ключ доступа
 
 ### Запуск/остановка [POST]
 + Attributes (ProcessAction)
@@ -58,10 +75,9 @@ API для управления Tor'ом
     + Attributes (Error)
 
 
-## Список конфигураций процесса [/api/controller/processes/{process_id}/configs{?key}]
+## Список конфигураций процесса [/api/controller/processes/{process_id}/configs]
 + Parameters
     + process_id (required, string) - идентификатор процесса
-    + key (required, string) - ключ доступа
 
 ### Получить список конфигураций [GET]
 + Response 200 (application/json)
@@ -71,11 +87,10 @@ API для управления Tor'ом
     + Attributes (Error)
 
 
-## Конфигурация процесса [/api/controller/processes/{process_id}/configs/{config_name}{?key}]
+## Конфигурация процесса [/api/controller/processes/{process_id}/configs/{config_name}]
 + Parameters
     + process_id (required, string) - идентификатор процесса
     + config_name (required, string) - имя конфигурации
-    + key (required, string) - ключ доступа
 
 ### Получить конфигурацию процесса [GET]
 + Response 200 (application/json)
@@ -85,12 +100,11 @@ API для управления Tor'ом
     + Attributes (Error)
 
 
-## Опция конфигурации [/api/controller/processes/{process_id}/configs/{config_name}/options/{option_name}{?key}]
+## Опция конфигурации [/api/controller/processes/{process_id}/configs/{config_name}/options/{option_name}]
 + Parameters
     + process_id (required, string) - идентификатор процесса
     + config_name (required, string) - имя конфигурации
     + option_name (required, string) - имя опции
-    + key (required, string) - ключ доступа
 
 ### Получить опцию [GET]
 + Response 200 (application/json)
@@ -189,3 +203,23 @@ API для управления Tor'ом
 + message (required, string)
 + category (optional, string)
 + value (optional, number)
+
+# PresetGroupDesc
+Описание группы предустановленных настроек.
+## Properties
++ name (required, string)
++ description (required, string)
+
+# PresetDesc
+Предустановленное значение параметра.
+## Properties
++ process_id (required, string)
++ config_name (required, string)
++ option_name (required, string)
++ value (optional, string) - значение
++ array_value (optional, array[string]) - значение
+
+# PresetName
+Имя группы предустановленных настроек.
+## Properties
++ name (required, string)

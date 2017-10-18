@@ -27,34 +27,62 @@ RequestExecutionLevel user
 ShowInstDetails show
 SetOverwrite off
 
-LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
-
 ;--------------------------------
 ;Header Files
 
-!include StrRep.nsh
-!include ReplaceInFile.nsh
+!include "MUI2.nsh"
+!include "StrRep.nsh"
+!include "ReplaceInFile.nsh"
 
 ;--------------------------------
-;Version Information
+;Language Selection Dialog Settings
 
-  VIProductVersion ${VERSION}
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${PRODUCT}"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
-  VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" ${VERSION}
+;Remember the installer language
+!define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+!define MUI_LANGDLL_REGISTRY_KEY "Software\${PRODUCT}" 
+!define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
+;--------------------------------
+;Interface Settings
+
+!define MUI_ABORTWARNING
+!define MUI_COMPONENTSPAGE_NODESC 
 
 ;--------------------------------
 ; Pages
 
-Page directory
-Page instfiles
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
 
-UninstPage uninstConfirm
-UninstPage instfiles
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
+
+;--------------------------------
+;Languages
+
+!insertmacro MUI_LANGUAGE "English" ;first language is the default language
+!insertmacro MUI_LANGUAGE "Russian"
+
+;--------------------------------
+;Version Information
+
+VIProductVersion ${VERSION}
+VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${PRODUCT}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" ${VERSION}
+
+;--------------------------------
+;Reserve Files
+  
+  ;If you are using solid compression, files that are required before
+  ;the actual installation should be stored first in the data block,
+  ;because this will make your installer start faster.
+  
+!insertmacro MUI_RESERVEFILE_LANGDLL
 
 ;--------------------------------
 ; The stuff to install
@@ -103,14 +131,31 @@ Section "Install files"
   
 SectionEnd
 
+;--------------------------------
+;Installer Functions
+
+Function .onInit
+
+  !insertmacro MUI_LANGDLL_DISPLAY
+
+FunctionEnd
+
+;--------------------------------
 ; Optional section (can be disabled by the user)
 
-Section "Start Menu Shortcuts"
+;Language strings
+LangString UninstallShortcut ${LANG_ENGLISH} "Uninstall"
+LangString UninstallShortcut ${LANG_RUSSIAN} "Uninstall"
 
+LangString RunShortcut ${LANG_ENGLISH} "Start"
+LangString RunShortcut ${LANG_RUSSIAN} "Start"
+
+Section "Start Menu Shortcuts"
+  ; Create shortcuts
   CreateDirectory "$SMPROGRAMS\${PRODUCT}"
-  CreateShortcut "$SMPROGRAMS\${PRODUCT}\Uninstall ${PRODUCT}.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortcut "$SMPROGRAMS\${PRODUCT}\Start ${PRODUCT}.lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
-  
+  CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(UninstallShortcut) ${PRODUCT}.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(RunShortcut) ${PRODUCT}.lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
+
 SectionEnd
 
 ;--------------------------------
@@ -138,3 +183,12 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
 SectionEnd
+
+;--------------------------------
+;Uninstaller Functions
+
+Function un.onInit
+
+  !insertmacro MUI_UNGETLANGUAGE
+  
+FunctionEnd

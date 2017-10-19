@@ -9,7 +9,7 @@ class OptionsStorage :
     public IOptionsStorage
 {
 public:
-    explicit OptionsStorage(IConfigSchemePtr scheme);
+    OptionsStorage(IConfigSchemePtr scheme, bool addDefaultValues);
     virtual ~OptionsStorage();
     
     // IOptionsStorage

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 
@@ -9,6 +10,7 @@
 #include <boost/function/function1.hpp>
 
 #include "Options/IConfigScheme.h"
+#include "Options/Option.h"
 #include "Error.h"
 #include "Process/IProcess.h"
 
@@ -182,6 +184,8 @@ public:
     Json::Value toJson() const override;
 
     typedef boost::function1<void, PresetGroupsResult> Handler;
+
+    std::list<std::string> m_presetGroups;
 };
 
 //-------------------------------------------------------------------------
@@ -212,4 +216,10 @@ public:
     Json::Value toJson() const override;
 
     typedef boost::function1<void, PresetsResult> Handler;
+
+    typedef std::list<Option> Options;
+    typedef std::map<std::string, Options> SchemeOptions;
+    typedef std::map<std::string, SchemeOptions> ProcessOptions;
+
+    ProcessOptions m_processOptions;
 };

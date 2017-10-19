@@ -11,10 +11,6 @@ namespace bp = boost::process;
 Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
     m_config(config), m_logger(Tools::Logger::Logger::getInstance())
 {
-    // TODO: read config
-    m_scheduler.set_num_threads(4);
-    m_scheduler.add_active_user();
-
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &processConf, getConf().getRangeOf("processes.process"))
     {
         ProcessBasePtr processPtr(new ProcessBase(processConf, m_scheduler));
@@ -28,6 +24,10 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
     {
         m_presets.load(getConf().branch("presets"), getConf().branch("processes"));
     }
+
+    // TODO: read config
+    m_scheduler.set_num_threads(4);
+    m_scheduler.add_active_user();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -284,6 +284,15 @@ void Controller::setProcessOption(const std::string &processName,
 //-------------------------------------------------------------------------------------------------
 void Controller::getPresetGroupsImpl(const PresetGroupsResult::Handler &handler)
 {
+    PresetGroupsResult result;
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+
+    for (const PresetGroup &g : m_presets.getRange())
+    {
+        result.m_presetGroups.push_back(g.first);
+    }
+
+    scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -310,6 +319,35 @@ void Controller::applyPresetGroup(const std::string &name, const ApplyPresetGrou
 //-------------------------------------------------------------------------------------------------
 void Controller::getPresetsImpl(const std::string &name, const PresetsResult::Handler &handler)
 {
+    PresetsResult result;
+    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+
+    const PresetGroup &pg = m_presets.getPresets(name);
+    for (PresetGroupConfig::const_iterator i = pg.second.begin(); i != pg.second.end(); ++i)
+    {
+        const std::string &processName = i->first;
+        const ProcessConfiguration &processConf = i->second;
+        PresetsResult::Options processOptions;
+        std::list<std::string> storages;
+        processConf.getStorages(storages);
+        
+        PresetsResult::SchemeOptions schemeOptions;
+
+        for (const std::string &storageName : storages)
+        {
+            IOptionsStorageConstPtr storagePtr = processConf.getStorage(storageName);
+            PresetsResult::Options opts;
+            for (const Option &o : storagePtr->getRange())
+            {
+                opts.push_back(o);
+            }
+            schemeOptions[storageName] = opts;
+        }
+
+        result.m_processOptions[processName] = schemeOptions;
+    }
+
+    scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------

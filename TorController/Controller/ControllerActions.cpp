@@ -170,7 +170,6 @@ Json::Value GetProcessConfigsResult::toJson() const
         root.append(process);
     }
     return root;
-
 }
 
 //==============================================================================================================================================
@@ -308,7 +307,11 @@ PresetGroupsResult::~PresetGroupsResult() {}
 
 Json::Value PresetGroupsResult::toJson() const
 {
-    Json::Value root;
+    Json::Value root(Json::arrayValue);
+    for (const std::string &groupName : m_presetGroups)
+    {
+        root.append(groupName);
+    }
 
     return root;
 }
@@ -340,9 +343,75 @@ PresetsResult::PresetsResult(const ErrorCode &ec) :
 
 PresetsResult::~PresetsResult() {}
 
+class OptionValueToJsonVisitorExplicitArray
+    : public boost::static_visitor<>
+{
+public:
+    OptionValueToJsonVisitorExplicitArray(Json::Value &parent, const std::string &name, const std::string &arrayName) :
+        m_parent(parent), m_name(name), m_arrayName(arrayName)
+    {
+    }
+
+    void operator()(const OptionSingleValue &v)
+    {
+        m_parent[m_name] = v;
+    }
+
+    void operator()(const OptionListValue &v)
+    {
+        Json::Value arr(Json::arrayValue);
+        for (const OptionSingleValue &s : v)
+        {
+            arr.append(s);
+        }
+
+        m_parent[m_arrayName] = arr;
+    }
+
+private:
+    Json::Value &m_parent;
+    const std::string m_name;
+    const std::string m_arrayName;
+};
+
 Json::Value PresetsResult::toJson() const
 {
-    Json::Value root;
+    Json::Value root(Json::arrayValue);
+
+    for (ProcessOptions::const_iterator itProcess = m_processOptions.begin(); itProcess != m_processOptions.end(); ++itProcess)
+    {
+        const std::string &processName = itProcess->first;
+        Json::Value processNode;
+        processNode["process_id"] = processName;
+        Json::Value configsNode(Json::arrayValue);
+        const SchemeOptions &schemes = itProcess->second;
+        for (SchemeOptions::const_iterator itScheme = schemes.begin(); itScheme != schemes.end(); ++itScheme)
+        {
+            const std::string &configName = itScheme->first;
+            Json::Value schemeNode;
+            schemeNode["config_name"] = configName;
+            Json::Value optsNode(Json::arrayValue);
+            const Options &opts = itScheme->second;
+            for (Options::const_iterator itOption = opts.begin(); itOption != opts.end(); ++ itOption)
+            {
+                Json::Value optionNode;
+                optionNode["name"] = itOption->name();
+
+                if (itOption->value().is_initialized())
+                {
+                    const OptionValueContainer &value = itOption->value().get();
+                    OptionValueToJsonVisitorExplicitArray visitor(optionNode, "value", "array_value");
+                    boost::apply_visitor(visitor, value);
+                }
+
+                optsNode.append(optionNode);
+            }
+            schemeNode["options"] = optsNode;
+            configsNode.append(schemeNode);
+        }
+        processNode["configs"] = configsNode;
+        root.append(processNode);
+    }
 
     return root;
 }

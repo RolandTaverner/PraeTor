@@ -45,7 +45,7 @@ void Presets::load(const Tools::Configuration::ConfigurationView &presetsConf,
     for (const Tools::Configuration::ConfigurationView &presetConf : presetsConf.getRangeOf("preset"))
     {
         const std::string presetGroupName = presetConf.getAttr("", "name");
-        PresetGroup group;
+        PresetGroupConfig group;
         for (const Tools::Configuration::ConfigurationView &processConf : presetConf.getRangeOf("process"))
         {
             const std::string processName = processConf.getAttr("", "name");
@@ -67,7 +67,7 @@ void Presets::load(const Tools::Configuration::ConfigurationView &presetsConf,
                     throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage), "Can't load presets for process " + processName + " storage " + schemeName);
                 }
                 IConfigSchemePtr schemePtr = itScheme->second;
-                IOptionsStoragePtr storage(new OptionsStorage(schemePtr));
+                IOptionsStoragePtr storage(new OptionsStorage(schemePtr, false));
                 
                 for (const Tools::Configuration::ConfigurationView &optionConf : schemeConf.getRangeOf("option"))
                 {
@@ -120,7 +120,7 @@ void Presets::load(const Tools::Configuration::ConfigurationView &presetsConf,
         
         if (!group.empty())
         {
-            m_presetsStorage[presetGroupName] = group;
+            m_presetsStorage[presetGroupName] = PresetGroup(presetGroupName, group);
         }
     } // for (const Tools::Configuration::ConfigurationView &presetConf : presetsConf.getRangeOf("preset"))
 }
@@ -158,4 +158,16 @@ const Presets::CollectionType::CollectionValueType &Presets::dereference(const C
     BOOST_ASSERT(dynamic_cast<const PresetElement*>(current)->getIterator() != m_presetsStorage.end());
 
     return dynamic_cast<const PresetElement*>(current)->getIterator()->second;
+}
+
+//-------------------------------------------------------------------------------------------------
+const PresetGroup &Presets::getPresets(const std::string &groupName) const
+{
+    PresetsMap::const_iterator it = m_presetsStorage.find(groupName);
+    if (it == m_presetsStorage.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::presetsNotFound), groupName);
+    }
+    
+    return it->second;
 }

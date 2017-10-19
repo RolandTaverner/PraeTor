@@ -15,7 +15,9 @@ namespace Detail
 			return "Process not found."; 
 		case static_cast<int>(ControllerErrors::startProcessError) :
 			return "Start process error.";
-		}
+        case static_cast<int>(ControllerErrors::presetsNotFound) :
+            return "Presets group not found.";
+        }
 		return "Controller error";
 	}
 

@@ -4,14 +4,17 @@
 #include "Options/OptionsStorage.h"
 
 //-------------------------------------------------------------------------------------------------
-OptionsStorage::OptionsStorage(IConfigSchemePtr scheme) :
+OptionsStorage::OptionsStorage(IConfigSchemePtr scheme, bool addDefaultValues) :
     m_scheme(scheme)
 {
-    for (const OptionDesc &desc : m_scheme->getRange())
+    if (addDefaultValues)
     {
-        if (desc.get<1>().is_initialized())
+        for (const OptionDesc &desc : m_scheme->getRange())
         {
-            setValue(desc.get<0>(), desc.get<1>());
+            if (desc.get<1>().is_initialized())
+            {
+                setValue(desc.get<0>(), desc.get<1>());
+            }
         }
     }
 }

@@ -44,7 +44,7 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
     {
         const std::string name = schemeConf.getAttr("", "name");
         IConfigSchemePtr scheme = ConfigScheme::createFromConfig(schemeConf);
-        IOptionsStoragePtr storage(new OptionsStorage(scheme));
+        IOptionsStoragePtr storage(new OptionsStorage(scheme, true));
         m_configuration.addStorage(name, storage);
     }
 

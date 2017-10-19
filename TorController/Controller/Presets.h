@@ -8,7 +8,8 @@
 #include "Options/AbstractCollection.h"
 #include "Process/ProcessConfiguration.h"
 
-typedef std::map<std::string, ProcessConfiguration> PresetGroup;
+typedef std::map<std::string, ProcessConfiguration> PresetGroupConfig;
+typedef std::pair<std::string, PresetGroupConfig> PresetGroup;
 
 class Presets : public AbstractCollection<PresetGroup>
 {
@@ -18,6 +19,8 @@ public:
 
     void load(const Tools::Configuration::ConfigurationView &presetsConf,
         const Tools::Configuration::ConfigurationView &processesConf);
+
+    const PresetGroup &getPresets(const std::string &groupName) const;
 
 private:
     typedef std::map<std::string, PresetGroup> PresetsMap;

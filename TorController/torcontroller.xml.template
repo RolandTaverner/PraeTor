@@ -46,6 +46,7 @@
       <installroot>%_INSTALL_ROOT_%</installroot>
       <dataroot>%_DATA_ROOT_%</dataroot>
 
+      <!-- Processes -->
       <processes>
         <process name="tor">
           <root>%_INSTALL_ROOT_%\Tor</root>
@@ -165,6 +166,30 @@
         </process>
 
       </processes>
+
+      <!-- Presets -->
+      <presets>
+        <preset name="client">
+          <process name="tor">
+            <scheme name="config">
+              <option name="ExitPolicy">
+                <value>reject *:*</value>
+              </option>
+            </scheme>
+          </process>
+        </preset>
+
+        <preset name="relay">
+          <process name="tor">
+            <scheme name="config">
+              <option name="ExitPolicy">
+                <value>reject *:*</value>
+              </option>
+            </scheme>
+          </process>
+        </preset>
+      </presets>
+
     </controller>
   </serviceconfig>
 

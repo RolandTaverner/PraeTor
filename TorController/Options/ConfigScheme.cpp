@@ -397,7 +397,7 @@ OptionDesc ConfigScheme::createOptionDescFromConfig(const Tools::Configuration::
     OptionValueType defaultValue;
     if (optConf.exists("default"))
     {
-        if (!isList && optConf.getCountOf("default") > 1u)
+        if (!isList && optConf.getCountOf("default.value") > 1u)
         {
             throw OptionError(makeErrorCode(OptionErrors::assigningListToSingleValue), name);
         }

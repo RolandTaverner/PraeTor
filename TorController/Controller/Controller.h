@@ -20,6 +20,7 @@
 
 #include "Controller/ControllerActions.h"
 #include "Controller/ControllerErrors.h"
+#include "Controller/Presets.h"
 #include "Process/ProcessBase.h"
 
 class Controller : private boost::noncopyable
@@ -115,13 +116,14 @@ private:
         }
     }
     
-        
     Tools::Configuration::ConfigurationView m_config;
     typedef std::map<std::string, ProcessBasePtr> Processes;
     Processes m_processes;
 
     std::string m_installRoot;
     std::string m_dataRoot;
+
+    Presets m_presets;
 
     typedef boost::shared_mutex MutexType;
     typedef boost::shared_lock_guard<MutexType> SharedLockType;

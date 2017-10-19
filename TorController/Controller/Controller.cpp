@@ -15,7 +15,7 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
     m_scheduler.set_num_threads(4);
     m_scheduler.add_active_user();
 
-    BOOST_FOREACH(const Tools::Configuration::ConfigurationView &processConf, config.getRangeOf("processes.process"))
+    BOOST_FOREACH(const Tools::Configuration::ConfigurationView &processConf, getConf().getRangeOf("processes.process"))
     {
         ProcessBasePtr processPtr(new ProcessBase(processConf, m_scheduler));
         m_processes[processPtr->name()] = processPtr;
@@ -23,6 +23,11 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
 
     m_installRoot = getConf().get("installroot");
     m_dataRoot = getConf().get("dataroot");
+
+    if (getConf().exists("presets"))
+    {
+        m_presets.load(getConf().branch("presets"), getConf().branch("processes"));
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

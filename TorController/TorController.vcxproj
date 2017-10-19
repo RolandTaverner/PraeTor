@@ -104,6 +104,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Controller\Presets.h" />
     <ClInclude Include="Error.h" />
     <ClInclude Include="Controller\Controller.h" />
     <ClInclude Include="Controller\ControllerActions.h" />
@@ -131,6 +132,7 @@
     <ClInclude Include="WebServices\ResourceParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Controller\Presets.cpp" />
     <ClCompile Include="Error.cpp" />
     <ClCompile Include="Controller\Controller.cpp" />
     <ClCompile Include="Controller\ControllerActions.cpp" />

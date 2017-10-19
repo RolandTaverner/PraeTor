@@ -19,7 +19,7 @@ API для управления Tor'ом
 
 ### Получить список групп предустановленных настроек [GET]
 + Response 200 (application/json)
-    + Attributes (array[PresetGroupDesc])
+    + Attributes (array[string])
 + Response 404 (application/json)
     + Attributes (Error)
 
@@ -203,12 +203,6 @@ API для управления Tor'ом
 + message (required, string)
 + category (optional, string)
 + value (optional, number)
-
-# PresetGroupDesc
-Описание группы предустановленных настроек.
-## Properties
-+ name (required, string)
-+ description (required, string)
 
 # PresetDesc
 Предустановленное значение параметра.

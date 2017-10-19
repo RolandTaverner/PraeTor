@@ -122,6 +122,8 @@ public:
     void on_setup(Executor &exec) const 
     {
         exec.creation_flags |= CREATE_NO_WINDOW;
+        exec.startup_info.dwFlags |= STARTF_USESHOWWINDOW;
+        exec.startup_info.wShowWindow |= SW_MINIMIZE;
     }
 
     template <class Executor>

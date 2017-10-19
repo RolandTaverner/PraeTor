@@ -36,7 +36,7 @@ API для управления Tor'ом
 
 ### Получить список предустановленных настроек [GET]
 + Response 200 (application/json)
-    + Attributes (array[PresetDesc])
+    + Attributes (array[ProcessPresets])
 
 ## Список процессов [/api/controller/processes]
 
@@ -204,14 +204,24 @@ API для управления Tor'ом
 + category (optional, string)
 + value (optional, number)
 
-# PresetDesc
-Предустановленное значение параметра.
+# OptionPreset
+Предустановленное значение опции option_name.
 ## Properties
-+ process_id (required, string)
-+ config_name (required, string)
 + option_name (required, string)
 + value (optional, string) - значение
 + array_value (optional, array[string]) - значение
+
+# ConfigPresets
+Предустановленные значения параметров секции config_name.
+## Properties
++ config_name (required, string)
++ options (required, array[OptionPreset])
+
+# ProcessPresets
+Предустановленные значения параметров процесса process_id.
+## Properties
++ process_id (required, string)
++ configs (required, array[ConfigPresets])
 
 # PresetName
 Имя группы предустановленных настроек.

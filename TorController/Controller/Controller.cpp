@@ -306,6 +306,10 @@ void Controller::getPresetGroups(const PresetGroupsResult::Handler &handler)
 //-------------------------------------------------------------------------------------------------
 void Controller::applyPresetGroupImpl(const std::string &name, const ApplyPresetGroupResult::Handler &handler)
 {
+    ApplyPresetGroupResult result;
+    UniqueLockType lock(m_access);
+
+    scheduleActionHandler<>(handler, result);
 }
 
 //-------------------------------------------------------------------------------------------------

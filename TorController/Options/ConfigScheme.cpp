@@ -297,6 +297,8 @@ IConfigSchemePtr ConfigScheme::createFromConfig(const Tools::Configuration::Conf
 {
     ConfigSchemePtr scheme(new ConfigScheme());
     
+    scheme->m_name = conf.getAttr("", "name");
+
     BOOST_FOREACH(const Tools::Configuration::ConfigurationView &optConf, conf.getRangeOf("option"))
     {
         const OptionDesc od = createOptionDescFromConfig(optConf);
@@ -492,4 +494,10 @@ void ConfigScheme::setFormatter(const std::string &name, IFormatterPtr formatter
     }
 
     m_formatters[name] = formatterPtr;
+}
+
+//-------------------------------------------------------------------------------------------------
+std::string ConfigScheme::name() const
+{
+    return m_name;
 }

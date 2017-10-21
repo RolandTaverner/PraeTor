@@ -308,6 +308,29 @@ void Controller::applyPresetGroupImpl(const std::string &name, const ApplyPreset
 {
     ApplyPresetGroupResult result;
     UniqueLockType lock(m_access);
+    const PresetGroup &pg = m_presets.getPresets(name);
+    for (Processes::const_iterator it = m_processes.begin(); it != m_processes.end(); ++it)
+    {
+        if (it->second->getState() != ProcessState::Stopped)
+        {
+            throw ControllerError(makeErrorCode(ControllerErrors::processIsRunning), "Cant apply presets: process " + it->first + " is not stopped");
+        }
+    }
+
+    const PresetGroupConfig &presetGroup = pg.second;
+
+    for (Processes::iterator it = m_processes.begin(); it != m_processes.end(); ++it)
+    {
+        const std::string processName = it->first;
+        IProcessPtr processPtr = it->second;
+
+        PresetGroupConfig::const_iterator itProcConf = presetGroup.find(processName);
+        if (itProcConf != presetGroup.end())
+        {
+            const ProcessConfiguration &processConfig = itProcConf->second;
+            processPtr->applyConfig(processConfig);
+        }
+    }
 
     scheduleActionHandler<>(handler, result);
 }

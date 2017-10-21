@@ -82,3 +82,16 @@ void ProcessConfiguration::addStorage(const std::string &name, IOptionsStoragePt
     }
     m_storages[name] = storagePtr;
 }
+
+//-------------------------------------------------------------------------------------------------
+IOptionsStoragePtr ProcessConfiguration::removeStorage(const std::string &name)
+{
+    OptionsStorages::const_iterator i = m_storages.find(name);
+    if (i == m_storages.end())
+    {
+        throw std::range_error("No such storage.");
+    }
+    IOptionsStoragePtr storagePtr = i->second;
+    m_storages.erase(i);
+    return storagePtr;
+}

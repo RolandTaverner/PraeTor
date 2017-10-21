@@ -47,6 +47,9 @@ public:
     std::string formatOption(const std::string &name, const OptionValueContainer &value, ISubstitutorPtr substitutorPtr) const override; /* throws */
 
     void setFormatter(const std::string &name, IFormatterPtr formatterPtr) override; /* throws */
+
+    std::string name() const override;
+
     // End of IConfigScheme implementation
 
     static IConfigSchemePtr createFromConfig(const Tools::Configuration::ConfigurationView &conf);
@@ -60,6 +63,7 @@ private:
     
     typedef std::map<std::string, IFormatterPtr> OptionsFormatters;
     OptionsFormatters m_formatters;
+    std::string m_name;
 
     static OptionDesc createOptionDescFromConfig(const Tools::Configuration::ConfigurationView &optConf);
 

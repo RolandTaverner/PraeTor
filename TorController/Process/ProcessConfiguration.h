@@ -22,6 +22,8 @@ public:
 
     void addStorage(const std::string &name, IOptionsStoragePtr storagePtr);
 
+    IOptionsStoragePtr removeStorage(const std::string &name);
+
     template<typename Container> Container &getStorages(Container &c) const
     {
         for (const OptionsStorages::value_type &s : m_storages)

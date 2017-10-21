@@ -78,6 +78,8 @@ public:
 
     ExitStatus getExitStatus() const override;
 
+    void applyConfig(const ProcessConfiguration &presetConf) override;
+
     // ISubstitutor
     bool hasSubstitute(const std::string &value) const override;
     

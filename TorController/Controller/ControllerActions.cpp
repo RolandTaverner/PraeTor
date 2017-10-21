@@ -329,7 +329,14 @@ ApplyPresetGroupResult::~ApplyPresetGroupResult() {}
 Json::Value ApplyPresetGroupResult::toJson() const
 {
     Json::Value root;
-
+    if (getError())
+    {
+        root["status"] = "FAIL";
+    }
+    else
+    {
+        root["status"] = "OK";
+    }
     return root;
 }
 

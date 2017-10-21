@@ -46,6 +46,8 @@ public:
     virtual std::string formatOption(const std::string &name, const OptionValueContainer &value, ISubstitutorPtr substitutorPtr) const = 0; /* throws */
 
     virtual void setFormatter(const std::string &name, IFormatterPtr formatterPtr) = 0; /* throws */
+
+    virtual std::string name() const = 0;
 };
 
 typedef boost::shared_ptr<IConfigScheme> IConfigSchemePtr;

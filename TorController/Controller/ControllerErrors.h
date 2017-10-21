@@ -7,7 +7,8 @@ enum class ControllerErrors
 	unknownError = 1,
     processNotFound = 2,
 	startProcessError = 3,
-    presetsNotFound = 4
+    presetsNotFound = 4,
+    processIsRunning = 5
 };
 
 namespace std

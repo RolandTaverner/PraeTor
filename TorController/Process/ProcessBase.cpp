@@ -523,3 +523,47 @@ OptionDescValue ProcessBase::setOptionValue(const std::string &configName,
 
     return OptionDescValue(desc, value, presentation);
 }
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::applyConfig(const ProcessConfiguration &presetConf)
+{
+    UniqueLockType lock(m_access);
+
+    if (isRunningInternal() || getState() != ProcessState::Stopped)
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
+    }
+
+    std::map<std::string, IOptionsStoragePtr> newStorages;
+
+    for (IOptionsStoragePtr currentStorage : m_configuration.getRange())
+    {
+        const std::string storageName = currentStorage->getScheme()->name();
+        IConfigSchemePtr schemePtr = currentStorage->getScheme();
+        IOptionsStoragePtr newStorage(new OptionsStorage(schemePtr, true));
+
+        if (presetConf.hasStorage(storageName))
+        {
+            IOptionsStorageConstPtr presetsStorage = presetConf.getStorage(storageName);
+            for (const Option &opt : presetsStorage->getRange())
+            {
+                newStorage->setValue(opt.name(), opt.value());
+            }
+        }
+
+        newStorages[storageName] = newStorage;
+    }
+
+    std::list<std::string> storages;
+    m_configuration.getStorages(storages);
+    for (const std::string &storageName : storages)
+    {
+        m_configuration.removeStorage(storageName);
+    }
+
+    for (std::map<std::string, IOptionsStoragePtr>::value_type &i : newStorages)
+    {
+        m_configuration.addStorage(i.first, i.second);
+    }
+}
+

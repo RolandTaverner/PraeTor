@@ -27,7 +27,7 @@ API для управления Tor'ом
 + Attributes (PresetName)
 
 + Response 200 (application/json)
-    + Attributes (array[PresetGroupDesc])
+    + Attributes (ApplyPresetResult)
 + Response 404 (application/json)
     + Attributes (Error)
 
@@ -227,3 +227,11 @@ API для управления Tor'ом
 Имя группы предустановленных настроек.
 ## Properties
 + name (required, string)
+
+# ApplyPresetResult
+Результат попытки применения предустановленных настроек.
+## Properties
++ status (required, enum[string])
+    + Members
+        + `OK`
+        + `FAIL`

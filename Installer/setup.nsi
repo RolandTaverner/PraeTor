@@ -1,6 +1,6 @@
 Unicode true
 
-!define /ifndef PRODUCT "Easy Tor"
+!define /ifndef PRODUCT "PraeTor"
 
 !define /ifndef VER_MAJOR 0
 !define /ifndef VER_MINOR 1

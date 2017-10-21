@@ -92,6 +92,21 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
+              <option name="SOCKSPort" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>9050</value>
+                </default>
+              </option>
+
+              <option name="ORPort" type="string" list="yes" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DirPort" type="string" list="yes" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
               <option name="Log" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
                 <default>
@@ -127,7 +142,14 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
-              <option name="ExitPolicy" type="string" list="yes" system="no" required="yes">
+              <option name="Nickname" type="string" list="no" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>PraeTor</value>
+                </default>
+              </option>
+
+              <option name="ExitPolicy" type="string" list="yes" system="no" required="no">
                 <format>%NAME% %VALUE%</format>
                 <default>
                   <value>reject *:*</value>
@@ -176,6 +198,30 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                   <value>%ROOTPATH%</value>
                 </default>
               </option>
+
+              <option name="forward-socks5" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>/ 127.0.0.1:9050 .</value>
+                </default>
+              </option>
+
+              <option name="forward" type="string" list="yes" system="yes" required="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+                <default>
+                  <value>.onion 127.0.0.1:9050</value>
+                  <value>127.*.*.*/ .</value>
+                  <value>localhost/ .</value>
+                </default>
+              </option>
+
+              <option name="listen-address" type="string" list="no" system="no" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>127.0.0.1:8118</value>
+                </default>
+              </option>
+
             </scheme>
 
           </options>
@@ -200,6 +246,12 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
             <scheme name="config">
               <option name="ExitPolicy">
                 <value>reject *:*</value>
+              </option>
+              <option name="ORPort">
+                <value>9001</value>
+              </option>
+              <option name="DirPort">
+                <value>9030</value>
               </option>
             </scheme>
           </process>

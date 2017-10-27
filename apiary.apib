@@ -75,6 +75,18 @@ API для управления Tor'ом
     + Attributes (Error)
 
 
+## Лог процесса [/api/controller/processes/{process_id}/log]
++ Parameters
+    + process_id (required, string) - идентификатор процесса
+
+### Получить лог процесса [GET]
++ Response 200 (application/json)
+    + Attributes (array[string])
++ Response 401
++ Response 404 (application/json)
+    + Attributes (Error)
+
+
 ## Список конфигураций процесса [/api/controller/processes/{process_id}/configs]
 + Parameters
     + process_id (required, string) - идентификатор процесса

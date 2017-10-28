@@ -74,5 +74,7 @@ private:
 
     void processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
 
+    void processLog(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters);
+
     void defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const ActionResult &result);
 };

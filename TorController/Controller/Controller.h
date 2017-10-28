@@ -48,6 +48,7 @@ public:
         const ProcessOptionResult::Handler &handler);
     void startProcess(const std::string &name, const StartProcessResult::Handler &handler);
     void stopProcess(const std::string &name, const StopProcessResult::Handler &handler);
+    void getProcessLog(const std::string &name, const GetProcessLogResult::Handler &handler);
 
     const Tools::Configuration::ConfigurationView &getConf() const;
 
@@ -72,6 +73,7 @@ private:
 
     void startProcessImpl(const std::string &name, const StartProcessResult::Handler &handler);
     void stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler);
+    void getProcessLogImpl(const std::string &name, const GetProcessLogResult::Handler &handler);
 
 private:
     void loadUserPresets(const Tools::Configuration::ConfigurationView &processesConf);

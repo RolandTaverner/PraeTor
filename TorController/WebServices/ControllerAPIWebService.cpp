@@ -53,6 +53,10 @@ static const char *s_resourceScheme =
 "                  \"action\":  \"ProcessAction\""
 "                },"
 "                { "
+"                  \"node\" : \"log\","
+"                  \"action\":  \"ProcessLog\""
+"                },"
+"                { "
 "                  \"node\" : \"configs\","
 "                  \"action\":  \"ProcessConfigs\","
 "                  \"next\" :"
@@ -98,6 +102,7 @@ ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_handlers["ProcessConfig"] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, _2);
     m_handlers["ProcessOption"] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, _2);
     m_handlers["ProcessAction"] = boost::bind(&ControllerAPIWebService::processAction, this, _1, _2);
+    m_handlers["ProcessLog"] = boost::bind(&ControllerAPIWebService::processLog, this, _1, _2);
 
     // HTTP status messages
     {
@@ -694,6 +699,32 @@ void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::Connection
     try
     {
         m_controller->getPresets(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processLog(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+{
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
+    const ResourceParameters::const_iterator i = parameters.find("process_id");
+    if (i == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
+        return;
+    }
+
+    try
+    {
+        m_controller->getProcessLog(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
     }
     catch (const std::exception &e)
     {

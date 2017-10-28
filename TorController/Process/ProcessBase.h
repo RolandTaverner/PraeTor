@@ -82,6 +82,8 @@ public:
 
     void applyUserConfig(const ProcessConfiguration &presetConf) override;
 
+    void getLog(LogLineHandler &acc) override;
+
     // ISubstitutor
     bool hasSubstitute(const std::string &value) const override;
     
@@ -119,7 +121,9 @@ private:
     std::string substituteRootPath() const;
     std::string substituteDataRootPath() const;
     std::string substituteConfigFilePath() const;
-    std::string substituteLogFilePath() const;
+    
+    enum class LogFilePathPart { Full, Name, Location};
+    std::string substituteLogFilePath(LogFilePathPart part) const;
 
     boost::filesystem::path m_configFilePath;
     boost::filesystem::path m_logFilePath;

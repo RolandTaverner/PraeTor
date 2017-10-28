@@ -422,3 +422,25 @@ Json::Value PresetsResult::toJson() const
 
     return root;
 }
+
+//==============================================================================================================================================
+GetProcessLogResult::GetProcessLogResult() {}
+
+GetProcessLogResult::GetProcessLogResult(const ErrorCode &ec) :
+    ActionResult(ec)
+{
+}
+
+GetProcessLogResult::~GetProcessLogResult() {}
+
+Json::Value GetProcessLogResult::toJson() const
+{
+    Json::Value root(Json::arrayValue);
+
+    for (const std::string &line : m_log)
+    {
+        root.append(line);
+    }
+
+    return root;
+}

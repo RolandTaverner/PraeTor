@@ -223,3 +223,22 @@ public:
 
     ProcessOptions m_processOptions;
 };
+
+//-------------------------------------------------------------------------
+class GetProcessLogResult : public ActionResult
+{
+public:
+    GetProcessLogResult();
+
+    explicit GetProcessLogResult(const ErrorCode &ec);
+
+    virtual ~GetProcessLogResult();
+
+    Json::Value toJson() const override;
+
+    typedef boost::function1<void, GetProcessLogResult> Handler;
+
+    typedef std::list<std::string> Log;
+
+    Log m_log;
+};

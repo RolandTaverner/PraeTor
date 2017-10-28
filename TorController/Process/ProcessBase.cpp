@@ -5,6 +5,8 @@
 #include <boost/algorithm/string/compare.hpp>
 #include <boost/assert.hpp>
 #include <boost/bind.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function/function0.hpp>
 #include <boost/function/function1.hpp>
@@ -20,6 +22,7 @@
 #include "Process/ProcessBase.h"
 #include "Process/ProcessErrors.h"
 
+namespace fs = boost::filesystem;
 namespace bp = boost::process;
 namespace ex = bp::extend;
 
@@ -52,7 +55,9 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
     m_substituteHandlers["ROOTPATH"] = boost::bind(&ProcessBase::substituteRootPath, this);
     m_substituteHandlers["DATAROOTPATH"] = boost::bind(&ProcessBase::substituteDataRootPath, this);
     m_substituteHandlers["CONFIGFILE"] = boost::bind(&ProcessBase::substituteConfigFilePath, this);
-    m_substituteHandlers["LOGFILE"] = boost::bind(&ProcessBase::substituteLogFilePath, this);
+    m_substituteHandlers["LOGFILE"] = boost::bind(&ProcessBase::substituteLogFilePath, this, LogFilePathPart::Full);
+    m_substituteHandlers["LOGFILENAME"] = boost::bind(&ProcessBase::substituteLogFilePath, this, LogFilePathPart::Name);
+    m_substituteHandlers["LOGFILELOCATION"] = boost::bind(&ProcessBase::substituteLogFilePath, this, LogFilePathPart::Location);
 
     m_scheduler.add_active_user();
 }
@@ -61,6 +66,28 @@ ProcessBase::ProcessBase(const Tools::Configuration::ConfigurationView &conf, pi
 ProcessBase::~ProcessBase()
 {
     m_scheduler.remove_active_user();
+    
+    if (isRunningInternal())
+    {
+        stop(StopProcessHandler());
+        m_childPtr->join();
+    }
+    // Remove old config and log
+    try
+    {
+        if (!m_logFilePath.empty() && fs::exists(m_logFilePath))
+        {
+            fs::remove(m_logFilePath);
+        }
+        if (!m_configFilePath.empty() && fs::exists(m_configFilePath))
+        {
+            fs::remove(m_configFilePath);
+        }
+    }
+    catch (const fs::filesystem_error &e)
+    {
+        Tools::Logger::Logger::getInstance().warning(std::string("Can't delete file ") + e.path1().string() + ": " + e.what());
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -154,6 +181,23 @@ void ProcessBase::start(const StartProcessHandler &handler)
     if (isRunningInternal())
     {
         throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
+    }
+    
+    // Remove old config and log
+    try
+    {
+        if (!m_logFilePath.empty() && fs::exists(m_logFilePath))
+        {
+            fs::remove(m_logFilePath);
+        }
+        if (!m_configFilePath.empty() && fs::exists(m_configFilePath))
+        {
+            fs::remove(m_configFilePath);
+        }
+    }
+    catch (const fs::filesystem_error &e)
+    {
+        Tools::Logger::Logger::getInstance().warning(std::string("Can't delete file ") + e.path1().string() + ": " + e.what());
     }
 
     // Set it before createConfigFile()!
@@ -444,8 +488,18 @@ std::string ProcessBase::substituteConfigFilePath() const
 }
 
 //-------------------------------------------------------------------------------------------------
-std::string ProcessBase::substituteLogFilePath() const
+std::string ProcessBase::substituteLogFilePath(LogFilePathPart part) const
 {
+    switch (part)
+    {
+    case LogFilePathPart::Full:
+        return m_logFilePath.string();
+    case LogFilePathPart::Name:
+        return m_logFilePath.filename().string();
+    case LogFilePathPart::Location:
+        return m_logFilePath.parent_path().string();
+    }
+    BOOST_ASSERT(false);
     return m_logFilePath.string();
 }
 
@@ -587,5 +641,21 @@ void ProcessBase::applyConfigImpl(const ProcessConfiguration &presetConf, bool s
     {
         m_configuration.addStorage(i.first, i.second);
     }
+}
 
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::getLog(LogLineHandler &acc)
+{
+    if (m_logFilePath.empty())
+    {
+        // TODO: throw?
+        return;
+    }
+
+    fs::ifstream logFile(m_logFilePath, std::ios_base::in);
+    std::string line;
+    while (std::getline(logFile, line))
+    {
+        acc(line);
+    }
 }

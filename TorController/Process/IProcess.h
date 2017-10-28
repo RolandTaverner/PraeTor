@@ -36,6 +36,8 @@ struct ExitStatus
 
 typedef boost::function1<void, const ErrorCode &> StartProcessHandler;
 typedef boost::function2<void, const ErrorCode &, const ExitStatus &> StopProcessHandler;
+typedef boost::function1<void, const std::string &> LogLineHandler;
+
 
 class IProcess
 {
@@ -83,6 +85,8 @@ public:
     virtual void applyConfig(const ProcessConfiguration &presetConf) = 0;
 
     virtual void applyUserConfig(const ProcessConfiguration &presetConf) = 0;
+
+    virtual void getLog(LogLineHandler &acc) = 0;
 };
 
 typedef boost::shared_ptr<IProcess> IProcessPtr;

@@ -59,7 +59,6 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
                 processPtr->applyUserConfig(processConfig);
             }
         }
-
     }
     // TODO: read config
     m_scheduler.set_num_threads(4);
@@ -461,5 +460,31 @@ void Controller::getPresets(const std::string &name, const PresetsResult::Handle
 {
     safeActionCall<PresetsResult>(
         boost::bind(&Controller::getPresetsImpl, this, name, handler),
+        handler);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessLogImpl(const std::string &name, const GetProcessLogResult::Handler &handler)
+{
+    SharedLockType lock(m_access);
+
+    Processes::const_iterator i = m_processes.find(name);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
+
+    GetProcessLogResult result;
+    IProcessPtr processPtr = i->second;
+    LogLineHandler h = [&result](const std::string &line) -> void { result.m_log.push_back(line); };
+    processPtr->getLog(h);
+    scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::getProcessLog(const std::string &name, const GetProcessLogResult::Handler &handler)
+{
+    safeActionCall<GetProcessLogResult>(
+        boost::bind(&Controller::getProcessLogImpl, this, name, handler),
         handler);
 }

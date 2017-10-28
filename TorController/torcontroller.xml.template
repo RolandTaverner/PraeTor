@@ -222,6 +222,45 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
+              <option name="logdir" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%LOGFILELOCATION%</value>
+                </default>
+              </option>
+
+              <option name="logfile" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%LOGFILENAME%</value>
+                </default>
+              </option>
+              
+              <option name="debug" type="number" list="yes" system="yes" required="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+                <default>
+                  <value>4096</value>
+                  <value>8192</value>
+                </default>
+              </option>
+
+              <option name="actionsfile" type="string" list="yes" system="yes" required="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+                <default>
+                  <value>match-all.action</value>
+                  <value>default.action</value>
+                  <value>user.action</value>
+                </default>
+              </option>
+
+              <option name="filterfile" type="string" list="yes" system="yes" required="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+                <default>
+                  <value>default.filter</value>
+                  <value>user.filter</value>
+                </default>
+              </option>
+              
             </scheme>
 
           </options>

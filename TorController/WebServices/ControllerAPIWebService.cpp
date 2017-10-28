@@ -178,6 +178,25 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
 
     try
     {
+        if (contextPtr->getRequest()->get_method() == "OPTIONS")
+        {
+            pion::http::response_ptr responsePtr = createResponse(pion::http::types::RESPONSE_CODE_OK, "OPTIONS", "text/plain", "", false);
+
+            responsePtr->add_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
+            
+            std::ostringstream h;
+            h << pion::http::types::HEADER_CONTENT_TYPE << ", ";
+            h << pion::http::types::HEADER_HOST << ", ";
+            h << pion::http::types::HEADER_CONNECTION << ", ";
+            h << pion::http::types::HEADER_CONTENT_LENGTH << ", ";
+            h << pion::http::types::HEADER_CONTENT_ENCODING << ", ";
+            h << pion::http::types::HEADER_USER_AGENT << ", ";
+            
+            responsePtr->add_header("Access-Control-Allow-Headers",  h.str());
+            contextPtr->sendResponse(responsePtr);
+            return;
+        }
+        
         ResourceParameters resourceParameters;
 
         const std::string action = resourceParser().mapToAction(contextPtr->getRequest()->get_resource(), resourceParameters);
@@ -201,16 +220,6 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
         sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, std::string("Internal error: ") + e.what());
         return;
     }
-
-    //if (request->get_method() != pion::http::types::REQUEST_METHOD_POST
-    //    && request->get_method() != pion::http::types::REQUEST_METHOD_GET)
-    //{
-    //    // bad request
-    //    contextPtr->getStat()->increment("bad_queries", 1);
-
-    //    contextPtr->sendResponse(responsePtr);
-    //    return;
-    //}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -268,7 +277,9 @@ pion::http::response_ptr ControllerAPIWebService::createResponse(unsigned status
 
     responsePtr->set_content_length(responseBody.length());
     responsePtr->set_content(responseBody);
-
+    
+    responsePtr->add_header("Access-Control-Allow-Origin", "*");
+    
     return responsePtr;
 }
 

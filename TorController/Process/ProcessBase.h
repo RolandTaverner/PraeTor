@@ -80,6 +80,8 @@ public:
 
     void applyConfig(const ProcessConfiguration &presetConf) override;
 
+    void applyUserConfig(const ProcessConfiguration &presetConf) override;
+
     // ISubstitutor
     bool hasSubstitute(const std::string &value) const override;
     
@@ -96,6 +98,7 @@ private:
 
     bool isRunningInternal() const;
     void setState(ProcessState newState);
+    void applyConfigImpl(const ProcessConfiguration &presetConf, bool saveCurrentOptions);
 
     boost::filesystem::path createConfigFile();
 

@@ -1,11 +1,19 @@
 #include <boost/bind.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/foreach.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/process/exception.hpp>
 
+#include "Tools/Configuration/XmlParser.h"
+
 #include "Controller/Controller.h"
 
 namespace bp = boost::process;
+namespace fs = boost::filesystem;
+
+static const char s_presetsFileName[] = "userpresets.xml";
+static const char s_userPresetsGroupName[] = "user";
 
 //-------------------------------------------------------------------------------------------------
 Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
@@ -25,6 +33,34 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
         m_presets.load(getConf().branch("presets"), getConf().branch("processes"));
     }
 
+    try
+    {
+        loadUserPresets(getConf().branch("processes"));
+    }
+    catch (const std::exception &e)
+    {
+        m_userPresets = Presets::createTemplate(s_userPresetsGroupName, getConf().branch("processes"));
+    }
+
+    if (!m_userPresets.getRange().empty())
+    {
+        const PresetGroup &pg = m_userPresets.getPresets(s_userPresetsGroupName);
+        const PresetGroupConfig &presetGroup = pg.second;
+        
+        for (Processes::iterator it = m_processes.begin(); it != m_processes.end(); ++it)
+        {
+            const std::string processName = it->first;
+            IProcessPtr processPtr = it->second;
+
+            PresetGroupConfig::const_iterator itProcConf = presetGroup.find(processName);
+            if (itProcConf != presetGroup.end())
+            {
+                const ProcessConfiguration &processConfig = itProcConf->second;
+                processPtr->applyUserConfig(processConfig);
+            }
+        }
+
+    }
     // TODO: read config
     m_scheduler.set_num_threads(4);
     m_scheduler.add_active_user();
@@ -36,6 +72,34 @@ Controller::~Controller()
     m_scheduler.remove_active_user();
     m_scheduler.shutdown();
     m_scheduler.join();
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::loadUserPresets(const Tools::Configuration::ConfigurationView &processesConf)
+{
+    const fs::path presetsFilePath = fs::path(m_dataRoot) / s_presetsFileName;
+
+    fs::ifstream presetFile(presetsFilePath, std::ios_base::in);
+    if (!presetFile)
+    {
+        throw std::runtime_error("User presets file " + presetsFilePath.string() + " not found");
+    }
+
+    Tools::Configuration::ConfigurationView userPresetsConf = Tools::Configuration::Parsers::Xml::readXml(presetFile);
+    m_userPresets.load(userPresetsConf.branch("presets"), processesConf, true);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::saveUserPresets()
+{
+    const fs::path presetsFilePath = fs::path(m_dataRoot) / s_presetsFileName;
+    fs::ofstream presetFile(presetsFilePath, std::ios_base::out | std::ios_base::trunc);
+    if (!presetFile)
+    {
+        throw std::runtime_error("Can't write user presets file " + presetsFilePath.string());
+    }
+
+    Tools::Configuration::Parsers::Xml::writeXml(m_userPresets.toConfiguration(), presetFile);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -88,7 +152,7 @@ void Controller::getProcessInfoImpl(const std::string &name, const GetProcessInf
 {
     GetProcessInfoResult result;
     {
-        boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+        SharedLockType lock(m_access);
 
         Processes::const_iterator i = m_processes.find(name);
         if (i == m_processes.end())
@@ -113,7 +177,7 @@ void Controller::getProcessInfo(const std::string &name, const GetProcessInfoRes
 //-------------------------------------------------------------------------------------------------
 void Controller::getProcessConfigsImpl(const std::string &name, const GetProcessConfigsResult::Handler &handler)
 {
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    SharedLockType lock(m_access);
 
     Processes::const_iterator i = m_processes.find(name);
     if (i == m_processes.end())
@@ -138,7 +202,7 @@ void Controller::getProcessesImpl(const GetProcessesResult::Handler &handler)
 {
     GetProcessesResult result;
     {
-        boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+        SharedLockType lock(m_access);
         BOOST_FOREACH(const Processes::value_type &v, m_processes)
         {
             result.m_processes.push_back(v.first);
@@ -175,7 +239,7 @@ void Controller::getProcessConfigImpl(const std::string &processName,
     const GetProcessConfigResult::Handler &handler)
 {
     GetProcessConfigResult result;
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    SharedLockType lock(m_access);
 
     Processes::const_iterator i = m_processes.find(processName);
     if (i == m_processes.end())
@@ -207,7 +271,7 @@ void Controller::getProcessOptionImpl(const std::string &processName,
     const ProcessOptionResult::Handler &handler)
 {
     ProcessOptionResult result;
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    SharedLockType lock(m_access);
 
     Processes::const_iterator i = m_processes.find(processName);
     if (i == m_processes.end())
@@ -256,7 +320,7 @@ void Controller::setProcessOptionImpl(const std::string &processName,
     const ProcessOptionResult::Handler &handler)
 {
     ProcessOptionResult result;
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    UniqueLockType lock(m_access);
 
     Processes::const_iterator i = m_processes.find(processName);
     if (i == m_processes.end())
@@ -266,6 +330,21 @@ void Controller::setProcessOptionImpl(const std::string &processName,
     IProcessPtr processPtr = i->second;
     result.m_option = processPtr->setOptionValue(configName, optionName, optionValue);
 
+    // Save user-supplied option value
+    try
+    {
+        m_userPresets.setOption(s_userPresetsGroupName,
+            processName,
+            configName,
+            Option(optionName, optionValue));
+
+        saveUserPresets();
+    }
+    catch (const std::exception &e)
+    {
+        // TODO: log this
+    }
+    
     scheduleActionHandler<>(handler, result);
 }
 
@@ -285,7 +364,7 @@ void Controller::setProcessOption(const std::string &processName,
 void Controller::getPresetGroupsImpl(const PresetGroupsResult::Handler &handler)
 {
     PresetGroupsResult result;
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    SharedLockType lock(m_access);
 
     for (const PresetGroup &g : m_presets.getRange())
     {
@@ -347,7 +426,7 @@ void Controller::applyPresetGroup(const std::string &name, const ApplyPresetGrou
 void Controller::getPresetsImpl(const std::string &name, const PresetsResult::Handler &handler)
 {
     PresetsResult result;
-    boost::shared_lock<boost::upgrade_mutex> lock(m_access);
+    SharedLockType lock(m_access);
 
     const PresetGroup &pg = m_presets.getPresets(name);
     for (PresetGroupConfig::const_iterator i = pg.second.begin(); i != pg.second.end(); ++i)

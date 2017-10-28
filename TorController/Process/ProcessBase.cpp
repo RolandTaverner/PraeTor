@@ -528,7 +528,19 @@ OptionDescValue ProcessBase::setOptionValue(const std::string &configName,
 void ProcessBase::applyConfig(const ProcessConfiguration &presetConf)
 {
     UniqueLockType lock(m_access);
+    applyConfigImpl(presetConf, false);
+}
 
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::applyUserConfig(const ProcessConfiguration &presetConf)
+{
+    UniqueLockType lock(m_access);
+    applyConfigImpl(presetConf, true);
+}
+
+//-------------------------------------------------------------------------------------------------
+void ProcessBase::applyConfigImpl(const ProcessConfiguration &presetConf, bool saveCurrentOptions)
+{
     if (isRunningInternal() || getState() != ProcessState::Stopped)
     {
         throw ProcessError(makeErrorCode(ProcessErrors::alreadyRunning));
@@ -542,6 +554,16 @@ void ProcessBase::applyConfig(const ProcessConfiguration &presetConf)
         IConfigSchemePtr schemePtr = currentStorage->getScheme();
         IOptionsStoragePtr newStorage(new OptionsStorage(schemePtr, true));
 
+        // Copy current options
+        if (saveCurrentOptions)
+        {
+            for (const Option &opt : currentStorage->getRange())
+            {
+                newStorage->setValue(opt.name(), opt.value());
+            }
+        }
+        
+        // Copy preset options
         if (presetConf.hasStorage(storageName))
         {
             IOptionsStorageConstPtr presetsStorage = presetConf.getStorage(storageName);
@@ -565,5 +587,5 @@ void ProcessBase::applyConfig(const ProcessConfiguration &presetConf)
     {
         m_configuration.addStorage(i.first, i.second);
     }
-}
 
+}

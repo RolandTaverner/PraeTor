@@ -6,6 +6,7 @@
 #include <Tools/Configuration/ConfigurationView.h>
 
 #include "Options/AbstractCollection.h"
+#include "Options/Option.h"
 #include "Process/ProcessConfiguration.h"
 
 typedef std::map<std::string, ProcessConfiguration> PresetGroupConfig;
@@ -18,13 +19,25 @@ public:
     virtual ~Presets();
 
     void load(const Tools::Configuration::ConfigurationView &presetsConf,
-        const Tools::Configuration::ConfigurationView &processesConf);
+        const Tools::Configuration::ConfigurationView &processesConf, bool keepEmpty = false);
 
     const PresetGroup &getPresets(const std::string &groupName) const;
+    void setOption(const std::string &groupName, const std::string &processName, const std::string &configName, const Option &option);
+    Tools::Configuration::ConfigurationView toConfiguration() const;
+
+    static Presets createTemplate(const std::string &presetGroupName, const Tools::Configuration::ConfigurationView &processesConf);
 
 private:
+    typedef std::map<std::string, IConfigSchemePtr> SchemeMap;
+    typedef std::map<std::string, SchemeMap> ProcessSchemes;
+
+    PresetGroupConfig loadPresetGroup(const Tools::Configuration::ConfigurationView &presetConf,
+        const ProcessSchemes &processesSchemes, bool keepEmpty) const;
+    static void addAllProcessConfigs(PresetGroupConfig &group, const Presets::ProcessSchemes &processesSchemes);
+
     typedef std::map<std::string, PresetGroup> PresetsMap;
     PresetsMap m_presetsStorage;
+
 
     // AbstractCollection<PresetGroup> implementation
     CollectionType::Element *begin() const override;

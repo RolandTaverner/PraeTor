@@ -74,6 +74,9 @@ private:
     void stopProcessImpl(const std::string &name, const StopProcessResult::Handler &handler);
 
 private:
+    void loadUserPresets(const Tools::Configuration::ConfigurationView &processesConf);
+    void saveUserPresets();
+
     pion::single_service_scheduler m_scheduler;
 
     template<typename ActionHandler, typename ActionResult>
@@ -124,11 +127,12 @@ private:
     std::string m_dataRoot;
 
     Presets m_presets;
+    Presets m_userPresets;
 
     typedef boost::shared_mutex MutexType;
     typedef boost::shared_lock_guard<MutexType> SharedLockType;
     typedef boost::lock_guard<MutexType> UniqueLockType;
-
+    
     Tools::Logger::Logger &m_logger;
 
     mutable MutexType m_access;

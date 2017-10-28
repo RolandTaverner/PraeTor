@@ -81,6 +81,8 @@ public:
     virtual ExitStatus getExitStatus() const = 0;
 
     virtual void applyConfig(const ProcessConfiguration &presetConf) = 0;
+
+    virtual void applyUserConfig(const ProcessConfiguration &presetConf) = 0;
 };
 
 typedef boost::shared_ptr<IProcess> IProcessPtr;

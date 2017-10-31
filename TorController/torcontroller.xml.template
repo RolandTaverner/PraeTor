@@ -57,6 +57,8 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
       <dataroot>%_DATA_ROOT_%</dataroot>
 
       <!-- Processes -->
+      <start>1</start>
+
       <processes>
         <process name="tor">
           <root>%_INSTALL_ROOT_%\Tor</root>

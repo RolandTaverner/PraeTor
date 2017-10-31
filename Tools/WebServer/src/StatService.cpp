@@ -75,8 +75,8 @@ void StatService::operator()(ConnectionContextPtr contextPtr)
     {
         // bad request
         static const std::string badRequestData = std::string("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>") +
-                "<stat:document version=\"" + m_serviceName + "\" xmlns:stat=\"http://xml.sputnik.ru/stat\">" +
-                "<error type=\"bad request\"><description></description></error></stat:document>";
+                "<document version=\"" + m_serviceName + "\">" +
+                "<error type=\"bad request\"><description></description></error></document>";
 
         pion::http::response_ptr responsePtr(new pion::http::response(pion::http::types::REQUEST_METHOD_GET));
         responsePtr->set_status_code(pion::http::types::RESPONSE_CODE_BAD_REQUEST);
@@ -108,7 +108,7 @@ void StatService::operator()(ConnectionContextPtr contextPtr)
     std::ostringstream xmlStream;
 
     xmlStream << "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" << "\n"
-            << "<stat:document version=\"" << m_serviceName << "-" << m_serviceVersion << "\" xmlns:stat=\"http://xml.sputnik.ru/stat\">" << "\n"
+            << "<document version=\"" << m_serviceName << "-" << m_serviceVersion << "\">" << "\n"
             << "<system>" << "\n"
             << "<version>" << m_serviceVersion << "</version>" << "\n"
             << "<revision>" << m_serviceRevision << "</revision>" << "\n"
@@ -140,7 +140,7 @@ void StatService::operator()(ConnectionContextPtr contextPtr)
     lockProvider.unlock();
 
     xmlStream << "</user>" << "\n"
-            << "</stat:document>";
+            << "</document>";
     const std::string xmlResponse = xmlStream.str();
 
     pion::http::response_ptr responsePtr(new pion::http::response(pion::http::types::REQUEST_METHOD_GET));

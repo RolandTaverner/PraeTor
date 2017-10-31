@@ -230,11 +230,13 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::start(void)
 {
+    m_controller->start();
 }
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::stop(void)
 {
+    m_controller->stop();
 }
 
 //-------------------------------------------------------------------------------------------------

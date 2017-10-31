@@ -488,3 +488,37 @@ void Controller::getProcessLog(const std::string &name, const GetProcessLogResul
         boost::bind(&Controller::getProcessLogImpl, this, name, handler),
         handler);
 }
+
+//-------------------------------------------------------------------------------------------------
+void Controller::start()
+{
+    const bool startProcesses = getConf().get<int>("start", 0);
+    if (startProcesses)
+    {
+        UniqueLockType lock(m_access);
+        for (Processes::const_iterator it = m_processes.begin(); it != m_processes.end(); ++it)
+        {   
+            it->second->start(StartProcessHandler());
+        }
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::stop()
+{
+    UniqueLockType lock(m_access);
+    for (Processes::const_iterator it = m_processes.begin(); it != m_processes.end(); ++it)
+    {
+        if (it->second->isRunning() && it->second->getState() != ProcessState::Stopped)
+        {
+            try
+            {
+                it->second->stop(StopProcessHandler());
+            }
+            catch (const std::exception &e)
+            {
+                // TODO: log
+            }
+        }
+    }
+}

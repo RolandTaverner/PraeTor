@@ -29,6 +29,9 @@ public:
     explicit Controller(const Tools::Configuration::ConfigurationView &config);
     virtual ~Controller();
 
+    void start();
+    void stop();
+
     void getControllerInfo(const ControllerInfoResult::Handler &handler);
     void getPresetGroups(const PresetGroupsResult::Handler &handler);
     void applyPresetGroup(const std::string &name, const ApplyPresetGroupResult::Handler &handler);

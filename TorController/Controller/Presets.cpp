@@ -344,3 +344,29 @@ Presets Presets::createTemplate(const std::string &presetGroupName, const tc::Co
 
     return result;
 }
+
+//-------------------------------------------------------------------------------------------------
+void Presets::removeOption(const std::string &groupName, const std::string &processName, const std::string &configName, const std::string &optionName)
+{
+    PresetsMap::iterator itGroup = m_presetsStorage.find(groupName);
+    if (itGroup == m_presetsStorage.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::presetsNotFound), groupName);
+    }
+
+    PresetGroup &pg = itGroup->second;
+    PresetGroupConfig::iterator itProcess = pg.second.find(processName);
+    if (itProcess == pg.second.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound), processName);
+    }
+
+    ProcessConfiguration &pc = itProcess->second;
+    if (!pc.hasStorage(configName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage), configName);
+    }
+
+    IOptionsStoragePtr storagePtr = pc.getStorage(configName);
+    storagePtr->removeValue(optionName);
+}

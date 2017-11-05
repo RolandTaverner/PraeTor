@@ -23,6 +23,7 @@ public:
 
     const PresetGroup &getPresets(const std::string &groupName) const;
     void setOption(const std::string &groupName, const std::string &processName, const std::string &configName, const Option &option);
+    void removeOption(const std::string &groupName, const std::string &processName, const std::string &configName, const std::string &optionName);
     Tools::Configuration::ConfigurationView toConfiguration() const;
 
     static Presets createTemplate(const std::string &presetGroupName, const Tools::Configuration::ConfigurationView &processesConf);

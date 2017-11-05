@@ -570,6 +570,21 @@ void Controller::removeProcessOptionImpl(const std::string &processName,
     result.m_option = processPtr->removeOptionValue(configName, optionName);
 
     scheduleActionHandler<>(handler, result);
+
+    // Remove user-supplied option value
+    try
+    {
+        m_userPresets.removeOption(s_userPresetsGroupName,
+            processName,
+            configName,
+            optionName);
+
+        saveUserPresets();
+    }
+    catch (const std::exception &e)
+    {
+        // TODO: log this
+    }
 }
 
 //-------------------------------------------------------------------------------------------------

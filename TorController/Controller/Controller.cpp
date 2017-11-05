@@ -37,7 +37,7 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
     {
         loadUserPresets(getConf().branch("processes"));
     }
-    catch (const std::exception &e)
+    catch (const std::exception &)
     {
         m_userPresets = Presets::createTemplate(s_userPresetsGroupName, getConf().branch("processes"));
     }
@@ -408,6 +408,35 @@ void Controller::applyPresetGroupImpl(const std::string &name, const ApplyPreset
             const ProcessConfiguration &processConfig = itProcConf->second;
             processPtr->applyConfig(processConfig);
         }
+    }
+
+    try 
+    {
+        for (const PresetGroupConfig::value_type processConf : presetGroup)
+        {
+            const std::string &processName = processConf.first;
+            const ProcessConfiguration &conf = processConf.second;
+            
+            std::list<std::string> storages;
+            conf.getStorages(storages);
+            for (const std::string configName : storages)
+            {
+                IOptionsStorageConstPtr storagePtr = conf.getStorage(configName);
+                for (const Option &option : storagePtr->getRange())
+                {
+                    m_userPresets.setOption(s_userPresetsGroupName,
+                        processName,
+                        configName,
+                        option);
+                }
+            }
+
+            saveUserPresets();
+        }
+    }
+    catch (const std::exception &e)
+    {
+        // TODO: log this
     }
 
     scheduleActionHandler<>(handler, result);

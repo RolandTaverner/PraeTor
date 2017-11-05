@@ -659,3 +659,48 @@ void ProcessBase::getLog(LogLineHandler &acc)
         acc(line);
     }
 }
+
+//-------------------------------------------------------------------------------------------------
+OptionDescValue ProcessBase::removeOptionValue(const std::string &configName, const std::string &optionName)
+{
+    UniqueLockType lock(m_access);
+    if (!m_configuration.hasStorage(configName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchStorage),
+            name() + "." + configName);
+    }
+
+    if (getState() != ProcessState::Stopped &&
+        (configName == s_configFileSection || configName == s_cmdLineSection))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::cantEditConfigOfRunningProcess),
+            name() + "." + configName);
+    }
+
+    IOptionsStoragePtr storagePtr = m_configuration.getStorage(configName);
+    IConfigSchemePtr schemePtr = storagePtr->getScheme();
+
+    if (!schemePtr->hasOption(optionName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::noSuchOption),
+            name() + "." + configName + "." + optionName);
+    }
+
+    if (schemePtr->isSystem(optionName))
+    {
+        throw ProcessError(makeErrorCode(ProcessErrors::systemOptionEditForbidden),
+            name() + "." + configName + "." + optionName);
+    }
+
+    if (storagePtr->hasValue(optionName))
+    {
+        storagePtr->removeValue(optionName);
+    }
+
+    const OptionDesc desc = storagePtr->getScheme()->getOptionDesc(optionName);
+    const OptionValueType value = storagePtr->hasValue(optionName) ? storagePtr->getValue(optionName) :
+        (schemePtr->hasDefaultValue(optionName) ? schemePtr->getDefaultValue(optionName) : OptionValueType());
+    const std::string presentation = storagePtr->hasValue(optionName) ? storagePtr->formatOption(optionName, shared_from_this()) : "";
+
+    return OptionDescValue(desc, value, presentation);
+}

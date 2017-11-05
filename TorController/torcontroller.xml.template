@@ -249,9 +249,9 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
               <option name="actionsfile" type="string" list="yes" system="yes" required="yes">
                 <format multiline="1">%NAME% %VALUE%</format>
                 <default>
-                  <value>match-all.action</value>
-                  <value>default.action</value>
-                  <value>user.action</value>
+                  <value>%ROOTPATH%\match-all.action</value>
+                  <value>%ROOTPATH%\default.action</value>
+                  <value>%ROOTPATH%\user.action</value>
                 </default>
               </option>
 

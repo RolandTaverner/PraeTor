@@ -19,6 +19,8 @@ public:
 
     bool hasValue(const std::string &name) const override;
 
+    void removeValue(const std::string &name) override; /* throws */
+
     IConfigSchemePtr getScheme() const override;
 
     std::string formatOption(const std::string &name, ISubstitutorPtr substitutorPtr) const override;

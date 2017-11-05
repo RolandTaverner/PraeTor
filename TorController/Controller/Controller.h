@@ -49,6 +49,10 @@ public:
         const std::string &optionName,
         const OptionValueContainer &optionValue,
         const ProcessOptionResult::Handler &handler);
+    void removeProcessOption(const std::string &processName,
+        const std::string &configName,
+        const std::string &optionName,
+        const ProcessOptionResult::Handler &handler);
     void startProcess(const std::string &name, const StartProcessResult::Handler &handler);
     void stopProcess(const std::string &name, const StopProcessResult::Handler &handler);
     void getProcessLog(const std::string &name, const GetProcessLogResult::Handler &handler);
@@ -72,6 +76,10 @@ private:
         const std::string &configName,
         const std::string &optionName,
         const OptionValueContainer &optionValue,
+        const ProcessOptionResult::Handler &handler);
+    void removeProcessOptionImpl(const std::string &processName,
+        const std::string &configName,
+        const std::string &optionName,
         const ProcessOptionResult::Handler &handler);
 
     void startProcessImpl(const std::string &name, const StartProcessResult::Handler &handler);

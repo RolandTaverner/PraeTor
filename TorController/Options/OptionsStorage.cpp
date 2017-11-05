@@ -109,3 +109,15 @@ std::string OptionsStorage::formatOption(const std::string &name, ISubstitutorPt
 
     return getScheme()->formatOption(name, i->second.value().get(), substitutorPtr);
 }
+
+//-------------------------------------------------------------------------------------------------
+void OptionsStorage::removeValue(const std::string &name)
+{
+    Options::const_iterator i = m_options.find(name);
+    if (i == m_options.end())
+    {
+        throw OptionError(makeErrorCode(OptionErrors::notFoundInStorage), name);
+    }
+    
+    m_options.erase(i);
+}

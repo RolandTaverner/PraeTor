@@ -74,6 +74,8 @@ public:
         const std::string &optionName,
         const OptionValueContainer &optionValue) override;
 
+    OptionDescValue removeOptionValue(const std::string &configName, const std::string &optionName) override;
+    
     ProcessState getState() const override;
 
     ExitStatus getExitStatus() const override;

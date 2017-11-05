@@ -522,3 +522,34 @@ void Controller::stop()
         }
     }
 }
+
+//-------------------------------------------------------------------------------------------------
+void Controller::removeProcessOptionImpl(const std::string &processName,
+    const std::string &configName,
+    const std::string &optionName,
+    const ProcessOptionResult::Handler &handler)
+{
+    ProcessOptionResult result;
+    SharedLockType lock(m_access);
+
+    Processes::const_iterator i = m_processes.find(processName);
+    if (i == m_processes.end())
+    {
+        throw ControllerError(makeErrorCode(ControllerErrors::processNotFound));
+    }
+    IProcessPtr processPtr = i->second;
+    result.m_option = processPtr->removeOptionValue(configName, optionName);
+
+    scheduleActionHandler<>(handler, result);
+}
+
+//-------------------------------------------------------------------------------------------------
+void Controller::removeProcessOption(const std::string &processName,
+    const std::string &configName,
+    const std::string &optionName,
+    const ProcessOptionResult::Handler &handler)
+{
+    safeActionCall<ProcessOptionResult>(
+        boost::bind(&Controller::removeProcessOptionImpl, this, processName, configName, optionName, handler),
+        handler);
+}

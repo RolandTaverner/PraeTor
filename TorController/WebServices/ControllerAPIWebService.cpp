@@ -187,7 +187,7 @@ void ControllerAPIWebService::operator()(Tools::WebServer::ConnectionContextPtr 
         {
             pion::http::response_ptr responsePtr = createResponse(pion::http::types::RESPONSE_CODE_OK, "OPTIONS", "text/plain", "", false);
 
-            responsePtr->add_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT");
+            responsePtr->add_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
             
             std::ostringstream h;
             h << pion::http::types::HEADER_CONTENT_TYPE << ", ";
@@ -531,8 +531,10 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
         }
         else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_DELETE)
         {
-            sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_NOT_IMPLEMENTED, "Not implemented yet.");
-            return;
+            m_controller->removeProcessOption(itProcessId->second,
+                itConfigName->second,
+                itOptionName->second,
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Delete, _1));
         }
         else
         {

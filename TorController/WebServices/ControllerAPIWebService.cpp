@@ -174,6 +174,7 @@ ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
 //-------------------------------------------------------------------------------------------------
 ControllerAPIWebService::~ControllerAPIWebService()
 {
+    m_controller->stop();
 }
 
 //-------------------------------------------------------------------------------------------------

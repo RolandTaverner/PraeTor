@@ -43,11 +43,21 @@ struct WebServer::WebServerImpl
          std::size_t connectionLimit)
     {
         m_pionScheduler.set_num_threads(threadCount);
-
+        m_pionScheduler.add_active_user();
         m_pionWebServerCorePtr.reset(new Detail::PionWebServerCore(m_pionScheduler,
                                                                    endpoint,
                                                                    timeout,
                                                                    connectionLimit));
+    }
+    ~WebServerImpl()
+    {
+        m_pionWebServerCorePtr->stop();
+        m_pionWebServerCorePtr->join();
+        m_pionWebServerCorePtr.reset();
+
+        m_pionScheduler.remove_active_user();
+        m_pionScheduler.shutdown();
+        m_pionScheduler.join();
     }
 
     Detail::PionWebServerCorePtr m_pionWebServerCorePtr;
@@ -238,44 +248,64 @@ void WebServer::start()
     serverEndpoint.address(boost::asio::ip::address::from_string(m_host));
 
     m_pImpl.reset(new WebServerImpl(serverEndpoint, getHttpThreadCount(), getTimeout(), getConnectionLimit()));
-    m_workSchedulerPtr.reset(new Scheduler(getWorkerThreadCount(), getWorkerThreadCount()));
-
-    for(Services::iterator i = m_services.begin(); i != m_services.end(); ++i)
+    try
     {
-        i->second->start();
-    }
+        m_workSchedulerPtr.reset(new Scheduler(getWorkerThreadCount(), getWorkerThreadCount()));
 
-    for(Services::iterator i = m_services.begin(); i != m_services.end(); ++i)
-    {
-        ServiceHandlerPtr handlerPtr(new ServiceHandler(i->second,
-                                                        m_workSchedulerPtr,
-                                                        m_statPtr,
-                                                        ServiceHandler::ErrorHandler(boost::bind(&WebServer::onHandlerError, this, _1, _2, _3)),
-                                                        getConnectionLimit(),
-                                                        m_activeRequestsCount));
-
-        pion::http::server::request_handler_t handler = boost::bind(&ServiceHandler::operator(), handlerPtr, _1, _2);
-
-        m_pImpl->m_pionWebServerCorePtr->add_resource(i->first, handler);
-    }
-
-    for (PluginServices::iterator i = m_pluginServices.begin(); i != m_pluginServices.end(); ++i)
-    {
-        m_pImpl->m_pionWebServerCorePtr->add_service(i->first, i->second.first.get());
-        const PluginServiceOptions &opts = i->second.second;
-
-        for (PluginServiceOptions::const_iterator j = opts.begin(); j != opts.end(); ++j)
+        for (Services::iterator i = m_services.begin(); i != m_services.end(); ++i)
         {
-            m_pImpl->m_pionWebServerCorePtr->set_service_option(i->first, j->first, j->second);
+            ServiceHandlerPtr handlerPtr(new ServiceHandler(i->second,
+                m_workSchedulerPtr,
+                m_statPtr,
+                ServiceHandler::ErrorHandler(boost::bind(&WebServer::onHandlerError, this, _1, _2, _3)),
+                getConnectionLimit(),
+                m_activeRequestsCount));
+
+            pion::http::server::request_handler_t handler = boost::bind(&ServiceHandler::operator(), handlerPtr, _1, _2);
+
+            m_pImpl->m_pionWebServerCorePtr->add_resource(i->first, handler);
+        }
+        
+        for (PluginServices::iterator i = m_pluginServices.begin(); i != m_pluginServices.end(); ++i)
+        {
+            PluginServicePtr &pluginPtr = i->second.first;
+            
+            const PluginServiceOptions &opts = i->second.second;
+
+            for (PluginServiceOptions::const_iterator j = opts.begin(); j != opts.end(); ++j)
+            {
+                pluginPtr->set_option(j->first, j->second);
+            }
+            
+            m_pImpl->m_pionWebServerCorePtr->add_service(i->first, pluginPtr);
+            pluginPtr = nullptr;
+        }
+
+        for (std::map<std::string, std::string>::const_iterator i = m_redirects.begin(); i != m_redirects.end(); ++i)
+        {
+            m_pImpl->m_pionWebServerCorePtr->add_redirect(i->first, i->second);
+        }
+
+        m_pImpl->m_pionWebServerCorePtr->set_authentication(m_authPtr);
+
+        for (Services::iterator i = m_services.begin(); i != m_services.end(); ++i)
+        {
+            i->second->start();
         }
     }
-
-    for(std::map<std::string, std::string>::const_iterator i = m_redirects.begin(); i != m_redirects.end(); ++i)
+    catch (...)
     {
-        m_pImpl->m_pionWebServerCorePtr->add_redirect(i->first, i->second);
+        for (PluginServices::iterator i = m_pluginServices.begin(); i != m_pluginServices.end(); ++i)
+        {
+            if (i->second.first != nullptr)
+            {
+                delete i->second.first;
+                i->second.first = nullptr;
+            }
+        }
+        m_pImpl.reset();
+        throw;
     }
-
-    m_pImpl->m_pionWebServerCorePtr->set_authentication(m_authPtr);
 
     m_workSchedulerPtr->start();
     m_pImpl->m_pionWebServerCorePtr->start();

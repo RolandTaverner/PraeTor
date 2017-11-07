@@ -26,7 +26,7 @@ namespace Tools
 namespace WebServer
 {
 
-typedef boost::shared_ptr<pion::http::plugin_service> PluginServicePtr;
+typedef pion::http::plugin_service *PluginServicePtr;
 typedef std::map<std::string, std::string> PluginServiceOptions;
 
 class WebServer : boost::noncopyable

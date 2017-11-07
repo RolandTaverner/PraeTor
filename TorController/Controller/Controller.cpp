@@ -68,6 +68,8 @@ Controller::Controller(const Tools::Configuration::ConfigurationView &config) :
 //-------------------------------------------------------------------------------------------------
 Controller::~Controller()
 {
+    stop();
+    m_processes.clear();
     m_scheduler.remove_active_user();
     m_scheduler.shutdown();
     m_scheduler.join();

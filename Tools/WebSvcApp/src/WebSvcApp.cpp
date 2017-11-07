@@ -220,9 +220,7 @@ int WebSvcApp::run(Tools::Configuration::Configuration &conf)
 
                 if (pluginName == "fileservice")
                 {
-                    Tools::WebServer::PluginServicePtr servicePtr(new pion::plugins::FileService());
-
-                    webServerPtr->addPluginService(resource, servicePtr, opts);
+                    webServerPtr->addPluginService(resource, new pion::plugins::FileService(), opts);
                 }
             }
             logger.info("Plugin web-services initialized.");

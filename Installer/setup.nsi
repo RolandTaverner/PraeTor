@@ -128,6 +128,15 @@ Section "Install files"
   WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "NoModify" 1
   WriteRegDWORD HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT}" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
+
+  ReadRegStr $1 HKLM "SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x86" "Installed"
+  StrCmp $1 1 installed
+
+  ;not installed, so run the installer
+  SetOutPath "$INSTDIR" 
+  File "c:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.11.25325\vcredist_x86.exe" 	
+  ExecWait '"$INSTDIR\vcredist_x86.exe" /install /passive /norestart'
+installed:
   
 SectionEnd
 

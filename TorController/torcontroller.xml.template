@@ -40,16 +40,21 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
   <serviceconfig>
     <plugins>
       <plugin name="fileservice">
-        <resource>/tor</resource>
+        <resource>/ui</resource>
         <options>
-          <directory>x:\EasyTorExtension</directory>
+          <directory>%_INSTALL_ROOT_%\UI</directory>
         </options>
       </plugin>
     </plugins>
 
     <redirects>
-      <redirect from="/" to="/tor/procs.html" with_status="308" />
-      <redirect from="/favicon.ico" to="/tor/favicon.ico"/>
+      <redirect from="/index.html" to="/ui/index.html" with_status="308" />
+      <redirect from="/service-worker.js" to="/ui/service-worker.js" />
+      <redirect from="/asset-manifest.json" to="/ui/asset-manifest.json" />
+      <redirect from="/manifest.json" to="/ui/manifest.json" />
+      <redirect from="/static" to="/ui/static" with_status="308" />
+
+      <redirect from="/favicon.ico" to="/ui/favicon.ico" />
     </redirects>
     
     <controller>
@@ -97,7 +102,7 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
               <option name="SOCKSPort" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
                 <default>
-                  <value>9050</value>
+                  <value>127.0.0.1:9050</value>
                 </default>
               </option>
 

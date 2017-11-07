@@ -95,6 +95,10 @@ Section "Install files"
   SetOutPath "$INSTDIR"
   File "..\Release\TorController.exe"
 
+  ; Web UI files
+  SetOutPath "$INSTDIR\UI"
+  File /r "x:\EasyTorUI\build\*.*"
+
   ; Tor files
   SetOutPath "$INSTDIR\Tor"
   File /r "EtApps\tor-win32-0.3.1.7\*.*"
@@ -164,7 +168,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\${PRODUCT}"
   CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(UninstallShortcut) ${PRODUCT}.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(RunShortcut) ${PRODUCT}.lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
-  WriteIniStr "$SMPROGRAMS\${PRODUCT}\${PRODUCT} Control Panel.url" "InternetShortcut" "URL" "http://127.0.0.1:30000/"
+  WriteIniStr "$SMPROGRAMS\${PRODUCT}\${PRODUCT} Control Panel.url" "InternetShortcut" "URL" "http://127.0.0.1:30000/ui/index.html"
 SectionEnd
 
 ;--------------------------------

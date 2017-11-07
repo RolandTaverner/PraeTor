@@ -1,3 +1,5 @@
+#include <boost/algorithm/string/erase.hpp>
+
 #include "Tools/WebServer/RedirectService.h"
 
 namespace Tools
@@ -28,11 +30,13 @@ RedirectService::~RedirectService()
 void RedirectService::operator()(Tools::WebServer::ConnectionContextPtr contextPtr)
 {
     pion::http::request_ptr requestPtr = contextPtr->getRequest();
+    const std::string resource = requestPtr->get_resource();
+
 
     pion::http::response_ptr responsePtr(new pion::http::response(requestPtr->get_method()));
     responsePtr->set_status_code(m_httpStatus);
     responsePtr->set_status_message(getStatusMessage(m_httpStatus));
-    responsePtr->add_header("Location", m_to);
+    responsePtr->add_header("Location", m_to + boost::algorithm::erase_first_copy(resource, m_from));
     
     contextPtr->sendResponse(responsePtr);
 }

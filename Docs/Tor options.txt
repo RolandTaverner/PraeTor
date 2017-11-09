@@ -1,0 +1,309 @@
+  * AccelDir
+  * AccelName
+AccountingMax
+AccountingRule
+AccountingStart
+  + Address
+  + AllowDotExit
+  + AllowNonRFC953Hostnames
+AlternateBridgeAuthority
+AlternateDirAuthority
+  + AssumeReachable
+AuthDirBadExit
+AuthDirBadExitCCs
+AuthDirFastGuarantee
+AuthDirGuardBWGuarantee
+AuthDirHasIPv6Connectivity
+AuthDirInvalid
+AuthDirInvalidCCs
+AuthDirListBadExits
+AuthDirMaxServersPerAddr
+AuthDirPinKeys
+AuthDirReject
+AuthDirRejectCCs
+AuthDirSharedRandomness
+AuthDirTestEd25519LinkKeys
+  - AuthoritativeDirectory
+  + AutomapHostsOnResolve
+  + AutomapHostsSuffixes
+  + AvoidDiskWrites
+  + BandwidthBurst
+  + BandwidthRate
+  + Bridge
+  * BridgeAuthoritativeDir
+  + BridgePassword
+  + BridgeRecordUsageByCountry
+  + BridgeRelay
+  + CellStatistics
+CircuitBuildTimeout
+CircuitPriorityHalflife
+CircuitStreamTimeout
+CircuitsAvailableTimeout
+ClientBootstrapConsensusAuthorityDownloadSchedule
+ClientBootstrapConsensusAuthorityOnlyDownloadSchedule
+ClientBootstrapConsensusAuthorityOnlyMaxDownloadTries
+ClientBootstrapConsensusFallbackDownloadSchedule
+ClientBootstrapConsensusMaxDownloadTries
+ClientBootstrapConsensusMaxInProgressTries
+ClientDNSRejectInternalAddresses
+  + ClientOnly
+ClientPreferIPv6DirPort
+ClientPreferIPv6ORPort
+  + ClientRejectInternalAddresses
+ClientTransportPlugin
+  + ClientUseIPv4
+  + ClientUseIPv6
+  + ConnDirectionStatistics
+  - ConnLimit
+  + ConnectionPadding
+  * ConsensusParams
+  + ConstrainedSockSize
+  + ConstrainedSockets
+  + ContactInfo
+  + ControlPort
+  - ControlPortFileGroupReadable
+  - ControlPortWriteToFile
+  - ControlSocket
+  - ControlSocketsGroupWritable
+  + CookieAuthFile
+  - CookieAuthFileGroupReadable
+  + CookieAuthentication
+  * CountPrivateBandwidth
+  + DNSPort
+  + DataDirectory
+  - DataDirectoryGroupReadable
+  + DirAllowPrivateAddresses
+  + DirAuthority
+  + DirAuthorityFallbackRate
+  + DirCache
+  + DirPolicy
+  + DirPort
+DirPortFrontPage
+  + DirReqStatistics
+  - DisableAllSwap
+DisableDebuggerAttachment
+DisableNetwork
+DisableOOSCheck
+  + DownloadExtraInfo
+  + EnforceDistinctSubnets
+EntryNodes
+  + EntryStatistics
+  + ExcludeExitNodes
+ExcludeNodes
+ExitNodes
+  + ExitPolicy
+ExitPolicyRejectLocalInterfaces
+ExitPolicyRejectPrivate
+ExitPortStatistics
+ExitRelay
+ExtORPort
+ExtORPortCookieAuthFile
+ExtORPortCookieAuthFileGroupReadable
+ExtendAllowPrivateAddresses
+ExtendByEd25519ID
+ExtraInfoStatistics
+FallbackDir
+FascistFirewall
+FetchDirInfoEarly
+FetchDirInfoExtraEarly
+FetchHidServDescriptors
+FetchServerDescriptors
+FetchUselessDescriptors
+FirewallPorts
+GeoIPExcludeUnknown
+  + GeoIPFile
+  + GeoIPv6File
+GuardLifetime
+GuardfractionFile
+HTTPProxy
+HTTPProxyAuthenticator
+HTTPSProxy
+HTTPSProxyAuthenticator
+HardwareAccel
+HashedControlPassword
+HeartbeatPeriod
+HidServAuth
+HiddenServiceAllowUnknownPorts
+HiddenServiceAuthorizeClient
+HiddenServiceDir
+HiddenServiceDirGroupReadable
+HiddenServiceMaxStreams
+HiddenServiceMaxStreamsCloseCircuit
+HiddenServiceNonAnonymousMode
+HiddenServiceNumIntroductionPoints
+HiddenServicePort
+HiddenServiceSingleHopMode
+HiddenServiceStatistics
+HiddenServiceVersion
+IPv6Exit
+KeepBindCapabilities
+KeepalivePeriod
+LearnCircuitBuildTimeout
+  + Log
+LogMessageDomains
+LogTimeGranularity
+LongLivedPorts
+MapAddress
+MaxAdvertisedBandwidth
+MaxCircuitDirtiness
+MaxClientCircuitsPending
+MaxConsensusAgeForDiffs
+MaxMemInQueues
+MaxOnionQueueDelay
+MaxUnparseableDescSizeToLog
+MinMeasuredBWsForAuthToIgnoreAdvertised
+MinUptimeHidServDirectoryV2
+MyFamily
+NATDPort
+NewCircuitPeriod
+  + Nickname
+NodeFamily
+NumCPUs
+NumDirectoryGuards
+NumEntryGuards
+  + ORPort
+OfflineMasterKey
+OptimisticData
+OutboundBindAddress
+OutboundBindAddressExit
+OutboundBindAddressOR
+PaddingStatistics
+PathBiasCircThreshold
+PathBiasDropGuards
+PathBiasExtremeRate
+PathBiasExtremeUseRate
+PathBiasNoticeRate
+PathBiasNoticeUseRate
+PathBiasScaleThreshold
+PathBiasScaleUseThreshold
+PathBiasUseThreshold
+PathBiasWarnRate
+PathsNeededToBuildCircuits
+PerConnBWBurst
+PerConnBWRate
+  - PidFile
+  + PortForwarding
+  + PortForwardingHelper
+ProtocolWarnings
+PublishHidServDescriptors
+PublishServerDescriptor
+ReachableAddresses
+ReachableDirAddresses
+ReachableORAddresses
+RecommendedClientVersions
+RecommendedPackages
+RecommendedServerVersions
+RecommendedVersions
+ReducedConnectionPadding
+RefuseUnknownExits
+RejectPlaintextPorts
+RelayBandwidthBurst
+RelayBandwidthRate
+RendPostPeriod
+RephistTrackTime
+RunAsDaemon
+SSLKeyLifetime
+  + SafeLogging
+SafeSocks
+Sandbox
+SchedulerHighWaterMark__
+SchedulerLowWaterMark__
+SchedulerMaxFlushCells__
+ServerDNSAllowBrokenConfig
+ServerDNSAllowNonRFC953Hostnames
+ServerDNSDetectHijacking
+ServerDNSRandomizeCase
+ServerDNSResolvConfFile
+ServerDNSSearchDomains
+ServerDNSTestAddresses
+ServerTransportListenAddr
+ServerTransportOptions
+ServerTransportPlugin
+ShutdownWaitLength
+SigningKeyLifetime
+Socks4Proxy
+Socks5Proxy
+Socks5ProxyPassword
+Socks5ProxyUsername
+SocksPolicy
+SocksPort
+SocksSocketsGroupWritable
+SocksTimeout
+StrictNodes
+SyslogIdentityTag
+TestSocks
+  - TestingAuthDirTimeToLearnReachability
+  - TestingAuthKeyLifetime
+  - TestingAuthKeySlop
+  - TestingBridgeDownloadSchedule
+  - TestingCertMaxDownloadTries
+  - TestingClientConsensusDownloadSchedule
+  - TestingClientDownloadSchedule
+  - TestingClientMaxIntervalWithoutRequest
+  - TestingConsensusMaxDownloadTries
+  - TestingDescriptorMaxDownloadTries
+  - TestingDirAuthVoteExit
+  - TestingDirAuthVoteExitIsStrict
+  - TestingDirAuthVoteGuard
+  - TestingDirAuthVoteGuardIsStrict
+  - TestingDirAuthVoteHSDir
+  - TestingDirAuthVoteHSDirIsStrict
+  - TestingDirConnectionMaxStall
+  - TestingEnableCellStatsEvent
+  - TestingEnableConnBwEvent
+  - TestingEnableTbEmptyEvent
+  - TestingEstimatedDescriptorPropagationTime
+  - TestingLinkCertLifetime
+  - TestingLinkKeySlop
+  - TestingMicrodescMaxDownloadTries
+  - TestingMinExitFlagThreshold
+  - TestingMinFastFlagThreshold
+  - TestingServerConsensusDownloadSchedule
+  - TestingServerDownloadSchedule
+  - TestingSigningKeySlop
+  - TestingTorNetwork
+  - TestingV3AuthInitialDistDelay
+  - TestingV3AuthInitialVoteDelay
+  - TestingV3AuthInitialVotingInterval
+  - TestingV3AuthVotingStartOffset
+TokenBucketRefillInterval
+Tor2webMode
+Tor2webRendezvousPoints
+TrackHostExits
+TrackHostExitsExpire
+TransPort
+TransProxyType
+TruncateLogFile
+UpdateBridgesFromAuthority
+UseBridges
+UseDefaultFallbackDirs
+UseEntryGuards
+UseGuardFraction
+UseMicrodescriptors
+User
+V3AuthDistDelay
+V3AuthNIntervalsValid
+V3AuthUseLegacyKey
+V3AuthVoteDelay
+V3AuthVotingInterval
+V3AuthoritativeDirectory
+V3BandwidthsFile
+VersioningAuthoritativeDirectory
+VirtualAddrNetworkIPv4
+VirtualAddrNetworkIPv6
+WarnPlaintextPorts
+__AllDirActionsPrivate
+__ControlPort
+__DNSPort
+__DirPort
+__DisablePredictedCircuits
+__ExtORPort
+__HashedControlSessionPassword
+__LeaveStreamsUnattached
+__NATDPort
+__ORPort
+__OwningControllerProcess
+__ReloadTorrcOnSIGHUP
+__SocksPort
+__TransPort
+___UsingTestNetworkDefaults

@@ -106,11 +106,7 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
-              <option name="ORPort" type="string" list="yes" system="no" required="no">
-                <format>%NAME% %VALUE%</format>
-              </option>
-
-              <option name="DirPort" type="string" list="yes" system="no" required="no">
+              <option name="ORPort" type="string" list="yes">
                 <format>%NAME% %VALUE%</format>
               </option>
 
@@ -121,7 +117,7 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
-              <option name="SafeLogging" type="domainvalue" list="no">
+              <option name="SafeLogging" type="domainvalue">
                 <format>%NAME% %VALUE%</format>
                 <type>
                   <domain>
@@ -134,6 +130,311 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                     <value>1</value>
                 </default>
               </option>                        
+
+              <option name="PortForwarding" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="PortForwardingHelper" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+              
+              <option name="AllowDotExit" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="AllowNonRFC953Hostnames" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="AutomapHostsOnResolve" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="AutomapHostsSuffixes" type="string" list="yes" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+              </option>
+              
+              <option name="AvoidDiskWrites" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="BandwidthBurst" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="BandwidthRate" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="Bridge" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="BridgePassword" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="BridgeRecordUsageByCountry" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>1</value>
+                </default>
+              </option>
+
+              <option name="BridgeRelay" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="CellStatistics" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="ClientOnly" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="ClientRejectInternalAddresses" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>1</value>
+                </default>
+              </option>
+
+              <option name="ClientUseIPv4" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>1</value>
+                </default>
+              </option>
+
+              <option name="ClientUseIPv6" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>0</value>
+                </default>
+              </option>
+              
+              <option name="ConnDirectionStatistics" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="ConnectionPadding" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                    <value>auto</value>
+                  </domain>
+                </type>
+              </option>
+              
+              <option name="ConstrainedSockSize" type="string">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
+              <option name="ConstrainedSockets" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="ContactInfo" type="string">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>https://praetor.space</value>
+                </default>
+              </option>
+
+              <option name="ControlPort" type="string" list="no" system="yes" required="no">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>0</value>
+                </default>
+              </option>
+
+              <option name="CookieAuthFile" type="string" list="no" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <default>
+                  <value>%DATAROOTPATH%\cookie_auth</value>
+                </default>
+              </option>
+
+              <option name="CookieAuthentication" type="domainvalue" system="yes" required="yes">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+                <default>
+                    <value>1</value>
+                </default>
+              </option>
+
+              <option name="DirAllowPrivateAddresses" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="DirAuthority" type="string" list="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DirAuthorityFallbackRate" type="number">
+                <format>%NAME% %VALUE%</format>
+              </option>
+              
+              <option name="DirCache" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="DirPolicy" type="string" list="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DirPort" type="string" list="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+              </option>
+
+              <option name="DirReqStatistics" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="DNSPort" type="string" list="yes">
+                <format multiline="1">%NAME% %VALUE%</format>
+              </option>
+              
+              <option name="DownloadExtraInfo" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="EnforceDistinctSubnets" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
+
+              <option name="EntryStatistics" type="domainvalue">
+                <format>%NAME% %VALUE%</format>
+                <type>
+                  <domain>
+                    <value>0</value>
+                    <value>1</value>
+                  </domain>
+                </type>
+              </option>
 
               <option name="GeoIPFile" type="string" list="no" system="yes" required="yes">
                 <format>%NAME% %VALUE%</format>
@@ -156,6 +457,10 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 </default>
               </option>
 
+              <option name="Address" type="string" list="no" system="no" required="no">
+                <format>%NAME% %VALUE%</format>
+              </option>
+
               <option name="ExitPolicy" type="string" list="yes" system="no" required="no">
                 <format>%NAME% %VALUE%</format>
                 <default>
@@ -167,15 +472,13 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
                 <format>%NAME% %VALUE%</format>
                 <type>
                   <domain>
-                    <value>{ua}</value>
-                    <value>{ru}</value>
-                    <value>{kz}</value>
-                    <value>{jp}</value>
+                    <value>{ac}</value> <value>{af}</value> <value>{ax}</value> <value>{al}</value> <value>{dz}</value> <value>{ad}</value> <value>{ao}</value> <value>{ai}</value> <value>{aq}</value> <value>{ag}</value> <value>{ar}</value> <value>{am}</value> <value>{aw}</value> <value>{au}</value> <value>{at}</value> <value>{az}</value> <value>{bs}</value> <value>{bh}</value> <value>{bd}</value> <value>{bb}</value> <value>{by}</value> <value>{be}</value> <value>{bz}</value> <value>{bj}</value> <value>{bm}</value> <value>{bt}</value> <value>{bo}</value> <value>{ba}</value> <value>{bw}</value> <value>{bv}</value> <value>{br}</value> <value>{io}</value> <value>{vg}</value> <value>{bn}</value> <value>{bg}</value> <value>{bf}</value> <value>{bi}</value> <value>{kh}</value> <value>{cm}</value> <value>{ca}</value> <value>{cv}</value> <value>{ky}</value> <value>{cf}</value> <value>{td}</value> <value>{cl}</value> <value>{cn}</value> <value>{cx}</value> <value>{cc}</value> <value>{co}</value> <value>{km}</value> <value>{cg}</value> <value>{cd}</value> <value>{ck}</value> <value>{cr}</value> <value>{ci}</value> <value>{hr}</value> <value>{cu}</value> <value>{cy}</value> <value>{cz}</value> <value>{dk}</value> <value>{dj}</value> <value>{dm}</value> <value>{do}</value> <value>{tp}</value> <value>{ec}</value> <value>{eg}</value> <value>{sv}</value> <value>{gq}</value> <value>{ee}</value> <value>{et}</value> <value>{fk}</value> <value>{fo}</value> <value>{fj}</value> <value>{fi}</value> <value>{fr}</value> <value>{fx}</value> <value>{gf}</value> <value>{pf}</value> <value>{tf}</value> <value>{ga}</value> <value>{gm}</value> <value>{ge}</value> <value>{de}</value> <value>{gh}</value> <value>{gi}</value> <value>{gr}</value> <value>{gl}</value> <value>{gd}</value> <value>{gp}</value> <value>{gu}</value> <value>{gt}</value> <value>{gn}</value> <value>{gw}</value> <value>{gy}</value> <value>{ht}</value> <value>{hm}</value> <value>{hn}</value> <value>{hk}</value> <value>{hu}</value> <value>{is}</value> <value>{in}</value> <value>{id}</value> <value>{ir}</value> <value>{iq}</value> <value>{ie}</value> <value>{im}</value> <value>{il}</value> <value>{it}</value> <value>{jm}</value> <value>{jp}</value> <value>{jo}</value> <value>{kz}</value> <value>{ke}</value> <value>{ki}</value> <value>{kp}</value> <value>{kr}</value> <value>{kw}</value> <value>{kg}</value> <value>{la}</value> <value>{lv}</value> <value>{lb}</value> <value>{ls}</value> <value>{lr}</value> <value>{ly}</value> <value>{li}</value> <value>{lt}</value> <value>{lu}</value> <value>{mo}</value> <value>{mk}</value> <value>{mg}</value> <value>{mw}</value> <value>{my}</value> <value>{mv}</value> <value>{ml}</value> <value>{mt}</value> <value>{mh}</value> <value>{mq}</value> <value>{mr}</value> <value>{mu}</value> <value>{yt}</value> <value>{mx}</value> <value>{fm}</value> <value>{md}</value> <value>{mc}</value> <value>{mn}</value> <value>{me}</value> <value>{ms}</value> <value>{ma}</value> <value>{mz}</value> <value>{mm}</value> <value>{na}</value> <value>{nr}</value> <value>{np}</value> <value>{an}</value> <value>{nl}</value> <value>{nc}</value> <value>{nz}</value> <value>{ni}</value> <value>{ne}</value> <value>{ng}</value> <value>{nu}</value> <value>{nf}</value> <value>{mp}</value> <value>{no}</value> <value>{om}</value> <value>{pk}</value> <value>{pw}</value> <value>{ps}</value> <value>{pa}</value> <value>{pg}</value> <value>{py}</value> <value>{pe}</value> <value>{ph}</value> <value>{pn}</value> <value>{pl}</value> <value>{pt}</value> <value>{pr}</value> <value>{qa}</value> <value>{re}</value> <value>{ro}</value> <value>{ru}</value> <value>{rw}</value> <value>{ws}</value> <value>{sm}</value> <value>{st}</value> <value>{sa}</value> <value>{uk}</value> <value>{sn}</value> <value>{rs}</value> <value>{sc}</value> <value>{sl}</value> <value>{sg}</value> <value>{sk}</value> <value>{si}</value> <value>{sb}</value> <value>{so}</value> <value>{as}</value> <value>{za}</value> <value>{gs}</value> <value>{su}</value> <value>{es}</value> <value>{lk}</value> <value>{sh}</value> <value>{kn}</value> <value>{lc}</value> <value>{pm}</value> <value>{vc}</value> <value>{sd}</value> <value>{sr}</value> <value>{sj}</value> <value>{sz}</value> <value>{se}</value> <value>{ch}</value> <value>{sy}</value> <value>{tw}</value> <value>{tj}</value> <value>{tz}</value> <value>{th}</value> <value>{tg}</value> <value>{tk}</value> <value>{to}</value> <value>{tt}</value> <value>{tn}</value> <value>{tr}</value> <value>{tm}</value> <value>{tc}</value> <value>{tv}</value> <value>{ug}</value> <value>{ua}</value> <value>{ae}</value> <value>{gb}</value> <value>{uk}</value> <value>{us}</value> <value>{um}</value> <value>{uy}</value> <value>{uz}</value> <value>{vu}</value> <value>{va}</value> <value>{ve}</value> <value>{vn}</value> <value>{vi}</value> <value>{wf}</value> <value>{eh}</value> <value>{ye}</value> <value>{zm}</value> <value>{zw}</value>
                   </domain>
                 </type>
                 <default>
                   <value>{ua}</value>
                   <value>{ru}</value>
+                  <value>{kz}</value>
                 </default>
               </option>
 
@@ -283,6 +586,12 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
               <option name="ExitPolicy">
                 <value>reject *:*</value>
               </option>
+              <option name="ClientOnly">
+                <value>1</value>
+              </option>
+              <option name="PortForwarding">
+                <value>0</value>
+              </option>
             </scheme>
           </process>
         </preset>
@@ -290,6 +599,9 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
         <preset name="relay">
           <process name="tor">
             <scheme name="config">
+              <option name="ClientOnly">
+                <value>0</value>
+              </option>
               <option name="ExitPolicy">
                 <value>reject *:*</value>
               </option>
@@ -298,6 +610,31 @@ In case of emergency break glass and uninstall/reinstall PraeTor.
               </option>
               <option name="DirPort">
                 <value>9030</value>
+              </option>
+            </scheme>
+          </process>
+        </preset>
+
+        <preset name="relay-port-forwarding">
+          <process name="tor">
+            <scheme name="config">
+              <option name="ClientOnly">
+                <value>0</value>
+              </option>
+              <option name="ExitPolicy">
+                <value>reject *:*</value>
+              </option>
+              <option name="ORPort">
+                <value>9001</value>
+              </option>
+              <option name="DirPort">
+                <value>9030</value>
+              </option>
+              <option name="PortForwarding">
+                <value>1</value>
+              </option>
+              <option name="PortForwardingHelper">
+                <value>%ROOTPATH%\Tor\tor-fw-helper.exe</value>
               </option>
             </scheme>
           </process>

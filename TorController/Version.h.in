@@ -1,0 +1,13 @@
+// Version.h is generated from version.h.in.  Edit the source!
+
+
+// Version Information
+
+#define PRODUCT_VERSION @MAJOR@,@MINOR@,@PATCH@,@BUILD@
+#define PRODUCT_VERSION_STRING "@MAJOR@.@MINOR@.@PATCH@.@BUILD@"
+
+// Branding Information
+
+#define PRODUCT_FULLNAME_STRING "@PRODUCT_FULLNAME@"
+#define PRODUCT_SHORTNAME_STRING "@PRODUCT_SHORTNAME@"
+#define COPYRIGHT_STRING "@COPYRIGHT@"

@@ -1,8 +1,9 @@
 #include "WebServices/ControllerAPIWebService.h"
 #include "ControllerWebSvc.h"
+#include "gen/Version.h"
 
 //-------------------------------------------------------------------------------------------------
-ControllerWebSvc::ControllerWebSvc() : Tools::WebSvcApp::WebSvcApp("EasyTor", "1.0.0", "0")
+ControllerWebSvc::ControllerWebSvc() : Tools::WebSvcApp::WebSvcApp(PRODUCT_FULLNAME_STRING, PRODUCT_VERSION_STRING, "0")
 {
 }
 

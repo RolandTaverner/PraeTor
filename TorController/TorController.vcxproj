@@ -48,10 +48,14 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CustomBuildBeforeTargets>PreBuildEvent</CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
+    <CustomBuildBeforeTargets>PreBuildEvent</CustomBuildBeforeTargets>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -76,6 +80,14 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <CustomBuildStep>
+      <Command>c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(SolutionDir)BRANDING -o $(ProjectDir)gen\Version.rc $(ProjectDir)Version.rc.in
+c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(SolutionDir)BRANDING -o $(ProjectDir)gen\Version.h $(ProjectDir)Version.h.in</Command>
+      <Message>Generation Version Information</Message>
+      <Outputs>$(ProjectDir)gen\Version.rc;$(ProjectDir)gen\Version.h</Outputs>
+      <Inputs>$(SolutionDir)version.py;$(SolutionDir)VERSION;$(SolutionDir)BRANDING;$(ProjectDir)Version.rc.in;$(ProjectDir)Version.h.in</Inputs>
+      <TreatOutputAsContent>false</TreatOutputAsContent>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -99,6 +111,20 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <CustomBuildStep>
+      <Command>c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(SolutionDir)BRANDING -o $(ProjectDir)gen\Version.rc $(ProjectDir)Version.rc.in
+c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(SolutionDir)BRANDING -o $(ProjectDir)gen\Version.h $(ProjectDir)Version.h.in</Command>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Message>Generation Version Information</Message>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <Outputs>$(ProjectDir)gen\Version.rc;$(ProjectDir)gen\Version.h</Outputs>
+    </CustomBuildStep>
+    <CustomBuildStep>
+      <TreatOutputAsContent>false</TreatOutputAsContent>
+      <Inputs>$(SolutionDir)version.py;$(SolutionDir)VERSION;$(SolutionDir)BRANDING;$(ProjectDir)Version.rc.in;$(ProjectDir)Version.h.in</Inputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -109,6 +135,9 @@
     <ClInclude Include="Controller\Controller.h" />
     <ClInclude Include="Controller\ControllerActions.h" />
     <ClInclude Include="Controller\ControllerErrors.h" />
+    <ClInclude Include="gen\Version.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Options\ConfigScheme.h" />
     <ClInclude Include="Options\DefaultFormatter.h" />
     <ClInclude Include="Options\IConfigScheme.h" />
@@ -155,6 +184,7 @@
     <ClCompile Include="WebServices\ResourceParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="gen\Version.rc" />
     <ResourceCompile Include="TorController.rc" />
   </ItemGroup>
   <ItemGroup>

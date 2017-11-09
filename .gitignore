@@ -50,6 +50,7 @@ obj/
 *.VC.db
 *.VC.opendb
 .vs/
+gen/
 
 # NSIS output
 Installer/out/

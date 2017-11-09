@@ -4,10 +4,10 @@ Unicode true
 
 !define /ifndef VER_MAJOR 0
 !define /ifndef VER_MINOR 1
-!define /ifndef VER_REVISION 0
+!define /ifndef VER_PATCH 0
 !define /ifndef VER_BUILD 0
 
-!define /ifndef VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}"
+!define /ifndef VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_PATCH}.${VER_BUILD}"
 
 !define /ifndef OUTFILE "out\${PRODUCT}-${VERSION}-setup.exe"
 
@@ -68,11 +68,11 @@ SetOverwrite off
 
 VIProductVersion ${VERSION}
 VIAddVersionKey /LANG=${LANG_ENGLISH} "ProductName" "${PRODUCT}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© Fake company"
-VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "Test Application"
+; VIAddVersionKey /LANG=${LANG_ENGLISH} "Comments" "A test comment"
+; VIAddVersionKey /LANG=${LANG_ENGLISH} "CompanyName" "Fake company"
+; VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalTrademarks" "Test Application is a trademark of Fake company"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "LegalCopyright" "© ${PRODUCT}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} "FileDescription" "${PRODUCT} Installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" ${VERSION}
 
 ;--------------------------------

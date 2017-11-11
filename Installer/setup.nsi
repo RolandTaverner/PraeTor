@@ -167,7 +167,7 @@ Section "Start Menu Shortcuts"
   ; Create shortcuts
   CreateDirectory "$SMPROGRAMS\${PRODUCT}"
   CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(UninstallShortcut) ${PRODUCT}.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(RunShortcut) ${PRODUCT}.lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
+  CreateShortcut "$SMPROGRAMS\${PRODUCT}\$(RunShortcut).lnk" "$INSTDIR\TorController.exe" "--config=$\"${DATA_ROOT}\torcontroller.xml$\"" "$INSTDIR\TorController.exe" 0
   WriteIniStr "$SMPROGRAMS\${PRODUCT}\${PRODUCT} Control Panel.url" "InternetShortcut" "URL" "http://127.0.0.1:30000/ui/index.html"
 SectionEnd
 

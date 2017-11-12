@@ -89,20 +89,31 @@ static const char *s_resourceScheme =
 "  ]"
 "}";
 
+static const std::string nodeControllerInfo = "ControllerInfo";
+static const std::string nodePresets = "Presets";
+static const std::string nodeGetPresetsGroup = "GetPresetsGroup";
+static const std::string nodeProcesses = "Processes";
+static const std::string nodeProcessInfo = "ProcessInfo";
+static const std::string nodeProcessConfigs = "ProcessConfigs";
+static const std::string nodeProcessConfig = "ProcessConfig";
+static const std::string nodeProcessOption = "ProcessOption";
+static const std::string nodeProcessAction = "ProcessAction";
+static const std::string nodeProcessLog = "ProcessLog";
+
 //-------------------------------------------------------------------------------------------------
 ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_controller(controller), m_parser(s_resourceScheme)
 {
-    m_handlers["ControllerInfo"] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, _2);
-    m_handlers["Presets"] = boost::bind(&ControllerAPIWebService::presetsAction, this, _1, _2);
-    m_handlers["GetPresetsGroup"] = boost::bind(&ControllerAPIWebService::getPresetsGroupAction, this, _1, _2);
-    m_handlers["Processes"] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, _2);
-    m_handlers["ProcessInfo"] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, _2);
-    m_handlers["ProcessConfigs"] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, _2);
-    m_handlers["ProcessConfig"] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, _2);
-    m_handlers["ProcessOption"] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, _2);
-    m_handlers["ProcessAction"] = boost::bind(&ControllerAPIWebService::processAction, this, _1, _2);
-    m_handlers["ProcessLog"] = boost::bind(&ControllerAPIWebService::processLog, this, _1, _2);
+    m_handlers[nodeControllerInfo] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, nodeControllerInfo, _2);
+    m_handlers[nodePresets] = boost::bind(&ControllerAPIWebService::presetsAction, this, _1, nodePresets, _2);
+    m_handlers[nodeGetPresetsGroup] = boost::bind(&ControllerAPIWebService::getPresetsGroupAction, this, _1, nodeGetPresetsGroup, _2);
+    m_handlers[nodeProcesses] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, nodeProcesses, _2);
+    m_handlers[nodeProcessInfo] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, nodeProcessInfo, _2);
+    m_handlers[nodeProcessConfigs] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, nodeProcessConfigs,  _2);
+    m_handlers[nodeProcessConfig] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, nodeProcessConfig, _2);
+    m_handlers[nodeProcessOption] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, nodeProcessOption, _2);
+    m_handlers[nodeProcessAction] = boost::bind(&ControllerAPIWebService::processAction, this, _1, nodeProcessAction, _2);
+    m_handlers[nodeProcessLog] = boost::bind(&ControllerAPIWebService::processLog, this, _1, nodeProcessLog, _2);
 
     // HTTP status messages
     {
@@ -337,7 +348,7 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -347,7 +358,7 @@ void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionC
 
     try
     {
-        m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        m_controller->getControllerInfo(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {
@@ -356,7 +367,7 @@ void ControllerAPIWebService::controllerInfoAction(Tools::WebServer::ConnectionC
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -366,7 +377,7 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
 
     try
     {
-        m_controller->getProcesses(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        m_controller->getProcesses(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {
@@ -375,33 +386,7 @@ void ControllerAPIWebService::processesAction(Tools::WebServer::ConnectionContex
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
-{
-    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
-        return;
-    }
-
-    const ResourceParameters::const_iterator i = parameters.find("process_id");
-    if (i == parameters.end())
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
-        return;
-    }
-
-    try
-    {
-        m_controller->getProcessInfo(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
-    }
-    catch (const std::exception &e)
-    {
-        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
-    }
-}
-
-//-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processInfoAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -418,7 +403,7 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
 
     try
     {
-        m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        m_controller->getProcessInfo(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {
@@ -427,7 +412,33 @@ void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionC
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processConfigsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
+{
+    if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_METHOD_NOT_ALLOWED, "Method " + contextPtr->getRequest()->get_method() + " not allowed.");
+        return;
+    }
+
+    const ResourceParameters::const_iterator i = parameters.find("process_id");
+    if (i == parameters.end())
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, "Something went wrong with resource parser.");
+        return;
+    }
+
+    try
+    {
+        m_controller->getProcessConfigs(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
+    }
+    catch (const std::exception &e)
+    {
+        sendErrorResponse(contextPtr, pion::http::types::RESPONSE_CODE_SERVER_ERROR, e.what());
+    }
+}
+
+//-------------------------------------------------------------------------------------------------
+void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -447,7 +458,7 @@ void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionCo
     {
         m_controller->getProcessConfig(itProcessId->second, 
                                        itConfigName->second,
-                                       boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+                                       boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {
@@ -456,7 +467,7 @@ void ControllerAPIWebService::processConfigAction(Tools::WebServer::ConnectionCo
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
     const ResourceParameters::const_iterator itConfigName = parameters.find("config_name");
@@ -475,7 +486,7 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
             m_controller->getProcessOption(itProcessId->second,
                 itConfigName->second,
                 itOptionName->second,
-                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Get, _1));
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, action, ResourceActionType::Get, _1));
         }
         else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_PUT)
         {
@@ -528,14 +539,14 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
                 itConfigName->second,
                 itOptionName->second,
                 newOptionValue,
-                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Put, _1));
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, action, ResourceActionType::Put, _1));
         }
         else if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_DELETE)
         {
             m_controller->removeProcessOption(itProcessId->second,
                 itConfigName->second,
                 itOptionName->second,
-                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, ResourceActionType::Delete, _1));
+                boost::bind(&ControllerAPIWebService::onProcessOptionResponse, this, contextPtr, action, ResourceActionType::Delete, _1));
         }
         else
         {
@@ -551,19 +562,20 @@ void ControllerAPIWebService::processOptionAction(Tools::WebServer::ConnectionCo
 
 //-------------------------------------------------------------------------------------------------
 void ControllerAPIWebService::onProcessOptionResponse(Tools::WebServer::ConnectionContextPtr contextPtr,
+    const std::string &action,
     ResourceActionType actionType,
     const ProcessOptionResult &result)
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, result.getError());
+        sendErrorResponse(contextPtr, m_errorsMapping.getHttpStatusCode(action, contextPtr->getRequest()->get_method(), result.getError()), result.getError());
         return;
     }
 
     sendResponse(contextPtr, result.toJson().toStyledString());
 }
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     const ResourceParameters::const_iterator itProcessId = parameters.find("process_id");
 
@@ -586,17 +598,17 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
         return;
     }
 
-    const Json::Value &action = v["action"];
-    if (boost::algorithm::equals(action.asString(), "start"))
+    const Json::Value &processActionName = v["action"];
+    if (boost::algorithm::equals(processActionName.asString(), "start"))
     {
         m_controller->startProcess(itProcessId->second,
-            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
         return;
     }
-    else if (boost::algorithm::equals(action.asString(), "stop"))
+    else if (boost::algorithm::equals(processActionName.asString(), "stop"))
     {
         m_controller->stopProcess(itProcessId->second,
-            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+            boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
         return;
     }
 
@@ -604,7 +616,7 @@ void ControllerAPIWebService::processAction(Tools::WebServer::ConnectionContextP
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr, const ErrorCode &ec)
+void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionContextPtr contextPtr, unsigned httpStatusCode, const ErrorCode &ec)
 {
     const bool isGzipEnabled = (contextPtr->getRequest()->get_header("Accept-Encoding").find("gzip") != std::string::npos);
 
@@ -615,8 +627,7 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 
     const std::string responseBody = Json::FastWriter().write(error);
 
-    // TODO: set proper HTTP status
-    pion::http::response_ptr response = createResponse(pion::http::types::RESPONSE_CODE_SERVER_ERROR,
+    pion::http::response_ptr response = createResponse(httpStatusCode,
         contextPtr->getRequest()->get_method(), 
         "application/json", 
         responseBody, 
@@ -629,11 +640,11 @@ void ControllerAPIWebService::sendErrorResponse(Tools::WebServer::ConnectionCont
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const ActionResult &result)
+void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ActionResult &result)
 {
     if (result.getError())
     {
-        sendErrorResponse(contextPtr, result.getError());
+        sendErrorResponse(contextPtr, m_errorsMapping.getHttpStatusCode(action, contextPtr->getRequest()->get_method(), result.getError()), result.getError());
         return;
     }
 
@@ -641,13 +652,13 @@ void ControllerAPIWebService::defaultResponseHandler(Tools::WebServer::Connectio
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::presetsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::presetsAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() == pion::http::types::REQUEST_METHOD_GET)
     {
         try
         {
-            m_controller->getPresetGroups(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+            m_controller->getPresetGroups(boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
         }
         catch (const std::exception &e)
         {
@@ -669,7 +680,7 @@ void ControllerAPIWebService::presetsAction(Tools::WebServer::ConnectionContextP
 
             const std::string name = v["name"].asString();
 
-            m_controller->applyPresetGroup(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+            m_controller->applyPresetGroup(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
         }
         catch (const std::exception &e)
         {
@@ -683,7 +694,7 @@ void ControllerAPIWebService::presetsAction(Tools::WebServer::ConnectionContextP
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -703,7 +714,7 @@ void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::Connection
 
     try
     {
-        m_controller->getPresets(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        m_controller->getPresets(name, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {
@@ -712,7 +723,7 @@ void ControllerAPIWebService::getPresetsGroupAction(Tools::WebServer::Connection
 }
 
 //-------------------------------------------------------------------------------------------------
-void ControllerAPIWebService::processLog(Tools::WebServer::ConnectionContextPtr contextPtr, const ResourceParameters &parameters)
+void ControllerAPIWebService::processLog(Tools::WebServer::ConnectionContextPtr contextPtr, const std::string &action, const ResourceParameters &parameters)
 {
     if (contextPtr->getRequest()->get_method() != pion::http::types::REQUEST_METHOD_GET)
     {
@@ -729,7 +740,7 @@ void ControllerAPIWebService::processLog(Tools::WebServer::ConnectionContextPtr 
 
     try
     {
-        m_controller->getProcessLog(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, _1));
+        m_controller->getProcessLog(i->second, boost::bind(&ControllerAPIWebService::defaultResponseHandler, this, contextPtr, action, _1));
     }
     catch (const std::exception &e)
     {

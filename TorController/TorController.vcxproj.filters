@@ -123,6 +123,9 @@
     <ClInclude Include="gen\Version.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WebServices\ErrorsMapping.h">
+      <Filter>Header Files\WebServices</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -178,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="Controller\Presets.cpp">
       <Filter>Source Files\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="WebServices\ErrorsMapping.cpp">
+      <Filter>Source Files\WebServices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

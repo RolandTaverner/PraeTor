@@ -159,6 +159,7 @@ c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(So
     <ClInclude Include="ControllerWebSvc.h" />
     <ClInclude Include="WebServices\ControllerAPIWebService.h" />
     <ClInclude Include="WebServices\ErrorsMapping.h" />
+    <ClInclude Include="WebServices\ResourceActions.h" />
     <ClInclude Include="WebServices\ResourceParser.h" />
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +184,7 @@ c:\Python27\python.exe $(SolutionDir)version.py -f $(SolutionDir)VERSION -f $(So
     <ClCompile Include="ControllerWebSvc.cpp" />
     <ClCompile Include="WebServices\ControllerAPIWebService.cpp" />
     <ClCompile Include="WebServices\ErrorsMapping.cpp" />
+    <ClCompile Include="WebServices\ResourceActions.cpp" />
     <ClCompile Include="WebServices\ResourceParser.cpp" />
   </ItemGroup>
   <ItemGroup>

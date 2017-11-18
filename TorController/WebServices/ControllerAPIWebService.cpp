@@ -16,6 +16,7 @@
 
 #include "Controller/ControllerErrors.h"
 #include "WebServices/ControllerAPIWebService.h"
+#include "WebServices/ResourceActions.h"
 
 static const char *s_resourceScheme =
 "{"
@@ -89,31 +90,20 @@ static const char *s_resourceScheme =
 "  ]"
 "}";
 
-static const std::string nodeControllerInfo = "ControllerInfo";
-static const std::string nodePresets = "Presets";
-static const std::string nodeGetPresetsGroup = "GetPresetsGroup";
-static const std::string nodeProcesses = "Processes";
-static const std::string nodeProcessInfo = "ProcessInfo";
-static const std::string nodeProcessConfigs = "ProcessConfigs";
-static const std::string nodeProcessConfig = "ProcessConfig";
-static const std::string nodeProcessOption = "ProcessOption";
-static const std::string nodeProcessAction = "ProcessAction";
-static const std::string nodeProcessLog = "ProcessLog";
-
 //-------------------------------------------------------------------------------------------------
 ControllerAPIWebService::ControllerAPIWebService(ControllerPtr controller) :
     m_controller(controller), m_parser(s_resourceScheme)
 {
-    m_handlers[nodeControllerInfo] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, nodeControllerInfo, _2);
-    m_handlers[nodePresets] = boost::bind(&ControllerAPIWebService::presetsAction, this, _1, nodePresets, _2);
-    m_handlers[nodeGetPresetsGroup] = boost::bind(&ControllerAPIWebService::getPresetsGroupAction, this, _1, nodeGetPresetsGroup, _2);
-    m_handlers[nodeProcesses] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, nodeProcesses, _2);
-    m_handlers[nodeProcessInfo] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, nodeProcessInfo, _2);
-    m_handlers[nodeProcessConfigs] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, nodeProcessConfigs,  _2);
-    m_handlers[nodeProcessConfig] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, nodeProcessConfig, _2);
-    m_handlers[nodeProcessOption] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, nodeProcessOption, _2);
-    m_handlers[nodeProcessAction] = boost::bind(&ControllerAPIWebService::processAction, this, _1, nodeProcessAction, _2);
-    m_handlers[nodeProcessLog] = boost::bind(&ControllerAPIWebService::processLog, this, _1, nodeProcessLog, _2);
+    m_handlers[ResourceActions::nodeControllerInfo] = boost::bind(&ControllerAPIWebService::controllerInfoAction, this, _1, ResourceActions::nodeControllerInfo, _2);
+    m_handlers[ResourceActions::nodePresets] = boost::bind(&ControllerAPIWebService::presetsAction, this, _1, ResourceActions::nodePresets, _2);
+    m_handlers[ResourceActions::nodeGetPresetsGroup] = boost::bind(&ControllerAPIWebService::getPresetsGroupAction, this, _1, ResourceActions::nodeGetPresetsGroup, _2);
+    m_handlers[ResourceActions::nodeProcesses] = boost::bind(&ControllerAPIWebService::processesAction, this, _1, ResourceActions::nodeProcesses, _2);
+    m_handlers[ResourceActions::nodeProcessInfo] = boost::bind(&ControllerAPIWebService::processInfoAction, this, _1, ResourceActions::nodeProcessInfo, _2);
+    m_handlers[ResourceActions::nodeProcessConfigs] = boost::bind(&ControllerAPIWebService::processConfigsAction, this, _1, ResourceActions::nodeProcessConfigs,  _2);
+    m_handlers[ResourceActions::nodeProcessConfig] = boost::bind(&ControllerAPIWebService::processConfigAction, this, _1, ResourceActions::nodeProcessConfig, _2);
+    m_handlers[ResourceActions::nodeProcessOption] = boost::bind(&ControllerAPIWebService::processOptionAction, this, _1, ResourceActions::nodeProcessOption, _2);
+    m_handlers[ResourceActions::nodeProcessAction] = boost::bind(&ControllerAPIWebService::processAction, this, _1, ResourceActions::nodeProcessAction, _2);
+    m_handlers[ResourceActions::nodeProcessLog] = boost::bind(&ControllerAPIWebService::processLog, this, _1, ResourceActions::nodeProcessLog, _2);
 
     // HTTP status messages
     {

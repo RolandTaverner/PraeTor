@@ -70,8 +70,10 @@ API для управления Tor'ом
     + Attributes (ProcessActionResult)
 + Response 401
 + Response 403 (application/json)
-    + Attributes (ProcessActionResult)
+    + Attributes (Error)
 + Response 404 (application/json)
+    + Attributes (Error)
++ Response 409 (application/json)
     + Attributes (Error)
 
 
@@ -134,15 +136,22 @@ API для управления Tor'ом
     + Attributes (Option)
 + Response 400
 + Response 401
-+ Response 403
++ Response 403 (application/json) 
+    + Attributes (Error)
 + Response 404 (application/json) 
+    + Attributes (Error)
++ Response 409 (application/json) 
     + Attributes (Error)
 
 ### Удалить опцию [DELETE]
-+ Response 204 (application/json)
++ Response 200 (application/json)
+    + Attributes (Option)
 + Response 401
-+ Response 403
++ Response 403 (application/json) 
+    + Attributes (Error)
 + Response 404 (application/json) 
+    + Attributes (Error)
++ Response 409 (application/json) 
     + Attributes (Error)
 
 ## Data Structures
